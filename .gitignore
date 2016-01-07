@@ -1,0 +1,8 @@
+*.pyc
+*.log
+*.zip
+*.pkl
+
+# Android Studio files
+.idea/*
+!.idea/codeStyleSettings.xml
