@@ -55,6 +55,8 @@ def get_routes(refresh=False):
         routes = {}
     else:
         routes = read_routes_from_file()
+        if len(routes) > 1:
+            return routes
 
     api = overpy.Overpass()
 
@@ -75,7 +77,7 @@ def get_routes(refresh=False):
         if master_ref not in routes:
             routes[master_ref] = route_masters[master_ref]
             sys.stderr.write("Master route was missing: " + master_ref + "\n")
-            sys.stderr.write(routes[master_ref] + "\n\n")
+            sys.stderr.write(str(routes[master_ref]) + "\n\n")
 
     save_routes_to_file(routes)
 
@@ -88,6 +90,8 @@ def get_route_masters(refresh=False):
         route_masters = {}
     else:
         route_masters = read_route_masters_from_file()
+        if len(route_masters) > 1:
+            return route_masters
 
     api = overpy.Overpass()
 
@@ -137,7 +141,7 @@ def get_route_masters(refresh=False):
     return route_masters
 
 
-def get_route(routes, route_masters, rel):
+def get_route(routes, route_masters, rel, warn=True):
     if 'ref' in rel.tags:
         rid = rel.id
         ref = rel.tags['ref'].replace('B', '')
@@ -171,7 +175,7 @@ def get_route(routes, route_masters, rel):
             routes[ref].add_shape()
             if len(stops) == 0:
                 sys.stderr.write("Route has no bus stops: " + "https://www.openstreetmap.org/relation/" + str(rel.id) + "\n")
-        else:
+        elif warn:
             # we've seen a route with this ref tag already, warn about it
             sys.stderr.write("Route with ref=%s is there more than once, but has no parent route_master:\n" % str(ref))
             sys.stderr.write("    https://www.openstreetmap.org/relation/" + str(routes[rel.tags['ref']].id) + "\n")
@@ -294,6 +298,6 @@ def refresh_route(route_ref):
         return
 
     for rel in result.get_relations():
-        print get_route(routes, route_masters, rel)
+        print get_route(routes, route_masters, rel, warn=False)
 
     save_routes_to_file(routes)

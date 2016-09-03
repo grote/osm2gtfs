@@ -12,7 +12,7 @@ from osmhelper.osm_routes import Route, RouteMaster
 
 DEBUG_ROUTE = "104"
 
-START_DATE = "20160701"
+START_DATE = "20160901"
 END_DATE = "20170831"
 
 WEEKDAY = "Dias Úteis"
@@ -20,7 +20,12 @@ SATURDAY = "Sábado"
 SUNDAY = "Domingo"
 
 parser = argparse.ArgumentParser(prog='osm2gtfs', description='Create GTFS from OpenStreetMap data.')
-parser.add_argument('--refresh-route', metavar='ROUTE', type=int, help='Refresh OSM data for ROUTE')
+
+group = parser.add_mutually_exclusive_group()
+group.add_argument('--refresh-route', metavar='ROUTE', type=int, help='Refresh OSM data for ROUTE')
+group.add_argument('--refresh-all-routes', action="store_true", help='Refresh OSM data for all routes')
+group.add_argument('--refresh-all-stops', action="store_true", help='Refresh OSM data for all stops')
+group.add_argument('--refresh-all', action="store_true", help='Refresh all OSM data')
 args = parser.parse_args()
 
 
@@ -29,8 +34,15 @@ def main():
     if args.refresh_route is not None:
         osmhelper.refresh_route(args.refresh_route)
         sys.exit(0)
-
-    pre_data_hook()
+    elif args.refresh_all_routes:
+        osmhelper.get_routes(refresh=True)
+        sys.exit(0)
+    elif args.refresh_all_stops:
+        osmhelper.get_stops(osmhelper.get_routes(), refresh=True)
+        sys.exit(0)
+    elif args.refresh_all:
+        osmhelper.refresh_data()
+        sys.exit(0)
 
     # Get Fenix data from JSON file
     json_data = []
@@ -94,8 +106,6 @@ def main():
     service_sunday.SetWeekdayService(False)
     service_sunday.SetWeekendService(False)
     service_sunday.SetDayOfWeekHasService(6, True)
-
-    post_data_hook(routes, stops)
 
     # add all stops to GTFS
     for stop in stops.values():
@@ -254,18 +264,6 @@ def interpolate_stop_times(trip):
             stop_time.arrival_secs = secs
             stop_time.departure_secs = secs
             trip.ReplaceStopTimeObject(stop_time)
-
-
-def pre_data_hook():
-#    osmhelper.refresh_data()
-#    osmhelper.get_routes(refresh=True)
-#    osmhelper.get_stops(osmhelper.get_routes(), refresh=True)
-    pass
-
-
-def post_data_hook(routes, stops):
-    print routes[DEBUG_ROUTE]
-    pass
 
 
 if __name__ == "__main__":
