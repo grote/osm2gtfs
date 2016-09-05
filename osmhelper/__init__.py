@@ -12,7 +12,7 @@ from osmhelper.osm_stops import Stop
 
 CHECK_FOR_NON_PLATFORMS = False
 
-FLORIANOPOLIS = {"e":"-48.27117919921875", "n":"-27.215556209029675", "s":"-27.94103350326715", "w":"-49.0155029296875"}
+
 
 def refresh_data():
     get_stops(get_routes(refresh=True), refresh=True)
@@ -50,7 +50,7 @@ def read_stops_from_file():
         return {}
 
 
-def get_routes(refresh=False, route="bus", bbox=FLORIANOPOLIS):
+def get_routes(route, bbox, refresh=False):
     if refresh:
         print "Start with fresh routes"
         routes = {}
@@ -85,7 +85,7 @@ def get_routes(refresh=False, route="bus", bbox=FLORIANOPOLIS):
     return routes
 
 
-def get_route_masters(refresh=False, route="bus", bbox=FLORIANOPOLIS):
+def get_route_masters(route, bbox,refresh=False):
     if refresh:
         print "Start with fresh route masters"
         route_masters = {}

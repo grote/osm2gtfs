@@ -10,6 +10,8 @@ from datetime import datetime
 from osmhelper.osm_routes import Route, RouteMaster
 
 
+FLORIANOPOLIS = {"e":"-48.27117919921875", "n":"-27.215556209029675", "s":"-27.94103350326715", "w":"-49.0155029296875"}
+
 DEBUG_ROUTE = "104"
 
 START_DATE = "20160901"
@@ -35,10 +37,10 @@ def main():
         osmhelper.refresh_route(args.refresh_route)
         sys.exit(0)
     elif args.refresh_all_routes:
-        osmhelper.get_routes(refresh=True)
+        osmhelper.get_routes("bus", FLORIANOPOLIS, refresh=True)
         sys.exit(0)
     elif args.refresh_all_stops:
-        osmhelper.get_stops(osmhelper.get_routes(), refresh=True)
+        osmhelper.get_stops(osmhelper.get_routes("bus", FLORIANOPOLIS), refresh=True)
         sys.exit(0)
     elif args.refresh_all:
         osmhelper.refresh_data()
@@ -52,7 +54,7 @@ def main():
     linhas = json_data[0]['data']
 
     # Get OSM routes and check data
-    routes = osmhelper.get_routes()
+    routes = osmhelper.get_routes("bus", FLORIANOPOLIS)
 
     blacklist = ['10200', '12400', '328', '466', '665']
     # Try to find OSM routes in Fenix data
