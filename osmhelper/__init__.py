@@ -12,6 +12,7 @@ from osmhelper.osm_stops import Stop
 
 CHECK_FOR_NON_PLATFORMS = False
 
+FLORIANOPOLIS = {"e":"-48.27117919921875", "n":"-27.215556209029675", "s":"-27.94103350326715", "w":"-49.0155029296875"}
 
 def refresh_data():
     get_stops(get_routes(refresh=True), refresh=True)
@@ -49,7 +50,7 @@ def read_stops_from_file():
         return {}
 
 
-def get_routes(refresh=False):
+def get_routes(refresh=False, route="bus", bbox=FLORIANOPOLIS):
     if refresh:
         print "Start with fresh routes"
         routes = {}
@@ -60,13 +61,13 @@ def get_routes(refresh=False):
 
     result = api.query("""
     <query type="relation">
-        <has-kv k="route" v="bus"/>
-        <bbox-query e="-48.27117919921875" n="-27.215556209029675" s="-27.94103350326715" w="-49.0155029296875"/>
+        <has-kv k="route" v="%s"/>
+        <bbox-query e="%s" n="%s" s="%s" w="%s"/>
     </query>
     <print/>
-    """)
+    """ % (route, bbox["e"], bbox["n"], bbox["s"], bbox["w"]))
 
-    route_masters = get_route_masters(refresh)
+    route_masters = get_route_masters(refresh, route, bbox)
 
     for rel in result.get_relations():
         get_route(routes, route_masters, rel)
@@ -82,7 +83,7 @@ def get_routes(refresh=False):
     return routes
 
 
-def get_route_masters(refresh=False):
+def get_route_masters(refresh=False, route="bus", bbox=FLORIANOPOLIS):
     if refresh:
         print "Start with fresh route masters"
         route_masters = {}
@@ -91,17 +92,17 @@ def get_route_masters(refresh=False):
 
     api = overpy.Overpass()
 
-    # get all route_master's in Floripa area
-    # start out from route=bus relations,
+    # get all route_master's in bbox area
+    # start out from "route" (bus, train) relations,
     # because searching directly for type=route_master does not work with overpass
     result = api.query("""
     <query type="relation">
-        <has-kv k="route" v="bus"/>
-        <bbox-query e="-48.27117919921875" n="-27.215556209029675" s="-27.94103350326715" w="-49.0155029296875"/>
+        <has-kv k="route" v="%s"/>
+        <bbox-query e="%s" n="%s" s="%s" w="%s"/>
     </query>
     <recurse type="relation-backwards"/>
     <print/>
-    """)
+    """ % (route, bbox["e"], bbox["n"], bbox["s"], bbox["w"]))
 
     for rel in result.get_relations():
 
