@@ -13,8 +13,8 @@ from osmhelper.osm_stops import Stop
 CHECK_FOR_NON_PLATFORMS = False
 
 
-def refresh_data():
-    get_stops(get_routes(refresh=True), refresh=True)
+def refresh_data(route_type, bbox):
+    get_stops(get_routes(route_type, bbox, refresh=True), refresh=True)
 
 
 def read_route_masters_from_file():
@@ -49,7 +49,7 @@ def read_stops_from_file():
         return {}
 
 
-def get_routes(refresh=False):
+def get_routes(route_type, bbox, refresh=False):
     if refresh:
         print "Start with fresh routes"
         routes = {}
@@ -62,13 +62,13 @@ def get_routes(refresh=False):
 
     result = api.query("""
     <query type="relation">
-        <has-kv k="route" v="bus"/>
-        <bbox-query e="-48.27117919921875" n="-27.215556209029675" s="-27.94103350326715" w="-49.0155029296875"/>
+        <has-kv k="route" v="%s"/>
+        <bbox-query e="%s" n="%s" s="%s" w="%s"/>
     </query>
     <print/>
-    """)
+    """ % (route_type, bbox["e"], bbox["n"], bbox["s"], bbox["w"]))
 
-    route_masters = get_route_masters(refresh)
+    route_masters = get_route_masters(route_type, bbox, refresh)
 
     for rel in result.get_relations():
         get_route(routes, route_masters, rel)
@@ -84,7 +84,7 @@ def get_routes(refresh=False):
     return routes
 
 
-def get_route_masters(refresh=False):
+def get_route_masters(route_type, bbox, refresh=False):
     if refresh:
         print "Start with fresh route masters"
         route_masters = {}
@@ -95,17 +95,17 @@ def get_route_masters(refresh=False):
 
     api = overpy.Overpass()
 
-    # get all route_master's in Floripa area
-    # start out from route=bus relations,
+    # get all route_master's in bbox area
+    # start out from "route_type" (bus, train) relations,
     # because searching directly for type=route_master does not work with overpass
     result = api.query("""
     <query type="relation">
-        <has-kv k="route" v="bus"/>
-        <bbox-query e="-48.27117919921875" n="-27.215556209029675" s="-27.94103350326715" w="-49.0155029296875"/>
+        <has-kv k="route" v="%s"/>
+        <bbox-query e="%s" n="%s" s="%s" w="%s"/>
     </query>
     <recurse type="relation-backwards"/>
     <print/>
-    """)
+    """ % (route_type, bbox["e"], bbox["n"], bbox["s"], bbox["w"]))
 
     for rel in result.get_relations():
 
@@ -274,19 +274,19 @@ def get_stops_of_route(route_id):
     return stops
 
 
-def refresh_route(route_ref):
-    route_masters = get_route_masters()
-    routes = get_routes()
+def refresh_route(route_ref, route_type, bbox):
+    route_masters = get_route_masters(route_type, bbox)
+    routes = get_routes(route_type, bbox)
 
     api = overpy.Overpass()
     result = api.query("""
     <query type="relation">
-        <has-kv k="route" v="bus"/>
+        <has-kv k="route" v="%s"/>
         <has-kv k="ref" v="%s"/>
-        <bbox-query e="-48.27117919921875" n="-27.215556209029675" s="-27.94103350326715" w="-49.0155029296875"/>
+        <bbox-query e="%s" n="%s" s="%s" w="%s"/>
     </query>
     <print/>
-    """ % str(route_ref))
+    """ % (route_type, str(route_ref), bbox["e"], bbox["n"], bbox["s"], bbox["w"]))
 
     if route_ref in route_masters:
         # TODO also refresh route master
