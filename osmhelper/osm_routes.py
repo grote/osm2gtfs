@@ -142,9 +142,9 @@ class Route(BaseRoute):
                 nodes.reverse()
                 nodes.extend(reversed(ways_info[way]["nd"]))
             else:
-                sys.stderr.write("Route has non matching ways: " + str(self) + "\n")
+                sys.stderr.write("Route has non-matching ways: " + str(self) + "\n")
                 sys.stderr.write("  Problem at: http://www.openstreetmap.org/way/" + str(ways_info[way]["id"]) + "\n")
-                pass
+                break
 
         # limit the number of nodes per API request to prevent 414
         size = 100
