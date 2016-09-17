@@ -24,6 +24,10 @@ to create a GTFS file using Google's transitfeed library and validates it after 
 
     pip install -r requirements.txt
 
+## Use
+
+    python osm2gtfs.py -c fenix.json.example
+
 ## License
 
 ![GNU GPLv3 Image](https://www.gnu.org/graphics/gplv3-127x51.png)

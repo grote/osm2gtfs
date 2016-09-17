@@ -1,4 +1,4 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python
 # coding=utf-8
 
 import transitfeed
@@ -6,15 +6,12 @@ import json
 import sys
 import osmhelper
 import argparse
+import pprint
 from datetime import datetime
 from osmhelper.osm_routes import Route, RouteMaster
 
-FLORIANOPOLIS = {"e": "-48.2711", "n": "-27.2155", "s": "-27.9410", "w": "-49.0155"}
 
 DEBUG_ROUTE = "104"
-
-START_DATE = "20160901"
-END_DATE = "20170831"
 
 WEEKDAY = "Dias Úteis"
 SATURDAY = "Sábado"
@@ -23,26 +20,38 @@ SUNDAY = "Domingo"
 parser = argparse.ArgumentParser(prog='osm2gtfs', description='Create GTFS from OpenStreetMap data.')
 
 group = parser.add_mutually_exclusive_group()
+group.add_argument('-c', '--config', metavar='FILE', type=argparse.FileType('r'), help='Configuration json file')
 group.add_argument('--refresh-route', metavar='ROUTE', type=int, help='Refresh OSM data for ROUTE')
 group.add_argument('--refresh-all-routes', action="store_true", help='Refresh OSM data for all routes')
 group.add_argument('--refresh-all-stops', action="store_true", help='Refresh OSM data for all stops')
 group.add_argument('--refresh-all', action="store_true", help='Refresh all OSM data')
 args = parser.parse_args()
 
+# Load config json file
+try:
+    config = json.load(args.config)
+except ValueError, e:
+    print('Failed to load config json file:')
+    print(e)
+
+BBOX = config['query']['bbox'];
+START_DATE = config['start_date']
+END_DATE = config['end_date']
 
 def main():
+
     # --refresh-route
     if args.refresh_route is not None:
-        osmhelper.refresh_route(args.refresh_route, "bus", FLORIANOPOLIS)
+        osmhelper.refresh_route(args.refresh_route, "bus", BBOX)
         sys.exit(0)
     elif args.refresh_all_routes:
-        osmhelper.get_routes("bus", FLORIANOPOLIS, refresh=True)
+        osmhelper.get_routes("bus", BBOX, refresh=True)
         sys.exit(0)
     elif args.refresh_all_stops:
-        osmhelper.get_stops(osmhelper.get_routes("bus", FLORIANOPOLIS), refresh=True)
+        osmhelper.get_stops(osmhelper.get_routes("bus", BBOX), refresh=True)
         sys.exit(0)
     elif args.refresh_all:
-        osmhelper.refresh_data("bus", FLORIANOPOLIS)
+        osmhelper.refresh_data("bus", BBOX)
         sys.exit(0)
 
     # Get Fenix data from JSON file
@@ -53,7 +62,7 @@ def main():
     linhas = json_data[0]['data']
 
     # Get OSM routes and check data
-    routes = osmhelper.get_routes("bus", FLORIANOPOLIS)
+    routes = osmhelper.get_routes("bus", BBOX)
 
     blacklist = ['10200', '12400', '328', '466', '665']
     # Try to find OSM routes in Fenix data
@@ -82,10 +91,10 @@ def main():
 
     schedule = transitfeed.Schedule()
     agency = schedule.AddAgency(
-        name="Consórcio Fênix",
-        url="http://www.consorciofenix.com.br/",
-        timezone="America/Sao_Paulo",
-        agency_id="BR-Floripa"
+        name=config['agency']['agency_name'],
+        url="config['agency']['agency_url'],
+        timezone=config['agency']['agency_timezone'],
+        agency_id=config['agency']['agency_id']
     )
 
     service_weekday = schedule.NewDefaultServicePeriod()
@@ -148,14 +157,14 @@ def main():
         add_trips(schedule, line, service_weekday, route, weekday, WEEKDAY)
         add_trips(schedule, line, service_saturday, route, saturday, SATURDAY)
         add_trips(schedule, line, service_sunday, route, sunday, SUNDAY)
-    
+
     feed_info = transitfeed.FeedInfo()
-    feed_info.feed_publisher_name = "Torsten Grote"
-    feed_info.feed_publisher_url = "https://transportr.grobox.de"
-    feed_info.feed_lang = "pt"
+    feed_info.feed_publisher_name = config['feed_info']['publisher_name']
+    feed_info.feed_publisher_url = config['feed_info']['publisher_url']
+    feed_info.feed_lang = config['agency']['agency_lang']
     feed_info.feed_start_date = START_DATE
     feed_info.feed_end_date = END_DATE
-    feed_info.feed_version = "0.1"
+    feed_info.feed_version = config['feed_info']['version']
     schedule.AddFeedInfoObject(feed_info)
 
     schedule.Validate(transitfeed.ProblemReporter())
@@ -207,7 +216,7 @@ def add_trips(schedule, line, service, route, horarios, day):
     for time_group in horarios[key]:
         for time_point in time_group:
             # parse first departure time
-            start_time = datetime.strptime(time_point[0], "%H:%M") 
+            start_time = datetime.strptime(time_point[0], "%H:%M")
             start_time = str(start_time.time())
 
             # calculate last arrival time for GTFS
