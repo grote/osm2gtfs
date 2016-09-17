@@ -6,8 +6,13 @@ Use public transport data from OpenStreetMap and external schedule information t
 **Attention:** The source code is currently very specific to one city, but this can be developed into something more generic.
 You can help with pull requests that introduce an abstraction layer for the external schedule information.
 
-Requirements
-------------
-* https://github.com/DinoTools/python-overpy
-* https://github.com/google/transitfeed
-* https://github.com/metaodi/osmapi
+## Depends
+
+
+- https://github.com/DinoTools/python-overpy
+- https://github.com/google/transitfeed
+- https://github.com/metaodi/osmapi
+
+## Install
+
+    pip install -r requirements.txt
