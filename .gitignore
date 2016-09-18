@@ -2,6 +2,7 @@
 *.log
 *.zip
 *.pkl
+data/
 
 # Android Studio files
 .idea/*
