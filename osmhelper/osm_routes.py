@@ -27,14 +27,14 @@ class BaseRoute(object):
             rep += self.name
         return rep
 
-    def add_linha(self, linha):
-        self.name = linha['nome'].encode('utf-8')
+    def add_route(self, route):
+        self.name = route['nome'].encode('utf-8')
 
-        self.last_update = datetime.strptime(linha['alterado_em'], "%d/%m/%Y")
+        self.last_update = datetime.strptime(route['alterado_em'], "%d/%m/%Y")
 
         # TODO format this data
-        self.horarios = linha['horarios']
-        self.operacoes = linha['operacoes']
+        self.horarios = route['horarios']
+        self.operacoes = route['operacoes']
 
 
 class Route(BaseRoute):
@@ -56,11 +56,11 @@ class Route(BaseRoute):
         rep += "http://www.consorciofenix.com.br/horarios?q=" + str(self.ref)
         return rep
 
-    def add_linha(self, linha):
-        super(Route, self).add_linha(linha)
+    def add_route(self, route):
+        super(Route, self).add_route(route)
 
         # save duration
-        duration_str = linha['tempo_de_percurso'].replace('aproximado', '')
+        duration_str = route['tempo_de_percurso'].replace('aproximado', '')
         (hours, tmp, minutes) = duration_str.partition(':')
         self.duration = timedelta(hours=int(hours), minutes=int(minutes))
 
@@ -182,13 +182,13 @@ class RouteMaster(BaseRoute):
     def __repr__(self):
         rep = BaseRoute.__repr__(self)
         rep += " | https://www.openstreetmap.org/relation/" + str(self.id) + "\n"
-        
+
         i = 1
         for route in self.routes:
             rep += "  Route %d: " % i
             rep += str(self.routes[route]) + "\n"
             i += 1
-        
+
         return rep
 
     def get_first_stop(self):
