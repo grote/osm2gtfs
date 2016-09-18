@@ -1,4 +1,4 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python
 # coding=utf-8
 
 import overpy
@@ -66,7 +66,7 @@ def get_routes(route_type, bbox, refresh=False):
         <bbox-query e="%s" n="%s" s="%s" w="%s"/>
     </query>
     <print/>
-    """ % (route_type, bbox["e"], bbox["n"], bbox["s"], bbox["w"]))
+    """ % (route_type, str(bbox["e"]), str(bbox["n"]), str(bbox["s"]), str(bbox["w"])))
 
     route_masters = get_route_masters(route_type, bbox, refresh)
 
@@ -105,7 +105,7 @@ def get_route_masters(route_type, bbox, refresh=False):
     </query>
     <recurse type="relation-backwards"/>
     <print/>
-    """ % (route_type, bbox["e"], bbox["n"], bbox["s"], bbox["w"]))
+    """ % (route_type, str(bbox["e"]), str(bbox["n"]), str(bbox["s"]), str(bbox["w"])))
 
     for rel in result.get_relations():
 
@@ -286,7 +286,7 @@ def refresh_route(route_ref, route_type, bbox):
         <bbox-query e="%s" n="%s" s="%s" w="%s"/>
     </query>
     <print/>
-    """ % (route_type, str(route_ref), bbox["e"], bbox["n"], bbox["s"], bbox["w"]))
+    """ % (route_type, str(route_ref), str(bbox["e"]), str(bbox["n"]), str(bbox["s"]), str(bbox["w"])))
 
     if route_ref in route_masters:
         # TODO also refresh route master
