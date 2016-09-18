@@ -17,6 +17,11 @@ to create a GTFS file using Google's transitfeed library and validates it after 
 
 Requirements
 ------------
+
+Install dependencies by running
+
+    pip install -r requirements.txt
+
 * https://github.com/DinoTools/python-overpy
 * https://github.com/google/transitfeed
 * https://github.com/metaodi/osmapi
