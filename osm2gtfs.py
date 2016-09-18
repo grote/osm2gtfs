@@ -15,10 +15,10 @@ WEEKDAY = "Dias Úteis"
 SATURDAY = "Sábado"
 SUNDAY = "Domingo"
 
+# Handle arguments
 parser = argparse.ArgumentParser(prog='osm2gtfs', description='Create GTFS from OpenStreetMap data.')
-
+parser.add_argument('--config', '-c', metavar='FILE', type=argparse.FileType('r'), help='Configuration json file', required=True)
 group = parser.add_mutually_exclusive_group()
-group.add_argument('-c', '--config', metavar='FILE', type=argparse.FileType('r'), help='Configuration json file')
 group.add_argument('--refresh-route', metavar='ROUTE', type=int, help='Refresh OSM data for ROUTE')
 group.add_argument('--refresh-all-routes', action="store_true", help='Refresh OSM data for all routes')
 group.add_argument('--refresh-all-stops', action="store_true", help='Refresh OSM data for all stops')
@@ -36,10 +36,10 @@ def main():
         print(e)
         sys.exit(0)
 
-    # Initialize information from config fimle
-    bbox = config['query']['bbox'];
-    start_date = config['start_date']
-    end_date = config['end_date']
+    # Initialize information from config file
+    bbox = config['query']['bbox']
+    start_date = config['feed_info']['start_date']
+    end_date = config['feed_info']['end_date']
 
     # --refresh-route
     if args.refresh_route is not None:
