@@ -1,9 +1,9 @@
 {
     "query": {
         "bbox": {
-            "e": "-48.2711",
             "n": "-27.2155",
             "s": "-27.9410",
+            "e": "-48.2711",
             "w": "-49.0155"
         }
     },
@@ -12,7 +12,8 @@
         "agency_name": "Consórcio Fênix",
         "agency_url": "http://www.consorciofenix.com.br/",
         "agency_timezone": "America/Sao_Paulo",
-        "agency_lang": "pt"
+        "agency_lang": "pt",
+        "agency_phone": "+55 (48) 3025-6868"
     },
     "feed_info": {
         "publisher_name": "Torsten Grote",
