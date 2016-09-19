@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # coding=utf-8
 
+import os
 import transitfeed
 import json
 import sys
@@ -17,7 +18,7 @@ SUNDAY = "Domingo"
 
 # Handle arguments
 parser = argparse.ArgumentParser(prog='osm2gtfs', description='Create GTFS from OpenStreetMap data.')
-parser.add_argument('--config', '-c', metavar='FILE', type=argparse.FileType('r'), help='Configuration json file', required=True)
+parser.add_argument('--config', '-c', metavar='FILE', type=argparse.FileType('r'), help='Configuration json file')
 parser.add_argument('--output', '-o', metavar='FILENAME', type=str, help='Specify GTFS output zip file')
 group = parser.add_mutually_exclusive_group()
 group.add_argument('--refresh-route', metavar='ROUTE', type=int, help='Refresh OSM data for ROUTE')
@@ -30,12 +31,13 @@ args = parser.parse_args()
 def main():
 
     # Load config json file
-    try:
-        config = json.load(args.config)
-    except ValueError, e:
-        print('Failed to load config json file:')
-        print(e)
-        sys.exit(0)
+    if os.path.isfile('config.json'):
+        with open("config.json") as json_file:
+            config = load_config(json_file)
+    elif args.config is not None:
+            config = load_config(args.config)
+    else:
+        print('Error: No config json file found')
 
     # Initialize information from config file
     bbox = config['query']['bbox']
@@ -286,6 +288,15 @@ def interpolate_stop_times(trip):
             stop_time.departure_secs = secs
             trip.ReplaceStopTimeObject(stop_time)
 
+def load_config(file):
+    try:
+        config = json.load(file)
+    except ValueError, e:
+        print('Error: Config json file is invalid')
+        print(e)
+        sys.exit(0)
+
+    return config;
 
 if __name__ == "__main__":
     main()
