@@ -20,6 +20,7 @@ SUNDAY = "Domingo"
 parser = argparse.ArgumentParser(prog='osm2gtfs', description='Create GTFS from OpenStreetMap data.')
 parser.add_argument('--config', '-c', metavar='FILE', type=argparse.FileType('r'), help='Configuration json file')
 parser.add_argument('--output', '-o', metavar='FILENAME', type=str, help='Specify GTFS output zip file')
+parser.add_argument('--route-type', '-rt', metavar='TYPE', help='OSM Route type, default is bus', default='bus', dest='route_type')
 group = parser.add_mutually_exclusive_group()
 group.add_argument('--refresh-route', metavar='ROUTE', type=int, help='Refresh OSM data for ROUTE')
 group.add_argument('--refresh-all-routes', action="store_true", help='Refresh OSM data for all routes')
@@ -55,16 +56,16 @@ def main():
 
     # --refresh-route
     if args.refresh_route is not None:
-        osmhelper.refresh_route(args.refresh_route, "bus", bbox)
+        osmhelper.refresh_route(args.refresh_route, args.route_type, bbox)
         sys.exit(0)
     elif args.refresh_all_routes:
-        osmhelper.get_routes("bus", bbox, refresh=True)
+        osmhelper.get_routes(args.route_type, bbox, refresh=True)
         sys.exit(0)
     elif args.refresh_all_stops:
-        osmhelper.get_stops(osmhelper.get_routes("bus", bbox), refresh=True)
+        osmhelper.get_stops(osmhelper.get_routes(args.route_type, bbox), refresh=True)
         sys.exit(0)
     elif args.refresh_all:
-        osmhelper.refresh_data("bus", bbox)
+        osmhelper.refresh_data(args.route_type, bbox)
         sys.exit(0)
 
     # Get Fenix data from JSON file
@@ -75,7 +76,7 @@ def main():
     linhas = json_data[0]['data']
 
     # Get OSM routes and check data
-    routes = osmhelper.get_routes("bus", bbox)
+    routes = osmhelper.get_routes(args.route_type, bbox)
 
     blacklist = ['10200', '12400', '328', '466', '665']
     # Try to find OSM routes in Fenix data
