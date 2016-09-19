@@ -15,6 +15,11 @@ This data is stored in python objects and cached on disk for efficient re-use.
 The osm2gtfs script then uses the OpenStreetMap data and local schedule information
 to create a GTFS file using Google's transitfeed library and validates it after creation.
 
+Use
+------------
+
+    python osm2gtfs.py -c fenix.json.example
+
 Requirements
 ------------
 
