@@ -21,5 +21,6 @@
         "version":  "0.1",
         "start_date": "20160901",
         "end_date": "20170831"
-    }
+    },
+    "output_file": "br-floripa.zip"
 }

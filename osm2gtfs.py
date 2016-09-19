@@ -18,6 +18,7 @@ SUNDAY = "Domingo"
 # Handle arguments
 parser = argparse.ArgumentParser(prog='osm2gtfs', description='Create GTFS from OpenStreetMap data.')
 parser.add_argument('--config', '-c', metavar='FILE', type=argparse.FileType('r'), help='Configuration json file', required=True)
+parser.add_argument('--output', '-o', metavar='FILENAME', type=str, help='Specify GTFS output zip file')
 group = parser.add_mutually_exclusive_group()
 group.add_argument('--refresh-route', metavar='ROUTE', type=int, help='Refresh OSM data for ROUTE')
 group.add_argument('--refresh-all-routes', action="store_true", help='Refresh OSM data for all routes')
@@ -40,6 +41,15 @@ def main():
     bbox = config['query']['bbox']
     start_date = config['feed_info']['start_date']
     end_date = config['feed_info']['end_date']
+
+    # Get and check filename for gtfs output
+    if args.output is not None:
+        output_file = args.output
+    elif 'output_file' in config:
+        output_file = config['output_file']
+    else:
+        print('Error: No filename for gtfs file specified')
+        sys.exit(0)
 
     # --refresh-route
     if args.refresh_route is not None:
@@ -169,7 +179,7 @@ def main():
     schedule.AddFeedInfoObject(feed_info)
 
     schedule.Validate(transitfeed.ProblemReporter())
-    schedule.WriteGoogleTransitFeed('br-floripa.zip')
+    schedule.WriteGoogleTransitFeed(output_file)
 
     sys.exit()
 
