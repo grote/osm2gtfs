@@ -103,12 +103,7 @@ def main():
     stops = osmhelper.get_stops(routes)
 
     schedule = transitfeed.Schedule()
-    agency = schedule.AddAgency(
-        name=config['agency']['agency_name'],
-        url=config['agency']['agency_url'],
-        timezone=config['agency']['agency_timezone'],
-        agency_id=config['agency']['agency_id']
-    )
+    agency = load_agency(config)
 
     service_weekday = schedule.NewDefaultServicePeriod()
     service_weekday.SetStartDate(start_date)
@@ -297,6 +292,35 @@ def load_config(file):
         sys.exit(0)
 
     return config;
+
+def load_agency(config):
+    '''
+    Loads agency data from a json config file. The valid keys under the json
+    "agency" object correspond to the transitfeed.Agency._FIELD_NAMES.
+
+    return a transitfeed.Agency object
+'''
+
+    data_dict = {}
+    for field_name in transitfeed.Agency._FIELD_NAMES:
+        try:
+
+            field_value = config["agency"][field_name]
+            if field_value is not None and field_value != "":
+                data_dict[field_name] = field_value
+
+        except KeyError:
+            sys.stderr.write("key '"+field_name+"' was not found on the config file.")
+
+    agency = transitfeed.Agency(field_dict=data_dict)
+
+    if not agency.Validate():
+        sys.stderr.write("Agency data has errors")
+        # later, an error handling based on a exception here could be added.
+        #raise AttributeError('Agency data on config file in not valid.')
+
+    #print(agency)
+    return agency
 
 if __name__ == "__main__":
     main()
