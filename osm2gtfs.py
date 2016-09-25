@@ -29,7 +29,6 @@ args = parser.parse_args()
 
 
 def main():
-
     # Load config json file
     if os.path.isfile('config.json'):
         with open("config.json") as json_file:
@@ -37,7 +36,8 @@ def main():
     elif args.config is not None:
             config = load_config(args.config)
     else:
-        print('Error: No config json file found')
+        print('Error: No config.json file found')
+        sys.exit(0)
 
     # Initialize information from config file
     bbox = config['query']['bbox']
@@ -285,9 +285,9 @@ def interpolate_stop_times(trip):
             trip.ReplaceStopTimeObject(stop_time)
 
 
-def load_config(file):
+def load_config(configfile):
     try:
-        config = json.load(file)
+        config = json.load(configfile)
     except ValueError, e:
         print('Error: Config json file is invalid')
         print(e)
