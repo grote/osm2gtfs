@@ -22,11 +22,12 @@ class FeedInfoCreator(object):
         Loads feed info data from a json config file.
         Return a transitfeed.FeedInfo object
         """
+        config = self.config
         feed_info = transitfeed.FeedInfo()
-        feed_info.feed_publisher_name = self.config['feed_info']['publisher_name']
-        feed_info.feed_publisher_url = self.config['feed_info']['publisher_url']
-        feed_info.feed_lang = self.config['agency']['agency_lang']
-        feed_info.feed_start_date = self.config['feed_info']['start_date']
-        feed_info.feed_end_date = self.config['feed_info']['end_date']
-        feed_info.feed_version = self.config['feed_info']['version']
+        feed_info.feed_publisher_name = config['feed_info']['publisher_name']
+        feed_info.feed_publisher_url = config['feed_info']['publisher_url']
+        feed_info.feed_lang = config['agency']['agency_lang']
+        feed_info.feed_start_date = config['feed_info']['start_date']
+        feed_info.feed_end_date = config['feed_info']['end_date']
+        feed_info.feed_version = config['feed_info']['version']
         return feed_info

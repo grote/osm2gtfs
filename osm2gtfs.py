@@ -10,18 +10,25 @@ from osmhelper.osm_helper import OsmHelper
 from factory.CreatorFactory import CreatorFactory
 
 # Handle arguments
-parser = argparse.ArgumentParser(prog='osm2gtfs', description='Create GTFS from OpenStreetMap data.')
+parser = argparse.ArgumentParser(
+    prog='osm2gtfs', description='Create GTFS from OpenStreetMap data.')
 
 # Filename arguments for config and output file
-parser.add_argument('--config', '-c', metavar='FILE', type=argparse.FileType('r'), help='Configuration json file')
-parser.add_argument('--output', '-o', metavar='FILENAME', type=str, help='Specify GTFS output zip file')
+parser.add_argument('--config', '-c', metavar='FILE',
+                    type=argparse.FileType('r'), help='Configuration file')
+parser.add_argument('--output', '-o', metavar='FILENAME',
+                    type=str, help='Specify GTFS output zip file')
 
 # Refresh caching arguments
 group = parser.add_mutually_exclusive_group()
-group.add_argument('--refresh-route', metavar='ROUTE', type=int, help='Refresh OSM data for ROUTE')
-group.add_argument('--refresh-all-routes', action="store_true", help='Refresh OSM data for all routes')
-group.add_argument('--refresh-all-stops', action="store_true", help='Refresh OSM data for all stops')
-group.add_argument('--refresh-all', action="store_true", help='Refresh all OSM data')
+group.add_argument('--refresh-route', metavar='ROUTE',
+                   type=int, help='Refresh OSM data for ROUTE')
+group.add_argument('--refresh-all-routes', action="store_true",
+                   help='Refresh OSM data for all routes')
+group.add_argument('--refresh-all-stops', action="store_true",
+                   help='Refresh OSM data for all stops')
+group.add_argument('--refresh-all', action="store_true",
+                   help='Refresh all OSM data')
 args = parser.parse_args()
 
 
@@ -47,13 +54,15 @@ def main():
 
     # --refresh-route
     if args.refresh_route is not None:
-        OsmHelper.refresh_route(args.refresh_route, "bus", config['query']['bbox'])
+        OsmHelper.refresh_route(
+            args.refresh_route, "bus", config['query']['bbox'])
         sys.exit(0)
     elif args.refresh_all_routes:
         OsmHelper.get_routes("bus", config['query']['bbox'], refresh=True)
         sys.exit(0)
     elif args.refresh_all_stops:
-        OsmHelper.get_stops(OsmHelper.get_routes("bus", config['query']['bbox']), refresh=True)
+        OsmHelper.get_stops(OsmHelper.get_routes(
+            "bus", config['query']['bbox']), refresh=True)
         sys.exit(0)
     elif args.refresh_all:
         OsmHelper.refresh_data("bus", config['query']['bbox'])
