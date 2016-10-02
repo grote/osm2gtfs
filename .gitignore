@@ -3,6 +3,7 @@
 *.zip
 *.pkl
 config.json
+data
 
 # Android Studio files
 .idea/*
