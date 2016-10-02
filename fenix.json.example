@@ -13,7 +13,8 @@
         "agency_url": "http://www.consorciofenix.com.br/",
         "agency_timezone": "America/Sao_Paulo",
         "agency_lang": "pt",
-        "agency_phone": "+55 (48) 3025-6868"
+        "agency_phone": "+55 (48) 3025-6868",
+        "agency_fare_url": ""
     },
     "feed_info": {
         "publisher_name": "Torsten Grote",
@@ -22,5 +23,6 @@
         "start_date": "20160901",
         "end_date": "20170831"
     },
-    "output_file": "br-floripa.zip"
+    "output_file": "data/br-floripa.zip",
+    "selector": "fenix"
 }
