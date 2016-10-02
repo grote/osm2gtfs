@@ -13,6 +13,7 @@ WEEKDAY = "Dias Úteis"
 SATURDAY = "Sábado"
 SUNDAY = "Domingo"
 
+
 class TripsCreatorFenix(TripsCreator):
 
     def add_trips_to_schedule(self, schedule, data):
@@ -172,7 +173,6 @@ class TripsCreatorFenix(TripsCreator):
                 # interpolate times, because Navitia can not handle this itself
                 self.interpolate_stop_times(trip)
 
-
     def add_trip_stops(self, schedule, trip, route, start_time, end_time, opts):
 
         if isinstance(route, Route):
@@ -193,7 +193,6 @@ class TripsCreatorFenix(TripsCreator):
                     trip.AddStopTime(schedule.GetStop(str(stop.id)))
     #                print "INTER: " + str(stop)
                 i += 1
-
 
     def interpolate_stop_times(self, trip):
         for secs, stop_time, is_timepoint in trip.GetTimeInterpolatedStops():

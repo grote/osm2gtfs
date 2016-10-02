@@ -2,6 +2,7 @@
 
 from creators.RoutesCreator import RoutesCreator
 
+
 class RoutesCreatorFenix(RoutesCreator):
 
     def add_routes_to_schedule(self, schedule, data):

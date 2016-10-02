@@ -1,6 +1,5 @@
 # coding=utf-8
 
-import sys
 
 class StopsCreator(object):
 
@@ -14,4 +13,4 @@ class StopsCreator(object):
         return rep
 
     def add_stops_to_schedule(self, schedule, data):
-        raise NotImplementedError( "Should have implemented this" )
+        raise NotImplementedError("Should have implemented this")

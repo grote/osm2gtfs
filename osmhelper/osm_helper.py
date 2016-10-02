@@ -1,14 +1,18 @@
+# coding=utf-8
+
+import os
+import pickle
+import sys
+from collections import OrderedDict
 
 import overpy
 from osmapi import OsmApi
-import sys
-import os
-import pickle
-from collections import OrderedDict
+
 from osmhelper.osm_routes import Route, RouteMaster
 from osmhelper.osm_stops import Stop
 
 CHECK_FOR_NON_PLATFORMS = False
+
 
 class OsmHelper(object):
 
@@ -29,7 +33,7 @@ class OsmHelper(object):
 
     @staticmethod
     def refresh_data(route_type, bbox):
-        OsmHelper.get_stops(get_routes(route_type, bbox, refresh=True), refresh=True)
+        OsmHelper.get_stops(OsmHelper.get_routes(route_type, bbox, refresh=True), refresh=True)
 
     @staticmethod
     def read_route_masters_from_file():
@@ -56,6 +60,7 @@ class OsmHelper(object):
 
     @staticmethod
     def read_stops_from_file():
+        # noinspection PyBroadException
         try:
             with open('data/stops.pkl', 'rb') as f:
                 stops = pickle.load(f)

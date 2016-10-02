@@ -1,6 +1,5 @@
 # coding=utf-8
 
-import sys
 
 class RoutesCreator(object):
 
@@ -13,5 +12,5 @@ class RoutesCreator(object):
             rep += str(self.config) + " | "
         return rep
 
-    def add_routes_to_schedule(self, schedule):
-        raise NotImplementedError( "Should have implemented this" )
+    def add_routes_to_schedule(self, schedule, data):
+        raise NotImplementedError("Should have implemented this")

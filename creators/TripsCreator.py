@@ -1,6 +1,5 @@
 # coding=utf-8
 
-import sys
 
 class TripsCreator(object):
 
@@ -14,4 +13,4 @@ class TripsCreator(object):
         return rep
 
     def add_trips_to_schedule(self, schedule, data):
-        raise NotImplementedError( "Should have implemented this" )
+        raise NotImplementedError("Should have implemented this")

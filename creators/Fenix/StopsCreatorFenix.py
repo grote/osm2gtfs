@@ -1,7 +1,7 @@
 # coding=utf-8
 
-import sys
 from creators.StopsCreator import StopsCreator
+
 
 class StopsCreatorFenix(StopsCreator):
 

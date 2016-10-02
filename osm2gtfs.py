@@ -7,7 +7,6 @@ import json
 import sys
 import argparse
 from osmhelper.osm_helper import OsmHelper
-from osmhelper.osm_routes import Route, RouteMaster
 from factory.CreatorFactory import CreatorFactory
 
 # Handle arguments
@@ -25,8 +24,8 @@ group.add_argument('--refresh-all-stops', action="store_true", help='Refresh OSM
 group.add_argument('--refresh-all', action="store_true", help='Refresh all OSM data')
 args = parser.parse_args()
 
-def main():
 
+def main():
     # Load config json file
     if args.config is not None:
         config = load_config(args.config)
@@ -89,6 +88,7 @@ def main():
 
     sys.exit()
 
+
 def load_config(configfile):
     """
     Loads json from config file
@@ -102,6 +102,7 @@ def load_config(configfile):
         sys.exit(0)
 
     return config
+
 
 if __name__ == "__main__":
     main()

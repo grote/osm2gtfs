@@ -1,14 +1,11 @@
 # coding=utf-8
 
-import sys
 import importlib
-import transitfeed
 from creators.AgencyCreator import AgencyCreator
 from creators.FeedInfoCreator import FeedInfoCreator
 from creators.RoutesCreator import RoutesCreator
 from creators.StopsCreator import StopsCreator
 from creators.TripsCreator import TripsCreator
-from creators.Fenix.TripsCreatorFenix import TripsCreatorFenix
 
 
 class CreatorFactory(object):
@@ -28,48 +25,47 @@ class CreatorFactory(object):
             rep += self.selector
         return rep
 
-
     def get_agency_creator(self):
         try:
-            AgencyCreatorOverride = getattr(importlib.import_module("creators." + self.selector + ".AgencyCreator" + self.selector), "AgencyCreator" + self.selector)
+            agency_creator_override = getattr(importlib.import_module("creators." + self.selector + ".AgencyCreator" + self.selector), "AgencyCreator" + self.selector)
             print "Using " + self.selector + " implementation for creation of the agency (AgencyCreator" + self.selector + ")"
-            return AgencyCreatorOverride(self.config)
+            return agency_creator_override(self.config)
         except ImportError:
             print "Using default implementation for creation of the agency"
             return AgencyCreator(self.config)
 
     def get_feed_info_creator(self):
         try:
-            FeedInfoCreatorOverride = getattr(importlib.import_module("creators." + self.selector + ".FeedInfoCreator" + self.selector), "FeedInfoCreator" + self.selector)
+            feed_info_creator_override = getattr(importlib.import_module("creators." + self.selector + ".FeedInfoCreator" + self.selector), "FeedInfoCreator" + self.selector)
             print "Using " + self.selector + " implementation for creation of the feed info (FeedInfoCreator" + self.selector + ")"
-            return FeedInfoCreatorOverride(self.config)
+            return feed_info_creator_override(self.config)
         except ImportError:
             print "Using default implementation for creation of the feed info"
             return FeedInfoCreator(self.config)
 
     def get_routes_creator(self):
         try:
-            RoutesCreatorOverride = getattr(importlib.import_module("creators." + self.selector + ".RoutesCreator" + self.selector), "RoutesCreator" + self.selector)
+            routes_creator_override = getattr(importlib.import_module("creators." + self.selector + ".RoutesCreator" + self.selector), "RoutesCreator" + self.selector)
             print "Using " + self.selector + " implementation for creation of routes (RoutesCreator" + self.selector + ")"
-            return RoutesCreatorOverride(self.config)
+            return routes_creator_override(self.config)
         except ImportError:
             print "Using default implementation for creation of routes"
             return RoutesCreator(self.config)
 
     def get_stops_creator(self):
         try:
-            StopsCreatorrOverride = getattr(importlib.import_module("creators." + self.selector + ".StopsCreator" + self.selector), "StopsCreator" + self.selector)
+            stops_creator_override = getattr(importlib.import_module("creators." + self.selector + ".StopsCreator" + self.selector), "StopsCreator" + self.selector)
             print "Using " + self.selector + " implementation for creation of stops (StopsCreator" + self.selector + ")"
-            return StopsCreatorrOverride(self.config)
+            return stops_creator_override(self.config)
         except ImportError:
             print "Using default implementation for creation of stops"
             return StopsCreator(self.config)
 
     def get_trips_creator(self):
         try:
-            TripsCreatorOverride = getattr(importlib.import_module("creators." + self.selector + ".TripsCreator" + self.selector), "TripsCreator" + self.selector)
+            trips_creator_override = getattr(importlib.import_module("creators." + self.selector + ".TripsCreator" + self.selector), "TripsCreator" + self.selector)
             print "Using " + self.selector + " implementation for creation of trips (TripsCreator" + self.selector + ")"
-            return TripsCreatorOverride(self.config)
+            return trips_creator_override(self.config)
         except ImportError:
             print "Using default implementation for creation of trips"
             return TripsCreator(self.config)
