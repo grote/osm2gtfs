@@ -75,8 +75,9 @@ class OsmHelper(object):
             routes = {}
         else:
             routes = OsmHelper.read_routes_from_file()
-            if len(routes) > 1:
-                return routes
+
+        # get the master routes first
+        route_masters = OsmHelper.get_route_masters(route_type, bbox, refresh)
 
         api = overpy.Overpass()
 
@@ -88,10 +89,13 @@ class OsmHelper(object):
         <print/>
         """ % (route_type, str(bbox["e"]), str(bbox["n"]), str(bbox["s"]), str(bbox["w"])))
 
-        route_masters = OsmHelper.get_route_masters(route_type, bbox, refresh)
-
         for rel in result.get_relations():
-            OsmHelper.get_route(routes, route_masters, rel)
+            if 'ref' in rel.tags:
+                if rel.tags['ref'] not in routes:
+                    OsmHelper.get_route(routes, route_masters, rel)
+                    OsmHelper.save_routes_to_file(routes)
+            else:
+                sys.stderr.write("Route has no ref tag: " + "https://www.openstreetmap.org/relation/" + str(rel.id) + "\n")
 
         for master_ref in route_masters.keys():
             if master_ref not in routes:
@@ -110,6 +114,7 @@ class OsmHelper(object):
             route_masters = {}
         else:
             route_masters = OsmHelper.read_route_masters_from_file()
+            # FIXME: when caching we might return too early here and miss routes
             if len(route_masters) > 1:
                 return route_masters
 
@@ -162,48 +167,47 @@ class OsmHelper(object):
 
     @staticmethod
     def get_route(routes, route_masters, rel, warn=True):
-        if 'ref' in rel.tags:
-            rid = rel.id
-            ref = rel.tags['ref'].replace('B', '')
-            if 'name' in rel.tags:
-                name = rel.tags['name']
-            else:
-                name = "??????"
-
-            if 'from' in rel.tags:
-                fr = rel.tags['from']
-            else:
-                fr = None
-
-            if 'to' in rel.tags:
-                to = rel.tags['to']
-            else:
-                to = None
-
-            # more tags: operator
-
-            if ref in route_masters:
-                # route has a master, so update it in the route_master and add it to the routes
-                stops = route_masters[ref].routes[rid].stops
-                route_masters[ref].routes[rid] = Route(rid, fr, to, stops, route_masters[ref], ref, name)
-                route_masters[ref].routes[rid].add_shape()
-                routes[ref] = route_masters[ref]
-            elif ref not in routes:
-                # we have not seen this route, so just add it
-                stops = OsmHelper.get_stops_of_route(rid)
-                routes[ref] = Route(rid, fr, to, stops, None, ref, name)
-                routes[ref].add_shape()
-                if len(stops) == 0:
-                    sys.stderr.write("Route has no bus stops: " + "https://www.openstreetmap.org/relation/" + str(rel.id) + "\n")
-            elif warn:
-                # we've seen a route with this ref tag already, warn about it
-                sys.stderr.write("Route with ref=%s is there more than once, but has no parent route_master:\n" % str(ref))
-                sys.stderr.write("    https://www.openstreetmap.org/relation/" + str(routes[rel.tags['ref']].id) + "\n")
-                sys.stderr.write("    https://www.openstreetmap.org/relation/" + str(rel.id) + "\n")
-
-            return routes[ref]
+        rid = rel.id
+        ref = rel.tags['ref'].replace('B', '')
+        if 'name' in rel.tags:
+            name = rel.tags['name']
         else:
-            sys.stderr.write("Route has no ref tag: " + "https://www.openstreetmap.org/relation/" + str(rel.id) + "\n")
+            name = "??????"
+
+        if 'from' in rel.tags:
+            fr = rel.tags['from']
+        else:
+            fr = None
+
+        if 'to' in rel.tags:
+            to = rel.tags['to']
+        else:
+            to = None
+
+        # more tags: operator
+
+        print("Adding route %s..." % str(ref))
+
+        if ref in route_masters:
+            # route has a master, so update it in the route_master and add it to the routes
+            stops = route_masters[ref].routes[rid].stops
+            route_masters[ref].routes[rid] = Route(rid, fr, to, stops, route_masters[ref], ref, name)
+            route_masters[ref].routes[rid].add_shape()
+            routes[ref] = route_masters[ref]
+        elif ref not in routes:
+            # we have not seen this route, so just add it
+            stops = OsmHelper.get_stops_of_route(rid)
+            routes[ref] = Route(rid, fr, to, stops, None, ref, name)
+            routes[ref].add_shape()
+            if len(stops) == 0:
+                sys.stderr.write("Route has no bus stops: " + "https://www.openstreetmap.org/relation/" + str(rel.id) + "\n")
+        elif warn:
+            # we've seen a route with this ref tag already, warn about it
+            sys.stderr.write("Route with ref=%s is there more than once, but has no parent route_master:\n" % str(ref))
+            sys.stderr.write("    https://www.openstreetmap.org/relation/" + str(routes[rel.tags['ref']].id) + "\n")
+            sys.stderr.write("    https://www.openstreetmap.org/relation/" + str(rel.id) + "\n")
+
+        return routes[ref]
 
     @staticmethod
     def get_stops(routes, refresh=False):
@@ -248,6 +252,7 @@ class OsmHelper(object):
 
     @staticmethod
     def get_stops_of_route(route_id):
+        print("Fetching stops for route...")
         api = overpy.Overpass()
 
         result = api.query("""
@@ -318,6 +323,9 @@ class OsmHelper(object):
             return
 
         for rel in result.get_relations():
-            print OsmHelper.get_route(routes, route_masters, rel, warn=False)
+            if 'ref' in rel.tags:
+                print OsmHelper.get_route(routes, route_masters, rel, warn=False)
+            else:
+                sys.stderr.write("Route has no ref tag: " + "https://www.openstreetmap.org/relation/" + str(rel.id) + "\n")
 
         OsmHelper.save_routes_to_file(routes)

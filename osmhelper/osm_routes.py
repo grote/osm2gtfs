@@ -114,6 +114,7 @@ class Route(BaseRoute):
         if self.shape is not None and not refresh:
             return
 
+        print("Fetching shape for route %s..." % str(self.ref))
         self.shape = []
 
         ways = []
