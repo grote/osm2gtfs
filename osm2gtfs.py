@@ -52,27 +52,28 @@ def main():
         print('Error: No filename for gtfs file specified')
         sys.exit(0)
 
+    # Initiate OpenStreetMap helper containing data
+    data = OsmHelper(config)
+
     # --refresh-route
     if args.refresh_route is not None:
         OsmHelper.refresh_route(
-            args.refresh_route, "bus", config['query']['bbox'])
+            args.refresh_route, data.bbox, data.tags)
         sys.exit(0)
     elif args.refresh_all_routes:
-        OsmHelper.get_routes("bus", config['query']['bbox'], refresh=True)
+        OsmHelper.get_routes(data.bbox, data.tags, refresh=True)
         sys.exit(0)
     elif args.refresh_all_stops:
-        OsmHelper.get_stops(OsmHelper.get_routes(
-            "bus", config['query']['bbox']), refresh=True)
+        OsmHelper.get_stops(OsmHelper.get_routes(data.bbox, data.tags),
+                            refresh=True)
         sys.exit(0)
     elif args.refresh_all:
-        OsmHelper.refresh_data("bus", config['query']['bbox'])
+        OsmHelper.refresh_data(data.bbox, data.tags)
         sys.exit(0)
 
     # Define (transitfeed) schedule object for GTFS creation
     schedule = transitfeed.Schedule()
 
-    # Initiate OpenStreetMap helper containing data
-    data = OsmHelper(config)
 
     # Initiate creators for GTFS components through an object factory
     factory = CreatorFactory(config)

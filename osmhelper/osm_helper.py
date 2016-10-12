@@ -19,8 +19,22 @@ class OsmHelper(object):
     def __init__(self, config):
         self.config = config
 
+        # bbox from config file for querying
+        self.bbox = (str(config['query']['bbox']["s"]) + "," +
+                     str(config['query']['bbox']["w"]) + "," +
+                     str(config['query']['bbox']["n"]) + "," +
+                     str(config['query']['bbox']["e"]))
+
+        # tags from config file for querying
+        self.tags = ''
+        for key, value in config["query"].get("tags", {}).iteritems():
+            self.tags += str('["' + key + '" = "' + value + '"]')
+        else:
+            # fallback
+            self.tags = '["public_transport:version" = "2"]'
+
         # Create data structure
-        self.routes = self.get_routes("bus", config['query']['bbox'])
+        self.routes = self.get_routes(self.bbox, self.tags)
         self.stops = self.get_stops(self.routes)
 
     def __repr__(self):
@@ -32,8 +46,9 @@ class OsmHelper(object):
         return rep
 
     @staticmethod
-    def refresh_data(route_type, bbox):
-        OsmHelper.get_stops(OsmHelper.get_routes(route_type, bbox, refresh=True), refresh=True)
+    def refresh_data(bbox, tags):
+        OsmHelper.get_stops(OsmHelper.get_routes(bbox, tags, refresh=True),
+                            refresh=True)
 
     @staticmethod
     def read_route_masters_from_file():
@@ -69,7 +84,7 @@ class OsmHelper(object):
             return {}
 
     @staticmethod
-    def get_routes(route_type, bbox, refresh=False):
+    def get_routes(bbox, tags, refresh=False):
         if refresh:
             print "Start with fresh routes"
             routes = {}
@@ -77,17 +92,11 @@ class OsmHelper(object):
             routes = OsmHelper.read_routes_from_file()
 
         # get the master routes first
-        route_masters = OsmHelper.get_route_masters(route_type, bbox, refresh)
+        route_masters = OsmHelper.get_route_masters(bbox, tags, refresh)
 
         api = overpy.Overpass()
-
-        result = api.query("""
-        <query type="relation">
-            <has-kv k="route" v="%s"/>
-            <bbox-query e="%s" n="%s" s="%s" w="%s"/>
-        </query>
-        <print/>
-        """ % (route_type, str(bbox["e"]), str(bbox["n"]), str(bbox["s"]), str(bbox["w"])))
+        query_str = 'relation(%s)%s;(._;);out body;' % (bbox, tags)
+        result = api.query(query_str)
 
         for rel in result.get_relations():
             if 'ref' in rel.tags:
@@ -108,7 +117,7 @@ class OsmHelper(object):
         return routes
 
     @staticmethod
-    def get_route_masters(route_type, bbox, refresh=False):
+    def get_route_masters(bbox, tags, refresh=False):
         if refresh:
             print "Start with fresh route masters"
             route_masters = {}
@@ -121,16 +130,11 @@ class OsmHelper(object):
         api = overpy.Overpass()
 
         # get all route_master's in bbox area
-        # start out from "route_type" (bus, train) relations,
+        # start out from "tags" relations,
         # because searching directly for type=route_master does not work with overpass
-        result = api.query("""
-        <query type="relation">
-            <has-kv k="route" v="%s"/>
-            <bbox-query e="%s" n="%s" s="%s" w="%s"/>
-        </query>
-        <recurse type="relation-backwards"/>
-        <print/>
-        """ % (route_type, str(bbox["e"]), str(bbox["n"]), str(bbox["s"]), str(bbox["w"])))
+        query_str = ('relation(%s)%s;rel(br);(._;);out body;' %
+                     (bbox, tags))
+        result = api.query(query_str)
 
         for rel in result.get_relations():
 
@@ -255,10 +259,8 @@ class OsmHelper(object):
         print("Fetching stops for route...")
         api = overpy.Overpass()
 
-        result = api.query("""
-        <id-query ref="%s" type="relation"/>
-        <print/>
-        """ % str(route_id))
+        query_str = 'relation(%s);(._;);out body;' % route_id
+        result = api.query(query_str)
 
         if len(result.get_relations()) == 0:
             raise RuntimeError(
@@ -299,19 +301,14 @@ class OsmHelper(object):
         return stops
 
     @staticmethod
-    def refresh_route(route_ref, route_type, bbox):
-        route_masters = OsmHelper.get_route_masters(route_type, bbox)
-        routes = OsmHelper.get_routes(route_type, bbox)
+    def refresh_route(route_ref, bbox, tags):
+        route_masters = OsmHelper.get_route_masters(bbox, tags)
+        routes = OsmHelper.get_routes(bbox, tags)
 
         api = overpy.Overpass()
-        result = api.query("""
-        <query type="relation">
-            <has-kv k="route" v="%s"/>
-            <has-kv k="ref" v="%s"/>
-            <bbox-query e="%s" n="%s" s="%s" w="%s"/>
-        </query>
-        <print/>
-        """ % (route_type, str(route_ref), str(bbox["e"]), str(bbox["n"]), str(bbox["s"]), str(bbox["w"])))
+        query_str = ('relation(%s)%s%s;(._;);out body;' %
+                     (bbox, tags, '["ref" = "' + str(route_ref) + '"]'))
+        result = api.query(query_str)
 
         if route_ref in route_masters:
             # TODO also refresh route master
