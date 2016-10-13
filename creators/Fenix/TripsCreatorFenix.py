@@ -73,7 +73,7 @@ class TripsCreatorFenix(TripsCreator):
         for route_ref, route in sorted(routes.iteritems()):
             line = schedule.AddRoute(
                 short_name=route.ref,
-                long_name=route.name,
+                long_name=route.name.decode('utf8'),
                 route_type="Bus")
             line.agency_id = schedule.GetDefaultAgency().agency_id
             line.route_desc = "TEST DESCRIPTION"

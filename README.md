@@ -4,13 +4,13 @@ osm2gtfs
 Use public transport data from OpenStreetMap and external schedule information to create a General Transit Feed (GTFS).
 
 **Attention:** The source code is currently very specific to one city, but this can be developed into something more generic.
-You can help with pull requests that introduce an abstraction layer for the external schedule information.
+You can help with pull requests to define a standard procedure and/or make it work for your city.
 
 How does it work?
 -----------------
 
 The osmhelper is responsible for retrieving current data directly from OpenStreetMap
-via the Overpass and OSM API.
+via the Overpass API.
 This data is stored in python objects and cached on disk for efficient re-use.
 The osm2gtfs script then uses the OpenStreetMap data and local schedule information
 to create a GTFS file using Google's transitfeed library and validates it after creation.
@@ -29,7 +29,6 @@ Install dependencies by running
 
 * https://github.com/DinoTools/python-overpy
 * https://github.com/google/transitfeed
-* https://github.com/metaodi/osmapi
 
 License
 -------

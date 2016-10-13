@@ -6,7 +6,7 @@ import transitfeed
 import json
 import sys
 import argparse
-from osmhelper.osm_helper import OsmHelper
+from osmhelper.osm_connector import OsmConnector
 from factory.CreatorFactory import CreatorFactory
 
 # Handle arguments
@@ -21,11 +21,9 @@ parser.add_argument('--output', '-o', metavar='FILENAME',
 
 # Refresh caching arguments
 group = parser.add_mutually_exclusive_group()
-group.add_argument('--refresh-route', metavar='ROUTE',
-                   type=int, help='Refresh OSM data for ROUTE')
-group.add_argument('--refresh-all-routes', action="store_true",
+group.add_argument('--refresh-routes', action="store_true",
                    help='Refresh OSM data for all routes')
-group.add_argument('--refresh-all-stops', action="store_true",
+group.add_argument('--refresh-stops', action="store_true",
                    help='Refresh OSM data for all stops')
 group.add_argument('--refresh-all', action="store_true",
                    help='Refresh all OSM data')
@@ -53,27 +51,22 @@ def main():
         sys.exit(0)
 
     # Initiate OpenStreetMap helper containing data
-    data = OsmHelper(config)
+    data = OsmConnector(config)
 
-    # --refresh-route
-    if args.refresh_route is not None:
-        OsmHelper.refresh_route(
-            args.refresh_route, data.bbox, data.tags)
+    # Refresh argument option calls
+    if args.refresh_routes:
+        data.get_routes(refresh=True)
         sys.exit(0)
-    elif args.refresh_all_routes:
-        OsmHelper.get_routes(data.bbox, data.tags, refresh=True)
-        sys.exit(0)
-    elif args.refresh_all_stops:
-        OsmHelper.get_stops(OsmHelper.get_routes(data.bbox, data.tags),
-                            refresh=True)
+    elif args.refresh_stops:
+        data.get_stops(refresh=True)
         sys.exit(0)
     elif args.refresh_all:
-        OsmHelper.refresh_data(data.bbox, data.tags)
+        data.get_routes(refresh=True)
+        data.get_stops(refresh=True)
         sys.exit(0)
 
     # Define (transitfeed) schedule object for GTFS creation
     schedule = transitfeed.Schedule()
-
 
     # Initiate creators for GTFS components through an object factory
     factory = CreatorFactory(config)
