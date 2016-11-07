@@ -1,3 +1,2 @@
-overpy
+git+git://github.com/DinoTools/python-overpy@afe8dc48bb3928860829370541df67c5501b5057#egg=overpy
 transitfeed
-osmapi

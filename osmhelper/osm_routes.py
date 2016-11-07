@@ -1,8 +1,8 @@
 # coding=utf-8
 
 import sys
+import overpy
 from datetime import timedelta, datetime
-from osmapi import OsmApi
 from osmhelper.osm_stops import Stop
 
 
@@ -27,6 +27,7 @@ class BaseRoute(object):
             rep += self.name
         return rep
 
+    # TODO: Move over to Fenix implementation
     def add_linha(self, linha):
         self.name = linha['nome'].encode('utf-8')
 
@@ -56,6 +57,7 @@ class Route(BaseRoute):
         rep += "http://www.consorciofenix.com.br/horarios?q=" + str(self.ref)
         return rep
 
+    # TODO: Move over to Fenix implementation
     def add_linha(self, linha):
         super(Route, self).add_linha(linha)
 
@@ -96,10 +98,10 @@ class Route(BaseRoute):
         return None
 
     def get_first_stop(self):
-            if len(self.stops) > 0:
-                return self.stops[0]
-            else:
-                return None
+        if len(self.stops) > 0:
+            return self.stops[0]
+        else:
+            return None
 
     def get_first_alt_stop(self):
         if self.fr is not None:
@@ -110,49 +112,57 @@ class Route(BaseRoute):
     def has_proper_master(self):
         return self.master is not None and len(self.master.routes) > 1
 
-    def add_shape(self, refresh=False):
+    def add_shape(self, route_variant, query_result_set, refresh=False):
         if self.shape is not None and not refresh:
             return
 
-        print("Fetching shape for route %s..." % str(self.ref))
         self.shape = []
 
         ways = []
-        osm_api = OsmApi()
-        for member in osm_api.RelationGet(self.id)['member']:
-            if member["type"] == "way" and not member["role"].startswith("platform"):
-                ways.append(member["ref"])
+        for member in route_variant.members:
+            if isinstance(member, overpy.RelationWay):
+                if not member.role == "platform":
+                    ways.append(member.ref)
 
-        nodes = []
-        ways_info = osm_api.WaysGet(ways)
+        shape_sorter = []
+        node_geography = {}
+
         for way in ways:
-            if len(nodes) == 0:
-                nodes.extend(ways_info[way]["nd"])
-            elif nodes[-1] == ways_info[way]["nd"][0]:
-                del nodes[-1]
-                nodes.extend(ways_info[way]["nd"])
-            elif nodes[-1] == ways_info[way]["nd"][-1]:
-                del nodes[-1]
-                nodes.extend(reversed(ways_info[way]["nd"]))
-            elif nodes[0] == ways_info[way]["nd"][0]:
-                del nodes[0]
-                nodes.reverse()
-                nodes.extend(ways_info[way]["nd"])
-            elif nodes[0] == ways_info[way]["nd"][-1]:
-                del nodes[0]
-                nodes.reverse()
-                nodes.extend(reversed(ways_info[way]["nd"]))
+            # Obtain geography (nodes) from original query result set
+            nodes = query_result_set.get_ways(way).pop().get_nodes()
+
+            # Prepare data for sorting and geographic information of nodes
+            way_nodes = []
+            for node in nodes:
+                way_nodes.append(node.id)
+                node_geography[node.id] = {'lat': float(
+                    node.lat), 'lon': float(node.lon)}
+
+            if len(shape_sorter) == 0:
+                shape_sorter.extend(way_nodes)
+            elif shape_sorter[-1] == way_nodes[0]:
+                del shape_sorter[-1]
+                shape_sorter.extend(way_nodes)
+            elif shape_sorter[-1] == way_nodes[-1]:
+                del shape_sorter[-1]
+                shape_sorter.extend(reversed(way_nodes))
+            elif shape_sorter[0] == way_nodes[0]:
+                del shape_sorter[0]
+                shape_sorter.reverse()
+                shape_sorter.extend(way_nodes)
+            elif shape_sorter[0] == way_nodes[-1]:
+                del shape_sorter[0]
+                shape_sorter.reverse()
+                shape_sorter.extend(reversed(way_nodes))
             else:
-                sys.stderr.write("Route has non-matching ways: " + str(self) + "\n")
-                sys.stderr.write("  Problem at: http://www.openstreetmap.org/way/" + str(ways_info[way]["id"]) + "\n")
+                sys.stderr.write(
+                    "Route has non-matching ways: " + str(self) + "\n")
+                sys.stderr.write(
+                    "  Problem at: http://osm.org/way/" + str(way) + "\n")
                 break
 
-        # limit the number of nodes per API request to prevent 414
-        size = 100
-        for nodes_sublist in [nodes[i:i + size] for i in range(0, len(nodes), size)]:
-            nodes_info = osm_api.NodesGet(nodes_sublist)
-            for node in nodes_sublist:
-                self.shape.append({'lat': nodes_info[node]["lat"], 'lon': nodes_info[node]["lon"]})
+        for sorted_node in shape_sorter:
+            self.shape.append(node_geography[sorted_node])
 
     def print_shape_for_leaflet(self):
         print "var shape = [",
@@ -182,14 +192,15 @@ class RouteMaster(BaseRoute):
 
     def __repr__(self):
         rep = BaseRoute.__repr__(self)
-        rep += " | https://www.openstreetmap.org/relation/" + str(self.id) + "\n"
-        
+        rep += " | https://www.openstreetmap.org/relation/" + \
+            str(self.id) + "\n"
+
         i = 1
         for route in self.routes:
             rep += "  Route %d: " % i
             rep += str(self.routes[route]) + "\n"
             i += 1
-        
+
         return rep
 
     def get_first_stop(self):

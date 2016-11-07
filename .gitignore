@@ -4,6 +4,7 @@
 *.pkl
 config.json
 data
+src
 
 # Android Studio files
 .idea/*
