@@ -4,8 +4,8 @@ import sys
 import json
 import transitfeed
 from datetime import datetime
-from creators.TripsCreator import TripsCreator
-from osmhelper.osm_routes import Route, RouteMaster
+from creators.trips_creator import TripsCreator
+from core.osm_routes import Route, RouteMaster
 
 DEBUG_ROUTE = "104"
 

@@ -3,7 +3,7 @@
 import sys
 import overpy
 from datetime import timedelta, datetime
-from osmhelper.osm_stops import Stop
+from core.osm_stops import Stop
 
 
 class BaseRoute(object):

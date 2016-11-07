@@ -4,10 +4,10 @@ import overpy
 import sys
 
 from transitfeed import util
-from creators.StopsCreator import StopsCreator
-from osmhelper.osm_routes import Route, RouteMaster
-from osmhelper.osm_stops import Stop
-from osmhelper.cache import Cache
+from creators.stops_creator import StopsCreator
+from core.cache import Cache
+from core.osm_routes import Route, RouteMaster
+from core.osm_stops import Stop
 
 
 class StopsCreatorFenix(StopsCreator):
@@ -26,7 +26,7 @@ class StopsCreatorFenix(StopsCreator):
                 print stop
 
                 # Cache stops with newly created stop names
-                Cache.write_data('stops', stops)
+                Cache.write_data('stops-' + data.selector, stops)
 
             # Add stop to GTFS object
             schedule.AddStop(

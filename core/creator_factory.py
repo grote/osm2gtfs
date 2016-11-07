@@ -1,11 +1,11 @@
 # coding=utf-8
 
 import importlib
-from creators.AgencyCreator import AgencyCreator
-from creators.FeedInfoCreator import FeedInfoCreator
-from creators.RoutesCreator import RoutesCreator
-from creators.StopsCreator import StopsCreator
-from creators.TripsCreator import TripsCreator
+from creators.agency_creator import AgencyCreator
+from creators.feed_info_creator import FeedInfoCreator
+from creators.routes_creator import RoutesCreator
+from creators.stops_creator import StopsCreator
+from creators.trips_creator import TripsCreator
 
 
 class CreatorFactory(object):
@@ -13,7 +13,7 @@ class CreatorFactory(object):
     def __init__(self, config):
         self.config = config
         if 'selector' in config:
-            self.selector = config['selector'].capitalize()
+            self.selector = config['selector']
         else:
             self.selector = None
 
@@ -26,12 +26,13 @@ class CreatorFactory(object):
         return rep
 
     def get_agency_creator(self):
+        selector = self.selector
         try:
             module = importlib.import_module(
-                "creators." + self.selector + ".AgencyCreator" + self.selector)
+                "creators." + selector + ".agency_creator_" + selector)
             agency_creator_override = getattr(
-                module, "AgencyCreator" + self.selector)
-            print "Agency creator: " + self.selector
+                module, "AgencyCreator" + selector.capitalize())
+            print "Agency creator: " + selector.capitalize()
             return agency_creator_override(self.config)
         except ImportError:
             print "Agency creator: Default"
@@ -41,46 +42,49 @@ class CreatorFactory(object):
         selector = self.selector
         try:
             module = importlib.import_module(
-                "creators." + selector + ".FeedInfoCreator" + selector)
+                "creators." + selector + ".feed_info_creator_" + selector)
             feed_info_creator_override = getattr(
-                module, "FeedInfoCreator" + selector)
-            print "Feed info creator: " + selector
+                module, "FeedInfoCreator" + selector.capitalize())
+            print "Feed info creator: " + selector.capitalize()
             return feed_info_creator_override(self.config)
         except ImportError:
             print "Feed info creator: Default"
             return FeedInfoCreator(self.config)
 
     def get_routes_creator(self):
+        selector = self.selector
         try:
             module = importlib.import_module(
-                "creators." + self.selector + ".RoutesCreator" + self.selector)
+                "creators." + selector + ".routes_creator_" + selector)
             routes_creator_override = getattr(
-                module, "RoutesCreator" + self.selector)
-            print "Routes creator: " + self.selector
+                module, "RoutesCreator" + selector.capitalize())
+            print "Routes creator: " + selector.capitalize()
             return routes_creator_override(self.config)
         except ImportError:
             print "Routes creator: Default"
             return RoutesCreator(self.config)
 
     def get_stops_creator(self):
+        selector = self.selector
         try:
             module = importlib.import_module(
-                "creators." + self.selector + ".StopsCreator" + self.selector)
+                "creators." + selector + ".stops_creator_" + selector)
             stops_creator_override = getattr(
-                module, "StopsCreator" + self.selector)
-            print "Stops creator: " + self.selector
+                module, "StopsCreator" + selector.capitalize())
+            print "Stops creator: " + selector.capitalize()
             return stops_creator_override(self.config)
         except ImportError:
             print "Stops creator: Default"
             return StopsCreator(self.config)
 
     def get_trips_creator(self):
+        selector = self.selector
         try:
             module = importlib.import_module(
-                "creators." + self.selector + ".TripsCreator" + self.selector)
+                "creators." + selector + ".trips_creator_" + selector)
             trips_creator_override = getattr(
-                module, "TripsCreator" + self.selector)
-            print "Trips creator: " + self.selector
+                module, "TripsCreator" + selector.capitalize())
+            print "Trips creator: " + selector.capitalize()
             return trips_creator_override(self.config)
         except ImportError:
             print "Trips creator: Default"
