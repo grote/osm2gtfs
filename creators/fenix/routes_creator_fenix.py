@@ -1,6 +1,6 @@
 # coding=utf-8
 
-from creators.RoutesCreator import RoutesCreator
+from creators.routes_creator import RoutesCreator
 
 
 class RoutesCreatorFenix(RoutesCreator):

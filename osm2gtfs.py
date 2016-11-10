@@ -6,8 +6,8 @@ import transitfeed
 import json
 import sys
 import argparse
-from osmhelper.osm_connector import OsmConnector
-from factory.CreatorFactory import CreatorFactory
+from core.osm_connector import OsmConnector
+from core.creator_factory import CreatorFactory
 
 # Handle arguments
 parser = argparse.ArgumentParser(

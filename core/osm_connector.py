@@ -3,9 +3,9 @@
 import sys
 import overpy
 from collections import OrderedDict
-from osmhelper.osm_routes import Route, RouteMaster
-from osmhelper.osm_stops import Stop
-from osmhelper.cache import Cache
+from core.cache import Cache
+from core.osm_routes import Route, RouteMaster
+from core.osm_stops import Stop
 
 
 class OsmConnector(object):
@@ -47,6 +47,12 @@ class OsmConnector(object):
             print("No tags found for querying from OpenStreetMap.")
             print("Using tag 'public_transport:version=2")
 
+        # Selector
+        if 'selector' in config:
+            self.selector = config['selector']
+        else:
+            self.selector = 'no-selector'
+
         # Initiate containers for data
         self.routes = {}
         self.stops = {}
@@ -85,7 +91,7 @@ class OsmConnector(object):
             # Check if routes data is already built in this object
             if not self.routes:
                 # If not, try to get routes data from file cache
-                self.routes = Cache.read_data('routes')
+                self.routes = Cache.read_data('routes-' + self.selector)
             # Return cached data if found
             if bool(self.routes):
                 return self.routes
@@ -120,8 +126,10 @@ class OsmConnector(object):
                 else:
                     rv = result.get_relations(member.ref)
                     if bool(rv):
-                        print("Route variant was assigned again:")
-                        print("http://osm.org/relation/" + str(rv.id))
+                        rv = rv.pop()
+                        sys.stderr.write("Route variant was assigned again:\n")
+                        sys.stderr.write(
+                            "http://osm.org/relation/" + str(rv.id) + "\n")
                         members[rv.id] = self._build_route_variant(rv, result)
                     else:
                         sys.stderr.write(
@@ -155,7 +163,7 @@ class OsmConnector(object):
                 self.routes[rv.ref] = rv
 
         # Cache and return whole data set
-        Cache.write_data('routes', self.routes)
+        Cache.write_data('routes-' + self.selector, self.routes)
         return self.routes
 
     def get_stops(self, refresh=False):
@@ -183,7 +191,7 @@ class OsmConnector(object):
             # Check if stops data is already built in this object
             if not self.stops:
                 # If not, try to get stops data from file cache
-                self.stops = Cache.read_data('stops')
+                self.stops = Cache.read_data('stops-' + self.selector)
             # Return cached data if found
             if bool(self.stops):
                 return self.stops
@@ -207,7 +215,7 @@ class OsmConnector(object):
                            ] = self._build_stop(stop, "node")
 
         # Cache and return whole data set
-        Cache.write_data('stops', self.stops)
+        Cache.write_data('stops-' + self.selector, self.stops)
         return self.stops
 
     def _build_route_master(self, route_master, members):
@@ -220,10 +228,26 @@ class OsmConnector(object):
             ref = route_master.tags['ref']
         else:
             sys.stderr.write(
-                "RouteMaster without 'ref': " + route_master.id + "\n")
-            sys.stderr.write("http://osm.org/relation/" + +
-                             route_master.id + "\n")
-            return
+                "RouteMaster without 'ref'. Please fix in OpenStreetMap\n")
+            sys.stderr.write(
+                "http://osm.org/relation/" + str(route_master.id) + "\n")
+
+            # Check if a ref can be taken from one of the members
+            ref = False
+            for member in list(members.values()):
+                if not ref and member.ref:
+                    ref = member.ref
+                    sys.stderr.write(
+                        "Using 'ref' from member variant instead\n")
+                    sys.stderr.write(
+                        "http://osm.org/relation/" + str(member.id) + "\n")
+
+            # Ignore whole Line if no reference number could be obtained
+            if not ref:
+                sys.stderr.write(
+                    "No 'ref' could be obtained from members. Skipping.\n")
+                return
+
         name = route_master.tags['name']
         rm = RouteMaster(route_master.id, ref, name, members)
         print(rm)
@@ -239,8 +263,9 @@ class OsmConnector(object):
             ref = route_variant.tags['ref']
         else:
             sys.stderr.write(
-                "RouteVariant without 'ref': " + route_variant.id + "\n")
-            print("http://osm.org/relation/" + + route_variant.id)
+                "RouteVariant without 'ref': " + str(route_variant.id) + "\n")
+            sys.stderr.write(
+                "http://osm.org/relation/" + str(route_variant.id) + "\n")
             return
 
         if 'from' in route_variant.tags:
