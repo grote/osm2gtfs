@@ -1,7 +1,6 @@
 # coding=utf-8
 
 import sys
-import overpy
 from datetime import timedelta, datetime
 from core.osm_stops import Stop
 
@@ -40,13 +39,13 @@ class BaseRoute(object):
 
 class Route(BaseRoute):
 
-    def __init__(self, osm, fr, to, stops, master, ref=None, name=None):
+    def __init__(self, osm, fr, to, stops, master, ref, name, shape):
         BaseRoute.__init__(self, osm, ref, name)
         self.fr = fr
         self.to = to
         self.stops = stops
         self.master = master
-        self.shape = None
+        self.shape = shape
         self.duration = None
 
     def __repr__(self):
@@ -111,58 +110,6 @@ class Route(BaseRoute):
 
     def has_proper_master(self):
         return self.master is not None and len(self.master.routes) > 1
-
-    def add_shape(self, route_variant, query_result_set, refresh=False):
-        if self.shape is not None and not refresh:
-            return
-
-        self.shape = []
-
-        ways = []
-        for member in route_variant.members:
-            if isinstance(member, overpy.RelationWay):
-                if not member.role == "platform":
-                    ways.append(member.ref)
-
-        shape_sorter = []
-        node_geography = {}
-
-        for way in ways:
-            # Obtain geography (nodes) from original query result set
-            nodes = query_result_set.get_ways(way).pop().get_nodes()
-
-            # Prepare data for sorting and geographic information of nodes
-            way_nodes = []
-            for node in nodes:
-                way_nodes.append(node.id)
-                node_geography[node.id] = {'lat': float(
-                    node.lat), 'lon': float(node.lon)}
-
-            if len(shape_sorter) == 0:
-                shape_sorter.extend(way_nodes)
-            elif shape_sorter[-1] == way_nodes[0]:
-                del shape_sorter[-1]
-                shape_sorter.extend(way_nodes)
-            elif shape_sorter[-1] == way_nodes[-1]:
-                del shape_sorter[-1]
-                shape_sorter.extend(reversed(way_nodes))
-            elif shape_sorter[0] == way_nodes[0]:
-                del shape_sorter[0]
-                shape_sorter.reverse()
-                shape_sorter.extend(way_nodes)
-            elif shape_sorter[0] == way_nodes[-1]:
-                del shape_sorter[0]
-                shape_sorter.reverse()
-                shape_sorter.extend(reversed(way_nodes))
-            else:
-                sys.stderr.write(
-                    "Route has non-matching ways: " + str(self) + "\n")
-                sys.stderr.write(
-                    "  Problem at: http://osm.org/way/" + str(way) + "\n")
-                break
-
-        for sorted_node in shape_sorter:
-            self.shape.append(node_geography[sorted_node])
 
     def print_shape_for_leaflet(self):
         print "var shape = [",

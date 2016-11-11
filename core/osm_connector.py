@@ -3,6 +3,7 @@
 import sys
 import overpy
 from collections import OrderedDict
+from transitfeed import util
 from core.cache import Cache
 from core.osm_routes import Route, RouteMaster
 from core.osm_stops import Stop
@@ -46,6 +47,17 @@ class OsmConnector(object):
             self.tags = '["public_transport:version" = "2"]'
             print("No tags found for querying from OpenStreetMap.")
             print("Using tag 'public_transport:version=2")
+
+        # Define name for stops without one
+        self.stop_no_name = 'No name'
+        if 'stops' in config and 'name_without' in config['stops']:
+            self.stop_no_name = config['stops']['name_without'].encode()
+
+        # Check if auto stop name logic should be used
+        self.auto_stop_names = False
+        if 'stops' in config and 'name_auto' in config['stops']:
+            if config['stops']['name_auto'] == "yes":
+                self.auto_stop_names = True
 
         # Selector
         if 'selector' in config:
@@ -162,8 +174,9 @@ class OsmConnector(object):
             else:
                 self.routes[rv.ref] = rv
 
-        # Cache and return whole data set
+        # Cache data
         Cache.write_data('routes-' + self.selector, self.routes)
+
         return self.routes
 
     def get_stops(self, refresh=False):
@@ -192,8 +205,14 @@ class OsmConnector(object):
             if not self.stops:
                 # If not, try to get stops data from file cache
                 self.stops = Cache.read_data('stops-' + self.selector)
-            # Return cached data if found
+
             if bool(self.stops):
+
+                # Maybe check for unnamed stop names
+                if self.auto_stop_names:
+                    self._get_names_for_unnamed_stops()
+
+                # Return cached data if found
                 return self.stops
 
         # No cached data was found or refresh was forced
@@ -204,18 +223,23 @@ class OsmConnector(object):
 
         # Build stops from ways (polygons)
         for stop in result.ways:
-            if Stop.is_valid_stop_candidate(stop):
+            if self._is_valid_stop_candidate(stop):
                 self.stops["way/" + str(stop.id)
                            ] = self._build_stop(stop, "way")
 
         # Build stops from nodes
         for stop in result.nodes:
-            if Stop.is_valid_stop_candidate(stop):
+            if self._is_valid_stop_candidate(stop):
                 self.stops["node/" + str(stop.id)
                            ] = self._build_stop(stop, "node")
 
-        # Cache and return whole data set
+        # Cache data
         Cache.write_data('stops-' + self.selector, self.stops)
+
+        # Maybe check for unnamed stop names
+        if self.auto_stop_names:
+            self._get_names_for_unnamed_stops()
+
         return self.stops
 
     def _build_route_master(self, route_master, members):
@@ -300,8 +324,8 @@ class OsmConnector(object):
 
                 stops.append(otype + "/" + str(stop_candidate.ref))
 
-        rv = Route(route_variant.id, fr, to, stops, rm, ref, name)
-        rv.add_shape(route_variant, query_result_set)
+        shape = self._generate_shape(route_variant, query_result_set)
+        rv = Route(route_variant.id, fr, to, stops, rm, ref, name, shape)
         print(rv)
         return rv
 
@@ -314,7 +338,7 @@ class OsmConnector(object):
 
         # Make sure name is not empty
         if 'name' not in stop.tags:
-            stop.tags['name'] = Stop.NO_NAME
+            stop.tags['name'] = "[" + self.stop_no_name + "]"
 
         # Ways don't have coordinates and they have to be calculated
         if stop_type == "way":
@@ -372,3 +396,170 @@ class OsmConnector(object):
             /* Return tags for elements */
             );out body;""" % (self.tags, self.bbox)
         return api.query(query_str)
+
+    def _generate_shape(self, route_variant, query_result_set):
+        """Helper function to generate a valid GTFS shape from OSM query result
+        data
+
+        Returns list of coordinates representing a shape
+
+        """
+        shape = []
+
+        ways = []
+        for member in route_variant.members:
+            if isinstance(member, overpy.RelationWay):
+                if not member.role == "platform":
+                    ways.append(member.ref)
+
+        shape_sorter = []
+        node_geography = {}
+
+        for way in ways:
+            # Obtain geography (nodes) from original query result set
+            nodes = query_result_set.get_ways(way).pop().get_nodes()
+
+            # Prepare data for sorting and geographic information of nodes
+            way_nodes = []
+            for node in nodes:
+                way_nodes.append(node.id)
+                node_geography[node.id] = {'lat': float(
+                    node.lat), 'lon': float(node.lon)}
+
+            if len(shape_sorter) == 0:
+                shape_sorter.extend(way_nodes)
+            elif shape_sorter[-1] == way_nodes[0]:
+                del shape_sorter[-1]
+                shape_sorter.extend(way_nodes)
+            elif shape_sorter[-1] == way_nodes[-1]:
+                del shape_sorter[-1]
+                shape_sorter.extend(reversed(way_nodes))
+            elif shape_sorter[0] == way_nodes[0]:
+                del shape_sorter[0]
+                shape_sorter.reverse()
+                shape_sorter.extend(way_nodes)
+            elif shape_sorter[0] == way_nodes[-1]:
+                del shape_sorter[0]
+                shape_sorter.reverse()
+                shape_sorter.extend(reversed(way_nodes))
+            else:
+                sys.stderr.write(
+                    "Route has non-matching ways: " + str(self) + "\n")
+                sys.stderr.write(
+                    "  Problem at: http://osm.org/way/" + str(way) + "\n")
+                break
+
+        for sorted_node in shape_sorter:
+            shape.append(node_geography[sorted_node])
+
+        return shape
+
+    def _is_valid_stop_candidate(self, stop):
+        """Helper function to check if a stop candidate has a valid tagging
+
+        Returns True or False
+
+        """
+        if 'public_transport' in stop.tags:
+            if stop.tags['public_transport'] == 'platform':
+                return True
+            elif stop.tags['public_transport'] == 'station':
+                return True
+        elif 'highway' in stop.tags:
+            if stop.tags['highway'] == 'bus_stop':
+                return True
+        elif 'amenity' in stop.tags:
+            if stop.tags['amenity'] == 'bus_station':
+                return True
+        return False
+
+    def _get_names_for_unnamed_stops(self):
+
+        """Intelligently guess stop names for unnamed stops by sourrounding
+        street names and amenities.
+
+        Caches stops with newly guessed names.
+
+        """
+        # Loop through all stops
+        for stop in self.stops.values():
+
+            # If there is no name, query one intelligently from OSM
+            if stop.name == "[" + self.stop_no_name + "]":
+                self._find_best_name_for_unnamed_stop(stop)
+                print stop
+
+                # Cache stops with newly created stop names
+                Cache.write_data('stops-' + self.selector, self.stops)
+
+    def _find_best_name_for_unnamed_stop(self, stop):
+        """Define name for stop without explicit name based on sourroundings
+
+        """
+        api = overpy.Overpass()
+
+        result = api.query("""
+        <osm-script>
+          <query type="way">
+            <around lat="%s" lon="%s" radius="50.0"/>
+            <has-kv k="name" />
+            <has-kv modv="not" k="highway" v="trunk"/>
+            <has-kv modv="not" k="highway" v="primary"/>
+            <has-kv modv="not" k="highway" v="secondary"/>
+            <has-kv modv="not" k="amenity" v="bus_station"/>
+          </query>
+          <print order="quadtile"/>
+          <query type="node">
+            <around lat="%s" lon="%s" radius="50.0"/>
+            <has-kv k="name"/>
+            <has-kv modv="not" k="highway" v="bus_stop"/>
+          </query>
+          <print order="quadtile"/>
+        </osm-script>
+        """ % (stop.lat, stop.lon, stop.lat, stop.lon))
+
+        candidates = []
+
+        # get all node candidates
+        for node in result.get_nodes():
+            if 'name' in node.tags and node.tags["name"] is not None:
+                candidates.append(node)
+
+        # get way node candidates
+        for way in result.get_ways():
+            if 'name' in way.tags and way.tags["name"] is not None:
+                candidates.append(way)
+
+        # leave if no candidates
+        if len(candidates) == 0:
+            # give stop a different name, so we won't search again without
+            # refreshing data
+            stop.name = self.stop_no_name
+            return
+
+        # find closest candidate
+        winner = None
+        winner_distance = sys.maxint
+        for candidate in candidates:
+            if isinstance(candidate, overpy.Way):
+                lat, lon = Stop.get_center_of_nodes(
+                    candidate.get_nodes(resolve_missing=True))
+                distance = util.ApproximateDistance(
+                    lat,
+                    lon,
+                    stop.lat,
+                    stop.lon
+                )
+            else:
+                distance = util.ApproximateDistance(
+                    candidate.lat,
+                    candidate.lon,
+                    stop.lat,
+                    stop.lon
+                )
+            if distance < winner_distance:
+                winner = candidate
+                winner_distance = distance
+
+        # take name from winner
+        stop.name = winner.tags["name"].encode('utf-8')

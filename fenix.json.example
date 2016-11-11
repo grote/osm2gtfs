@@ -10,6 +10,10 @@
             "route": "bus"
         }
     },
+    "stops": {
+        "name_without": "Ponto sem nome",
+        "name_auto": "yes"
+    },
     "agency": {
         "agency_id": "BR-Floripa",
         "agency_name": "Consórcio Fênix",
