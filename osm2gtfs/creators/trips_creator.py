@@ -15,6 +15,19 @@ class TripsCreator(object):
     def add_trips_to_schedule(self, schedule, data):
         raise NotImplementedError("Should have implemented this")
 
+        """
+        route_id  # Required: From Line
+        service_id  # Required: To be generated
+        trip_id  # Required: To be generated
+
+        trip_headsign # Itinerary "to"
+        direction_id  # Order of tinieraries in Line object
+        wheelchair_accessible  # Itinerary "wheelchair_accessible"
+        bikes_allowed: # Itinerary "bikes_allowed"
+        trip_short_name  # To be avoided!
+        block_id  # To be avoided!
+        """
+
     @staticmethod
     def interpolate_stop_times(trip):
         """
