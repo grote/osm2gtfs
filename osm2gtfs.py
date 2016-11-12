@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 # coding=utf-8
 
-import os
 import transitfeed
-import json
 import sys
 import argparse
+from core.configuration import Configuration
 from core.osm_connector import OsmConnector
 from core.creator_factory import CreatorFactory
 
@@ -31,27 +30,12 @@ args = parser.parse_args()
 
 
 def main():
-    # Load config json file
-    if args.config is not None:
-        config = load_config(args.config)
-    elif os.path.isfile('config.json'):
-        with open("config.json") as json_file:
-            config = load_config(json_file)
-    else:
-        print('Error: No config.json file found')
-        sys.exit(0)
 
-    # Get and check filename for gtfs output
-    if args.output is not None:
-        output_file = args.output
-    elif 'output_file' in config:
-        output_file = config['output_file']
-    else:
-        print('Error: No filename for gtfs file specified')
-        sys.exit(0)
+    # Load, prepare and validate configuration
+    config = Configuration(args)
 
     # Initiate OpenStreetMap helper containing data
-    data = OsmConnector(config)
+    data = OsmConnector(config.config)
 
     # Refresh argument option calls
     if args.refresh_routes:
@@ -69,7 +53,7 @@ def main():
     schedule = transitfeed.Schedule()
 
     # Initiate creators for GTFS components through an object factory
-    factory = CreatorFactory(config)
+    factory = CreatorFactory(config.config)
     agency_creator = factory.get_agency_creator()
     feed_info_creator = factory.get_feed_info_creator()
     routes_creator = factory.get_routes_creator()
@@ -87,25 +71,9 @@ def main():
     schedule.Validate(transitfeed.ProblemReporter())
 
     # Write GTFS
-    schedule.WriteGoogleTransitFeed(output_file)
+    schedule.WriteGoogleTransitFeed(config.output)
 
     sys.exit()
-
-
-def load_config(configfile):
-    """
-    Loads json from config file
-    Return a dictionary with configration data
-    """
-    try:
-        config = json.load(configfile)
-    except ValueError, e:
-        print('Error: Config json file is invalid')
-        print(e)
-        sys.exit(0)
-
-    return config
-
 
 if __name__ == "__main__":
     main()
