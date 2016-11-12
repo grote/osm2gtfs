@@ -13,4 +13,17 @@ class StopsCreator(object):
         return rep
 
     def add_stops_to_schedule(self, schedule, data):
-        raise NotImplementedError("Should have implemented this")
+
+        # Get stops information
+        stops = data.get_stops()
+
+        # Loop through all stops
+        for stop in stops.values():
+
+            # Add stop to GTFS object
+            schedule.AddStop(
+                lat=float(stop.lat),
+                lng=float(stop.lon),
+                name=stop.name,
+                stop_id=str(stop.id)
+            )
