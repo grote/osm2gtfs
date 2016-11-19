@@ -26,9 +26,7 @@
     "feed_info": {
         "publisher_name": "Torsten Grote",
         "publisher_url": "https://transportr.grobox.de",
-        "version":  "0.1",
-        "start_date": "20160901",
-        "end_date": "20170831"
+        "version":  "0.1"
     },
     "output_file": "data/br-floripa.zip",
     "selector": "fenix"
