@@ -7,7 +7,6 @@ STOP_REGEX = re.compile('(TICAN|TISAN|TICEN|TITRI|TILAG|TIRIO|TISAC).*')
 
 
 class Stop(object):
-    NO_NAME = "[Ponto sem nome]"
 
     def __init__(self, osm, stop_type, name=None, lat=None, lon=None):
         self.id = osm
@@ -62,23 +61,3 @@ class Stop(object):
         center_lon = degrees(atan2(y, x))
 
         return center_lat, center_lon
-
-    @staticmethod
-    def is_valid_stop_candidate(stop):
-        """Helper function to check if a stop candidate has a valid tagging
-
-        Returns True or False
-
-        """
-        if 'public_transport' in stop.tags:
-            if stop.tags['public_transport'] == 'platform':
-                return True
-            elif stop.tags['public_transport'] == 'station':
-                return True
-        elif 'highway' in stop.tags:
-            if stop.tags['highway'] == 'bus_stop':
-                return True
-        elif 'amenity' in stop.tags:
-            if stop.tags['amenity'] == 'bus_station':
-                return True
-        return False
