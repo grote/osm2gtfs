@@ -108,7 +108,8 @@ class Configuration(object):
         if not start_date:
             # Use first of current month if no start date was specified
             now = datetime.datetime.now()
-            start_date = datetime.date(day=1, month=now.month, year=now.year)
+            start_date = datetime.datetime(day=1, month=now.month,
+                                           year=now.year)
             config['feed_info']['start_date'] = str(start_date.year) + \
                 str(start_date.month) + "01"
             print("Using the generated start date: " +
@@ -119,6 +120,8 @@ class Configuration(object):
             try:
                 end_date = datetime.datetime.strptime(
                     config['feed_info']['end_date'], "%Y%m%d")
+                print("Using the end date from config file: " +
+                      config['feed_info']['end_date'])
             except ValueError, e:
                 sys.stderr.write(
                     'Warning: "end_date" from config file %s\n' % str(e))
@@ -129,8 +132,9 @@ class Configuration(object):
             end_date_year = start_date.year + 1
             end_date_month = start_date.month - 1
             end_date_day = monthrange(end_date_year, end_date_month)[1]
-            end_date = datetime.date(
-                day=end_date_day, month=end_date_month, year=end_date_year)
+            end_date = datetime.datetime(day=end_date_day,
+                                         month=end_date_month,
+                                         year=end_date_year)
             config['feed_info']['end_date'] = str(
                 end_date.year) + str(end_date.month) + str(end_date.day)
             print("Using the generated end date: " +
