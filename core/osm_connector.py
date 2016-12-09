@@ -409,7 +409,7 @@ class OsmConnector(object):
         ways = []
         for member in route_variant.members:
             if isinstance(member, overpy.RelationWay):
-                if not member.role == "platform":
+                if not str(member.role).startswith("platform"):
                     ways.append(member.ref)
 
         shape_sorter = []
