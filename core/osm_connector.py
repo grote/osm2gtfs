@@ -443,8 +443,8 @@ class OsmConnector(object):
                 shape_sorter.reverse()
                 shape_sorter.extend(reversed(way_nodes))
             else:
-                sys.stderr.write(
-                    "Route has non-matching ways: " + str(self) + "\n")
+                sys.stderr.write("Route has non-matching ways: http://osm.org/relation/" + str(
+                    route_variant.id) + "\n")
                 sys.stderr.write(
                     "  Problem at: http://osm.org/way/" + str(way) + "\n")
                 break
