@@ -146,8 +146,7 @@ class OsmConnector(object):
                     else:
                         sys.stderr.write(
                             "Member relation is not a valid route variant:\n")
-                        sys.stderr.write("http://osm.org/relation/"
-                                         + str(member.ref) + "\n")
+                        sys.stderr.write("http://osm.org/relation/" + str(member.ref) + "\n")
 
             rm = self._build_route_master(route_master, members)
 
@@ -157,7 +156,6 @@ class OsmConnector(object):
                 sys.stderr.write(
                     "http://osm.org/relation/" + str(route_master.id) + "\n")
                 sys.stderr.write("Skipped. Please fix in OpenStreetMap\n")
-
             else:
                 self.routes[rm.ref] = rm
 

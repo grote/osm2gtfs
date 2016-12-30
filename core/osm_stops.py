@@ -1,9 +1,6 @@
 # coding=utf-8
 
-import re
 from math import cos, sin, atan2, sqrt, radians, degrees
-
-STOP_REGEX = re.compile('(TICAN|TISAN|TICEN|TITRI|TILAG|TIRIO|TISAC).*')
 
 
 class Stop(object):
@@ -27,14 +24,6 @@ class Stop(object):
             rep += " http://www.openstreetmap.org/?mlat=" + str(self.lat) + "&mlon=" + str(self.lon)
         rep += " (https://www.openstreetmap.org/" + self.type + "/" + str(self.id) + ")"
         return rep
-
-    # TODO: Move over to Fenix implementation
-    @staticmethod
-    def normalize_name(old_name):
-        name = STOP_REGEX.sub(r'\1', old_name)
-        name = name.replace('Terminal de Integração da Lagoa da Conceição', 'TILAG')
-        name = name.replace('Terminal Centro', 'TICEN')
-        return name
 
     @staticmethod
     def get_center_of_nodes(nodes):

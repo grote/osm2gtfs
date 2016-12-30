@@ -2,41 +2,57 @@
 
 import sys
 import json
+import re
 import transitfeed
-from datetime import datetime
+from datetime import timedelta, datetime
 from creators.trips_creator import TripsCreator
 from core.osm_routes import Route, RouteMaster
 
-DEBUG_ROUTE = "104"
+DEBUG_ROUTE = ""
+BLACKLIST = [
+    '10200', '12400',
+    '328', '466',  # Don't exist in Fenix data, should be removed from OSM
+    '665',  # needs ponto final fixing and master in OSM
+    '464'  # TODO handle special route variants (B)
+]
+
+STOP_REGEX = re.compile('(TICAN|TISAN|TICEN|TITRI|TILAG|TIRIO|TISAC).*')
 
 WEEKDAY = "Dias Úteis"
 SATURDAY = "Sábado"
 SUNDAY = "Domingo"
 
+NO_DURATION = "não encontrado"
+
 
 class TripsCreatorFenix(TripsCreator):
 
+    def __init__(self, config):
+        super(TripsCreatorFenix, self).__init__(config)
+        self.service_weekday = None
+        self.service_saturday = None
+        self.service_sunday = None
+
     def add_trips_to_schedule(self, schedule, data):
+        self.service_weekday = schedule.NewDefaultServicePeriod()
+        self.service_weekday.SetStartDate(self.config['feed_info']['start_date'])
+        self.service_weekday.SetEndDate(self.config['feed_info']['end_date'])
+        self.service_weekday.SetWeekdayService(True)
+        self.service_weekday.SetWeekendService(False)
 
-        service_weekday = schedule.NewDefaultServicePeriod()
-        service_weekday.SetStartDate(self.config['feed_info']['start_date'])
-        service_weekday.SetEndDate(self.config['feed_info']['end_date'])
-        service_weekday.SetWeekdayService(True)
-        service_weekday.SetWeekendService(False)
+        self.service_saturday = schedule.NewDefaultServicePeriod()
+        self.service_saturday.SetStartDate(self.config['feed_info']['start_date'])
+        self.service_saturday.SetEndDate(self.config['feed_info']['end_date'])
+        self.service_saturday.SetWeekdayService(False)
+        self.service_saturday.SetWeekendService(False)
+        self.service_saturday.SetDayOfWeekHasService(5, True)
 
-        service_saturday = schedule.NewDefaultServicePeriod()
-        service_saturday.SetStartDate(self.config['feed_info']['start_date'])
-        service_saturday.SetEndDate(self.config['feed_info']['end_date'])
-        service_saturday.SetWeekdayService(False)
-        service_saturday.SetWeekendService(False)
-        service_saturday.SetDayOfWeekHasService(5, True)
-
-        service_sunday = schedule.NewDefaultServicePeriod()
-        service_sunday.SetStartDate(self.config['feed_info']['start_date'])
-        service_sunday.SetEndDate(self.config['feed_info']['end_date'])
-        service_sunday.SetWeekdayService(False)
-        service_sunday.SetWeekendService(False)
-        service_sunday.SetDayOfWeekHasService(6, True)
+        self.service_sunday = schedule.NewDefaultServicePeriod()
+        self.service_sunday.SetStartDate(self.config['feed_info']['start_date'])
+        self.service_sunday.SetEndDate(self.config['feed_info']['end_date'])
+        self.service_sunday.SetWeekdayService(False)
+        self.service_sunday.SetWeekendService(False)
+        self.service_sunday.SetDayOfWeekHasService(6, True)
 
         routes = data.routes
 
@@ -47,59 +63,54 @@ class TripsCreatorFenix(TripsCreator):
                 json_data.append(json.loads(line))
         linhas = json_data[0]['data']
 
-        blacklist = ['10200', '12400', '328', '466', '665']
         # Try to find OSM routes in Fenix data
         for route_ref, route in sorted(routes.iteritems()):
-            found = False
-            for linha in linhas:
-                if route_ref == linha:
-                    route.add_linha(linhas[linha])
-                    if isinstance(route, RouteMaster):
-                        for sub_route in route.routes.values():
-                            sub_route.add_linha(linhas[linha])
-                    found = True
-                    break
-
-            if not found and route_ref not in blacklist:
+            if route_ref not in BLACKLIST and route_ref in linhas:
+                linha = linhas[route_ref]
+                route.name = linha['nome'].encode('utf-8')
+                route.last_update = datetime.strptime(linha['alterado_em'], "%d/%m/%Y")
+                # save duration
+                if linha['tempo_de_percurso'].encode('utf-8') == NO_DURATION:
+                    sys.stderr.write("ERROR: Route has no duration in Fenix data: " + str(route) + "\n")
+                    continue
+                duration_str = linha['tempo_de_percurso'].replace('aproximado', '')
+                (hours, tmp, minutes) = duration_str.partition(':')
+                route.set_duration(timedelta(hours=int(hours), minutes=int(minutes)))
+                # TODO service exceptions linha['operacoes']
+                self.add_route(schedule, route, linha['horarios'])
+            elif route_ref not in BLACKLIST:
                 sys.stderr.write("Route not found in Fenix data: " + str(route) + "\n")
-                blacklist.append(route_ref)
 
-        # delete missing routes from OSM data
-        for route_ref in blacklist:
-            if route_ref in routes:
-                del routes[route_ref]
+    def add_route(self, schedule, route, horarios):
+        line = schedule.AddRoute(
+            short_name=route.ref,
+            long_name=route.name.decode('utf8'),
+            route_type="Bus")
+        line.agency_id = schedule.GetDefaultAgency().agency_id
+        line.route_desc = "TEST DESCRIPTION"
+        line.route_url = "http://www.consorciofenix.com.br/horarios?q=" + str(route.ref)
+        line.route_color = "1779c2"
+        line.route_text_color = "ffffff"
 
-        # add trips for all routes
-        for route_ref, route in sorted(routes.iteritems()):
-            line = schedule.AddRoute(
-                short_name=route.ref,
-                long_name=route.name.decode('utf8'),
-                route_type="Bus")
-            line.agency_id = schedule.GetDefaultAgency().agency_id
-            line.route_desc = "TEST DESCRIPTION"
-            line.route_url = "http://www.consorciofenix.com.br/horarios?q=" + str(route.ref)
-            line.route_color = "1779c2"
-            line.route_text_color = "ffffff"
+        weekday = {}
+        saturday = {}
+        sunday = {}
 
-            weekday = {}
-            saturday = {}
-            sunday = {}
+        for day in horarios:
+            sday = day.encode('utf-8')
 
-            for day in route.horarios:
-                sday = day.encode('utf-8')
+            if sday.startswith(WEEKDAY):
+                weekday[sday.replace(WEEKDAY + ' - Saída ', '')] = horarios[day]
+            elif sday.startswith(SATURDAY):
+                saturday[sday.replace(SATURDAY + ' - Saída ', '')] = horarios[day]
+            elif sday.startswith(SUNDAY):
+                sunday[sday.replace(SUNDAY + ' - Saída ', '')] = horarios[day]
+            else:
+                raise RuntimeError("Unknown day in Fenix data: " + day)
 
-                if sday.startswith(WEEKDAY):
-                    weekday[sday.replace(WEEKDAY + ' - Saída ', '')] = route.horarios[day]
-                elif sday.startswith(SATURDAY):
-                    saturday[sday.replace(SATURDAY + ' - Saída ', '')] = route.horarios[day]
-                elif sday.startswith(SUNDAY):
-                    sunday[sday.replace(SUNDAY + ' - Saída ', '')] = route.horarios[day]
-                else:
-                    raise RuntimeError("Unknown day in Fenix data: " + day)
-
-            self.add_trips_by_day(schedule, line, service_weekday, route, weekday, WEEKDAY)
-            self.add_trips_by_day(schedule, line, service_saturday, route, saturday, SATURDAY)
-            self.add_trips_by_day(schedule, line, service_sunday, route, sunday, SUNDAY)
+        self.add_trips_by_day(schedule, line, self.service_weekday, route, weekday, WEEKDAY)
+        self.add_trips_by_day(schedule, line, self.service_saturday, route, saturday, SATURDAY)
+        self.add_trips_by_day(schedule, line, self.service_sunday, route, sunday, SUNDAY)
 
     def add_trips_by_day(self, schedule, line, service, route, horarios, day):
         # check if we even have service
@@ -118,7 +129,7 @@ class TripsCreatorFenix(TripsCreator):
             return
 
         # check if we have a match for the first stop
-        key = route.match_first_stops(horarios.keys())
+        key = self.match_first_stops(route, horarios.keys())
 
         if key is None:
             # Do not print debug output here, because already done in route.match_first_stops()
@@ -156,8 +167,8 @@ class TripsCreatorFenix(TripsCreator):
                 end_sec = start_sec + route.duration.seconds * factor
                 end_time = transitfeed.FormatSecondsSinceMidnight(end_sec)
 
-                # save options
-                opts = time_point[1]
+                # TODO handle options
+                # opts = time_point[1]
 
                 trip = line.AddTrip(schedule, headsign=route.name, service_period=service)
                 # add empty attributes to make navitia happy
@@ -168,13 +179,54 @@ class TripsCreatorFenix(TripsCreator):
                 trip.direction_id = ""
                 if route.ref == DEBUG_ROUTE:
                     print "ADD TRIP " + str(trip.trip_id) + ":"
-                self.add_trip_stops(schedule, trip, route, start_time, end_time, opts)
+                self.add_trip_stops(schedule, trip, route, start_time, end_time)
 
                 # interpolate times, because Navitia can not handle this itself
                 self.interpolate_stop_times(trip)
 
-    def add_trip_stops(self, schedule, trip, route, start_time, end_time, opts):
+    @staticmethod
+    def match_first_stops(route, sim_stops):
+        # get the first stop of the route
+        stop = route.get_first_stop()
 
+        # normalize its name
+        stop.name = TripsCreatorFenix.normalize_stop_name(stop.name)
+
+        # get first stop from relation 'from' tag
+        alt_stop_name = route.get_first_alt_stop()
+        alt_stop_name = TripsCreatorFenix.normalize_stop_name(alt_stop_name.encode('utf-8'))
+
+        # trying to match first stop from OSM with SIM
+        for o_sim_stop in sim_stops:
+            sim_stop = TripsCreatorFenix.normalize_stop_name(o_sim_stop)
+            if sim_stop == stop.name:
+                return o_sim_stop
+            elif sim_stop == alt_stop_name:
+                return o_sim_stop
+
+        # print some debug information when no stop match found
+        sys.stderr.write(str(route) + "\n")
+        sys.stderr.write(str(sim_stops) + "\n")
+        sys.stderr.write("-----\n")
+        sys.stderr.write("OSM Stop: '" + stop.name + "'\n")
+        sys.stderr.write("OSM ALT Stop: '" + alt_stop_name + "'\n")
+        for sim_stop in sim_stops:
+            sim_stop = TripsCreatorFenix.normalize_stop_name(sim_stop)
+            sys.stderr.write("SIM Stop: '" + sim_stop + "'\n")
+        print
+        return None
+
+    @staticmethod
+    def normalize_stop_name(old_name):
+        name = STOP_REGEX.sub(r'\1', old_name)
+        name = name.replace('Terminal de Integração da Lagoa da Conceição', 'TILAG')
+        name = name.replace('Terminal Centro', 'TICEN')
+        name = name.replace('Terminal Rio Tavares', 'TIRIO')
+        name = name.replace('Itacurubi', 'Itacorubi')
+        return name
+
+    @staticmethod
+    def add_trip_stops(schedule, trip, route, start_time, end_time):
         if isinstance(route, Route):
             i = 1
             for stop in route.stops:
@@ -194,7 +246,8 @@ class TripsCreatorFenix(TripsCreator):
     #                print "INTER: " + str(stop)
                 i += 1
 
-    def interpolate_stop_times(self, trip):
+    @staticmethod
+    def interpolate_stop_times(trip):
         for secs, stop_time, is_timepoint in trip.GetTimeInterpolatedStops():
             if not is_timepoint:
                 stop_time.arrival_secs = secs
