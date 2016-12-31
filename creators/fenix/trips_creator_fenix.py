@@ -29,32 +29,34 @@ class TripsCreatorFenix(TripsCreator):
 
     def __init__(self, config):
         super(TripsCreatorFenix, self).__init__(config)
-        self.service_weekday = None
-        self.service_saturday = None
-        self.service_sunday = None
 
-    def add_trips_to_schedule(self, schedule, data):
-        self.service_weekday = schedule.NewDefaultServicePeriod()
+        self.service_weekday = transitfeed.ServicePeriod("weekday")
         self.service_weekday.SetStartDate(self.config['feed_info']['start_date'])
         self.service_weekday.SetEndDate(self.config['feed_info']['end_date'])
         self.service_weekday.SetWeekdayService(True)
         self.service_weekday.SetWeekendService(False)
 
-        self.service_saturday = schedule.NewDefaultServicePeriod()
+        self.service_saturday = transitfeed.ServicePeriod("saturday")
         self.service_saturday.SetStartDate(self.config['feed_info']['start_date'])
         self.service_saturday.SetEndDate(self.config['feed_info']['end_date'])
         self.service_saturday.SetWeekdayService(False)
         self.service_saturday.SetWeekendService(False)
         self.service_saturday.SetDayOfWeekHasService(5, True)
 
-        self.service_sunday = schedule.NewDefaultServicePeriod()
+        self.service_sunday = transitfeed.ServicePeriod("sunday")
         self.service_sunday.SetStartDate(self.config['feed_info']['start_date'])
         self.service_sunday.SetEndDate(self.config['feed_info']['end_date'])
         self.service_sunday.SetWeekdayService(False)
         self.service_sunday.SetWeekendService(False)
         self.service_sunday.SetDayOfWeekHasService(6, True)
 
+        self.exceptions = None
+
+    def add_trips_to_schedule(self, schedule, data):
         routes = data.routes
+        schedule.AddServicePeriodObject(self.service_weekday)
+        schedule.AddServicePeriodObject(self.service_saturday)
+        schedule.AddServicePeriodObject(self.service_sunday)
 
         # Get Fenix data from JSON file
         json_data = []
@@ -76,12 +78,11 @@ class TripsCreatorFenix(TripsCreator):
                 duration_str = linha['tempo_de_percurso'].replace('aproximado', '')
                 (hours, tmp, minutes) = duration_str.partition(':')
                 route.set_duration(timedelta(hours=int(hours), minutes=int(minutes)))
-                # TODO service exceptions linha['operacoes']
-                self.add_route(schedule, route, linha['horarios'])
+                self.add_route(schedule, route, linha['horarios'], linha['operacoes'])
             elif route_ref not in BLACKLIST:
                 sys.stderr.write("Route not found in Fenix data: " + str(route) + "\n")
 
-    def add_route(self, schedule, route, horarios):
+    def add_route(self, schedule, route, horarios, operacoes):
         line = schedule.AddRoute(
             short_name=route.ref,
             long_name=route.name.decode('utf8'),
@@ -98,7 +99,6 @@ class TripsCreatorFenix(TripsCreator):
 
         for day in horarios:
             sday = day.encode('utf-8')
-
             if sday.startswith(WEEKDAY):
                 weekday[sday.replace(WEEKDAY + ' - Saída ', '')] = horarios[day]
             elif sday.startswith(SATURDAY):
@@ -108,6 +108,26 @@ class TripsCreatorFenix(TripsCreator):
             else:
                 raise RuntimeError("Unknown day in Fenix data: " + day)
 
+        # check that each route has the same exceptions, so they are in fact global
+        if self.exceptions is None:
+            self.exceptions = operacoes
+        elif self.exceptions != operacoes:
+            raise RuntimeError("Route has different service exceptions: " + str(route))
+
+        # schedule exceptions
+        for o in operacoes:
+            date = datetime.strptime(o["data"], "%Y-%m-%d")
+            day = o["tipo"].encode('utf-8')
+            # TODO only include exceptions within service period
+            service = self.get_exception_service_period(schedule, date, day)
+            if day == SATURDAY:
+                self.add_trips_by_day(schedule, line, service, route, saturday, SATURDAY)
+            elif day == SUNDAY:
+                self.add_trips_by_day(schedule, line, service, route, sunday, SUNDAY)
+            else:
+                sys.stderr.write("ERROR: Unknown day %s\n" % day)
+
+        # regular schedule
         self.add_trips_by_day(schedule, line, self.service_weekday, route, weekday, WEEKDAY)
         self.add_trips_by_day(schedule, line, self.service_saturday, route, saturday, SATURDAY)
         self.add_trips_by_day(schedule, line, self.service_sunday, route, sunday, SUNDAY)
@@ -183,6 +203,29 @@ class TripsCreatorFenix(TripsCreator):
 
                 # interpolate times, because Navitia can not handle this itself
                 self.interpolate_stop_times(trip)
+
+    def get_exception_service_period(self, schedule, date, day):
+        date_string = date.strftime("%Y%m%d")
+        if date.weekday() <= 4:
+            print("Exception weekday for " + str(date))
+            self.service_weekday.SetDateHasService(date_string, False)
+        elif date.weekday() == 5:
+            print("Exception saturday for " + str(date))
+            self.service_saturday.SetDateHasService(date_string, False)
+        elif date.weekday() == 6:
+            print("Exception sunday for " + str(date))
+            self.service_sunday.SetDateHasService(date_string, False)
+
+        service_id = date_string + "_" + day
+        if service_id in schedule.service_periods:
+            service = schedule.GetServicePeriod(service_id)
+        else:
+            service = transitfeed.ServicePeriod(service_id)
+            service.SetStartDate(date_string)
+            service.SetEndDate(date_string)
+            service.SetDayOfWeekHasService(date.weekday())
+            schedule.AddServicePeriodObject(service)
+        return service
 
     @staticmethod
     def match_first_stops(route, sim_stops):
