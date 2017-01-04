@@ -128,9 +128,17 @@ class Configuration(object):
                 pass
 
         if not end_date:
+
             # Define end date automatically one year from start date
-            end_date_year = start_date.year + 1
-            end_date_month = start_date.month - 1
+            if start_date.month == 1:
+                # Special case in January of each year
+                end_date_month = 12
+                end_date_year = start_date.year
+            else:
+                # Regular case for all other months
+                end_date_year = start_date.year + 1
+                end_date_month = start_date.month - 1
+
             end_date_day = monthrange(end_date_year, end_date_month)[1]
             end_date = datetime.datetime(day=end_date_day,
                                          month=end_date_month,
