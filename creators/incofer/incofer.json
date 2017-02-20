@@ -1,0 +1,37 @@
+{
+    "query": {
+        "bbox": {
+            "n": "10.0365",
+            "s": "9.8346",
+            "e": "-83.8507",
+            "w": "-84.2418"
+        },
+        "tags": {
+          "route": "train",
+          "network": "Tren Urbano",
+          "operator": "Incofer"
+        }
+    },
+    "stops": {
+      "name_without": "Parada sin nombre",
+      "name_auto": "yes"
+    },
+    "agency": {
+      "agency_id": "CR-Incofer",
+      "agency_name": "Incofer",
+      "agency_url": "http://www.incofer.go.cr",
+      "agency_timezone": "America/Costa_Rica",
+      "agency_lang": "ES",
+      "agency_phone": "506 25425800",
+      "agency_fare_url": ""
+    },
+    "feed_info": {
+        "publisher_name": "Laboratorio Experimental",
+        "publisher_url": "http://ic-itcr.ac.cr/~jgutierrez/incofer/",
+        "version": "0.1",
+        "start_date" : "20170202",
+        "end_date": "20170910"
+    },
+    "output_file": "data/cr-incofer.zip",
+    "selector": "incofer"
+}
