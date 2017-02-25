@@ -13,17 +13,21 @@ caches on disk for efficient re-use. Then the data is combined with another
 source of schedule (time) information in order to create a GTFS file using the
 transitfeed library.
 
-**Attention:** The source code is currently very specific to one city, but it
-can be extended to make it work for your use case. In the config file any
-transit network can be specified for download from OpenStreetMap. And by
-extending the creator classes in code, different approaches for time information
-handling can be easily implemented. You can help with pull requests to improve
-this script.
+**Attention:** The source code is currently very specific to Florianópolis Buses
+and Costa Rica Urban Train, but it can be extended to make it work for your use
+case. In the config file any transit network can be specified for download from
+OpenStreetMap. And by extending the creator classes in code, different
+approaches for time information handling can be easily implemented. You can help
+with pull requests to improve this script.
 
 Use
 ------------
 
-    python osm2gtfs.py -c fenix.json.example
+    python osm2gtfs.py -c <config-file>
+
+Example:
+
+    $ python osm2gtfs.py -c creators/fenix/fenix.json
 
 Requirements
 ------------
