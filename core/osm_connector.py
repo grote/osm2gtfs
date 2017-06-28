@@ -173,8 +173,6 @@ class OsmConnector(object):
                 self.routes[rv.ref] = rv
 
         # Cache data
-        if not  os.path.isdir('data'): #checking is the dir exist
-                os.mkdir('data')
         Cache.write_data('routes-' + self.selector, self.routes)
 
         return self.routes

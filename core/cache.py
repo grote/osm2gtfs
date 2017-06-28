@@ -9,6 +9,8 @@ class Cache(object):
     drive.
 
     """
+    if not  os.path.isdir('data'): #checking is the dir exist
+            os.mkdir('data')
 
     @staticmethod
     def write_data(name, content):
