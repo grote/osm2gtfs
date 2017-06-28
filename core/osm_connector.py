@@ -1,5 +1,5 @@
 # coding=utf-8
-import os
+
 import sys
 import overpy
 from collections import OrderedDict
