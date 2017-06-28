@@ -18,8 +18,16 @@ class Cache(object):
         hard drive.
 
         """
-        with open('data/' + name + '.pkl', 'wb') as f:
-            pickle.dump(content, f, pickle.HIGHEST_PROTOCOL)
+
+        #checking if the dir exist
+        if os.path.isdir('data'):
+            with open('data/' + name + '.pkl', 'wb') as f:
+                pickle.dump(content, f, pickle.HIGHEST_PROTOCOL)
+        else:
+            print "Data doesnt exit .... creating the directory"
+            os.mkdir('data')
+            with open('data/' + name + '.pkl', 'wb') as f:
+                pickle.dump(content, f, pickle.HIGHEST_PROTOCOL)
 
     @staticmethod
     def read_data(name):
