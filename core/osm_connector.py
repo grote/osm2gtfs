@@ -290,7 +290,9 @@ class OsmConnector(object):
                 return
 
         name = route_master.tags['name']
-        frequency = route_master.tags['frequency']
+        frequency = None
+        if "frequency" in route_master.tags:
+            frequency = route_master.tags['frequency']
         rm = RouteMaster(route_master.id, ref, name, members, frequency)
         print(rm)
         return rm
