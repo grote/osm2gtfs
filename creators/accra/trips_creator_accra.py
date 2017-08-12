@@ -10,10 +10,6 @@ from core.osm_routes import Route, RouteMaster
 
 class TripsCreatorAccra(TripsCreator):
 
-    def __init__(self, config):
-        super(TripsCreatorAccra, self).__init__(config)
-
-
     def add_trips_to_schedule(self, schedule, data):
         self.service_weekday = schedule.GetDefaultServicePeriod()
         self.service_weekday.SetStartDate(self.config['feed_info']['start_date'])
@@ -35,8 +31,12 @@ class TripsCreatorAccra(TripsCreator):
             line_gtfs.route_color = "1779c2"
             line_gtfs.route_text_color = "ffffff"
 
+            route_index = 0
             for a_route_ref, a_route in line.routes.iteritems():
                 trip_gtfs = line_gtfs.AddTrip(schedule)
+                trip_gtfs.headsign = a_route.to
+                trip_gtfs.direction_id = route_index % 2
+                route_index += 1
                 try:
                     ROUTE_FREQUENCY = int(line.frequency)
                 except Exception as e:
@@ -47,7 +47,6 @@ class TripsCreatorAccra(TripsCreator):
                 for index_stop, a_stop in enumerate(a_route.stops) :
                     stop_id = a_stop.split('/')[-1]
                     departure_time = datetime(2008, 11, 22, 6, 0, 0)
-                    #trip_gtfs.AddStopTime(schedule.GetStop(str(stop_id)), stop_time=departure_time.strftime("%H:%M:%S"))
 
                     if index_stop == 0 :
                         trip_gtfs.AddStopTime(schedule.GetStop(str(stop_id)), stop_time=departure_time.strftime("%H:%M:%S"))
