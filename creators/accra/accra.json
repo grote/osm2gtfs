@@ -1,0 +1,35 @@
+{
+    "query": {
+        "bbox": {
+            "n": "5.7844",
+            "s": "5.4783",
+            "e": "0.0611",
+            "w": "-0.4779"
+        },
+        "tags": {
+            "route": "bus"
+        }
+    },
+    "stops": {
+        "name_without": "Stop without name",
+        "name_auto": "yes"
+    },
+    "agency": {
+        "agency_id": "AM3",
+        "agency_name": "TODO",
+        "agency_url": "http://todo",
+        "agency_timezone": "Africa/Accra",
+        "agency_lang": "EN",
+        "agency_phone": "TODO",
+        "agency_fare_url": ""
+    },
+    "feed_info": {
+        "publisher_name": "Jungle Bus - Kisio Digital",
+        "publisher_url": "http://ic-itcr.ac.cr/~jgutierrez/incofer/",
+        "version": "0.1",
+        "start_date": "20170901",
+        "end_date": "20180730"
+    },
+    "output_file": "data/accra.zip",
+    "selector": "accra"
+}
