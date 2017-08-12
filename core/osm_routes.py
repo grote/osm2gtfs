@@ -77,9 +77,10 @@ class Route(BaseRoute):
 
 class RouteMaster(BaseRoute):
 
-    def __init__(self, osm, ref, name, routes):
+    def __init__(self, osm, ref, name, routes, frequency = None):
         BaseRoute.__init__(self, osm, ref, name)
         self.routes = routes
+        self.frequency = frequency
         for route in self.routes.values():
             route.master = self
 
