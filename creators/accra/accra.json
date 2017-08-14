@@ -11,21 +11,21 @@
         }
     },
     "stops": {
-        "name_without": "Stop without name",
+        "name_without": "Add a name to the stop with JungleBus app",
         "name_auto": "yes"
     },
     "agency": {
         "agency_id": "AM3",
-        "agency_name": "TODO",
-        "agency_url": "http://todo",
+        "agency_name": "Accra Trotro",
+        "agency_url": "http://junglebus.io",
         "agency_timezone": "Africa/Accra",
         "agency_lang": "EN",
-        "agency_phone": "TODO",
+        "agency_phone": "",
         "agency_fare_url": ""
     },
     "feed_info": {
-        "publisher_name": "Jungle Bus - Kisio Digital",
-        "publisher_url": "http://ic-itcr.ac.cr/~jgutierrez/incofer/",
+        "publisher_name": "Jungle Bus",
+        "publisher_url": "junglebus.io",
         "version": "0.1",
         "start_date": "20170901",
         "end_date": "20180730"
