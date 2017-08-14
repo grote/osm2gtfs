@@ -63,7 +63,7 @@ class TripsCreatorAccra(TripsCreator):
                     if index_stop == 0 :
                         trip_gtfs.AddStopTime(schedule.GetStop(str(stop_id)), stop_time=departure_time.strftime("%H:%M:%S"))
                     elif index_stop == len(a_route.stops) -1 :
-                        departure_time += timedelta(hours = 1) #TODO
+                        departure_time += timedelta(hours = 1) #TODO temps de trajet de bout en bout de chaque ligne à affiner
                         trip_gtfs.AddStopTime(schedule.GetStop(str(stop_id)), stop_time=departure_time.strftime("%H:%M:%S"))
                     else :
                         trip_gtfs.AddStopTime(schedule.GetStop(str(stop_id)))
