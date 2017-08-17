@@ -208,7 +208,7 @@ class TripsCreatorFenix(TripsCreator):
                 self.add_trip_stops(schedule, trip, route, start_time, end_time)
 
                 # interpolate times, because Navitia can not handle this itself
-                self.interpolate_stop_times(trip)
+                TripsCreator.interpolate_stop_times(trip)
 
     def get_exception_service_period(self, schedule, date, day):
         date_string = date.strftime("%Y%m%d")
@@ -292,11 +292,3 @@ class TripsCreatorFenix(TripsCreator):
                     trip.AddStopTime(schedule.GetStop(str(stop.id)))
     #                print "INTER: " + str(stop)
                 i += 1
-
-    @staticmethod
-    def interpolate_stop_times(trip):
-        for secs, stop_time, is_timepoint in trip.GetTimeInterpolatedStops():
-            if not is_timepoint:
-                stop_time.arrival_secs = secs
-                stop_time.departure_secs = secs
-                trip.ReplaceStopTimeObject(stop_time)

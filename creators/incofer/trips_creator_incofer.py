@@ -25,7 +25,7 @@ class TripsCreatorIncofer(TripsCreator):
                 # print("DEBUG. procesando el itinerario", itinerary.name)
 
                 # shape for itinerary
-                shape_id = _add_shape(schedule, itinerary_id, itinerary)
+                shape_id = TripsCreator.add_shape(schedule, itinerary_id, itinerary)
 
                 # service periods | días de opearación (c/u con sus horarios)
                 operations = self._get_itinerary_operation(itinerary)
@@ -108,20 +108,6 @@ class TripsCreatorIncofer(TripsCreator):
         service.SetEndDate(self.config['feed_info']['end_date'])
         schedule.AddServicePeriodObject(service)
         return schedule.GetServicePeriod(operation)
-
-
-def _add_shape(schedule, route_id, osm_r):
-    # get shape id
-    shape_id = str(route_id)
-    try:
-        schedule.GetShape(shape_id)
-    except KeyError:
-        shape = transitfeed.Shape(shape_id)
-        for point in osm_r.shape:
-            shape.AddPoint(lat=float(point["lat"]), lon=float(point["lon"]))
-        schedule.AddShapeObject(shape)
-
-    return shape_id
 
 
 def add_trips_for_route(schedule, gtfs_route, itinerary, service_period,
