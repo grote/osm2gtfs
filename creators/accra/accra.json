@@ -16,8 +16,8 @@
     },
     "agency": {
         "agency_id": "AM3",
-        "agency_name": "Accra Trotro",
-        "agency_url": "http://junglebus.io",
+        "agency_name": "Accra Tro tro",
+        "agency_url": "https://ama.gov.gh/welcome/transport/",
         "agency_timezone": "Africa/Accra",
         "agency_lang": "EN",
         "agency_phone": "",
@@ -25,7 +25,7 @@
     },
     "feed_info": {
         "publisher_name": "Jungle Bus",
-        "publisher_url": "junglebus.io",
+        "publisher_url": "http://junglebus.io",
         "version": "0.1",
         "start_date": "20170901",
         "end_date": "20180730"
