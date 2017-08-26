@@ -43,8 +43,8 @@ class TripsCreatorAccra(TripsCreator):
                     ROUTE_FREQUENCY = int(line.frequency)
                 except Exception as e:
                     print("Frequency not a number for route_master " + str(line.id))
-                    ROUTE_FREQUENCY = 10
-                trip_gtfs.AddFrequency("06:00:00", "21:00:00", ROUTE_FREQUENCY * 60) #TODO horaires d'ouverture des lignes à confirmer
+                    ROUTE_FREQUENCY = 30
+                trip_gtfs.AddFrequency("05:00:00", "22:00:00", ROUTE_FREQUENCY * 60)
 
                 for index_stop, a_stop in enumerate(a_route.stops) :
                     stop_id = a_stop.split('/')[-1]
@@ -53,7 +53,7 @@ class TripsCreatorAccra(TripsCreator):
                     if index_stop == 0 :
                         trip_gtfs.AddStopTime(schedule.GetStop(str(stop_id)), stop_time=departure_time.strftime("%H:%M:%S"))
                     elif index_stop == len(a_route.stops) -1 :
-                        departure_time += timedelta(hours = 1) #TODO
+                        departure_time += timedelta(minutes = 67) #TODO
                         trip_gtfs.AddStopTime(schedule.GetStop(str(stop_id)), stop_time=departure_time.strftime("%H:%M:%S"))
                     else :
                         trip_gtfs.AddStopTime(schedule.GetStop(str(stop_id)))
