@@ -23,13 +23,14 @@ class BaseRoute(object):
 
 class Route(BaseRoute):
 
-    def __init__(self, osm, fr, to, stops, master, ref, name, shape):
+    def __init__(self, osm, fr, to, stops, master, ref, name, shape, travel_time = None):
         BaseRoute.__init__(self, osm, ref, name)
         self.fr = fr
         self.to = to
         self.stops = stops
         self.master = master
         self.shape = shape
+        self.travel_time = travel_time
         self.duration = None
 
     def __repr__(self):

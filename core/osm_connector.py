@@ -327,6 +327,11 @@ class OsmConnector(object):
         else:
             name = None
 
+        if 'travel_time' in route_variant.tags:
+            travel_time = route_variant.tags['travel_time']
+        else:
+            travel_time = None
+
         stops = []
 
         # Add ids for stops of this route variant
@@ -345,7 +350,7 @@ class OsmConnector(object):
                 stops.append(otype + "/" + str(stop_candidate.ref))
 
         shape = self._generate_shape(route_variant, query_result_set)
-        rv = Route(route_variant.id, fr, to, stops, rm, ref, name, shape)
+        rv = Route(route_variant.id, fr, to, stops, rm, ref, name, shape, travel_time)
         print(rv)
         return rv
 
