@@ -30,6 +30,8 @@ class TripsCreatorFenix(TripsCreator):
     def __init__(self, config):
         super(TripsCreatorFenix, self).__init__(config)
 
+        self.start_date = datetime.strptime(self.config['feed_info']['start_date'], "%Y%m%d")
+
         self.service_weekday = transitfeed.ServicePeriod("weekday")
         self.service_weekday.SetStartDate(self.config['feed_info']['start_date'])
         self.service_weekday.SetEndDate(self.config['feed_info']['end_date'])
@@ -118,7 +120,11 @@ class TripsCreatorFenix(TripsCreator):
         for o in operacoes:
             date = datetime.strptime(o["data"], "%Y-%m-%d")
             day = o["tipo"].encode('utf-8')
-            # TODO only include exceptions within service period
+
+            # only include exceptions within service period
+            if date < self.start_date:
+                continue
+
             service = self.get_exception_service_period(schedule, date, day)
             if day == SATURDAY:
                 self.add_trips_by_day(schedule, line, service, route, saturday, SATURDAY)
@@ -207,19 +213,17 @@ class TripsCreatorFenix(TripsCreator):
     def get_exception_service_period(self, schedule, date, day):
         date_string = date.strftime("%Y%m%d")
         if date.weekday() <= 4:
-            print("Exception weekday for " + str(date))
             self.service_weekday.SetDateHasService(date_string, False)
         elif date.weekday() == 5:
-            print("Exception saturday for " + str(date))
             self.service_saturday.SetDateHasService(date_string, False)
         elif date.weekday() == 6:
-            print("Exception sunday for " + str(date))
             self.service_sunday.SetDateHasService(date_string, False)
 
         service_id = date_string + "_" + day
         if service_id in schedule.service_periods:
             service = schedule.GetServicePeriod(service_id)
         else:
+            print("Created new schedule exception for %s with ID %s" % (str(date), service_id))
             service = transitfeed.ServicePeriod(service_id)
             service.SetStartDate(date_string)
             service.SetEndDate(date_string)
