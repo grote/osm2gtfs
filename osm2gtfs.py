@@ -73,7 +73,29 @@ def main():
     # Write GTFS
     schedule.WriteGoogleTransitFeed(config.output)
 
+    # Add feed_info.txt to GTFS
+    add_feed_info(schedule, config.output)
+
     sys.exit()
+
+
+# noinspection PyProtectedMember
+def add_feed_info(schedule, output_file):
+    """
+    Add feed_info.txt file to GTFS
+    Workaround for https://github.com/google/transitfeed/issues/395
+    """
+    if 'feed_info' not in schedule._table_columns:
+        return
+
+    with transitfeed.zipfile.ZipFile(output_file, 'a') as archive:
+        feed_info_string = transitfeed.StringIO.StringIO()
+        writer = transitfeed.util.CsvUnicodeWriter(feed_info_string)
+        columns = schedule.GetTableColumns('feed_info')
+        writer.writerow(columns)
+        writer.writerow([transitfeed.util.EncodeUnicode(schedule.feed_info[c]) for c in columns])
+        schedule._WriteArchiveString(archive, 'feed_info.txt', feed_info_string)
+
 
 if __name__ == "__main__":
     main()

@@ -15,7 +15,12 @@ class FeedInfoCreator(object):
         return rep
 
     def add_feed_info_to_schedule(self, schedule):
-        schedule.AddFeedInfoObject(self.prepare_feed_info())
+        feed_info = self.prepare_feed_info()
+        schedule.AddFeedInfoObject(feed_info)
+
+        # Missing feed_info workaround (https://github.com/google/transitfeed/issues/395)
+        # noinspection PyProtectedMember
+        schedule.AddTableColumns('feed_info', feed_info._ColumnNames())
 
     def prepare_feed_info(self):
         """
