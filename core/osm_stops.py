@@ -50,3 +50,25 @@ class Stop(object):
         center_lon = degrees(atan2(y, x))
 
         return center_lat, center_lon
+
+
+class StopArea(object):
+
+    def __init__(self, osm, stop_members, name=None):
+        self.id = osm
+        if name is not None:
+            self.name = name.encode('utf-8')
+        else:
+            self.name = name
+        self.stop_members = stop_members
+        self.lat, self.lon = Stop.get_center_of_nodes(stop_members.values())
+
+    def __repr__(self):
+        rep = ""
+        if self.name is not None:
+            rep += self.name
+        if self.lat is not None and self.lon is not None:
+            rep += " lat: " + str(self.lat) + " lon: " + str(self.lon) + "\n\t"
+        for ref, stop in self.stop_members.iteritems():
+            rep += " | Stop member: " + ref + " - " + stop.name
+        return rep
