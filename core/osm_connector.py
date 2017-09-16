@@ -6,7 +6,7 @@ from collections import OrderedDict
 from transitfeed import util
 from core.cache import Cache
 from core.osm_routes import Route, RouteMaster
-from core.osm_stops import Stop
+from core.osm_stops import Stop, StopArea
 
 
 class OsmConnector(object):
@@ -146,7 +146,8 @@ class OsmConnector(object):
                     else:
                         sys.stderr.write(
                             "Member relation is not a valid route variant:\n")
-                        sys.stderr.write("http://osm.org/relation/" + str(member.ref) + "\n")
+                        sys.stderr.write("http://osm.org/relation/" +
+                                         str(member.ref) + "\n")
 
             rm = self._build_route_master(route_master, members)
 
@@ -178,13 +179,15 @@ class OsmConnector(object):
         return self.routes
 
     def get_stops(self, refresh=False):
-        """The get_stops function returns the data of stops from
+        """The get_stops function returns the data of stops and stop areas from
         OpenStreetMap converted into usable objects.
 
-        Data about stops is getting obtained from OpenStreetMap through the
-        Overpass API, based on the configuration from the config file.
+        Data about stops and stop_areas is getting obtained from OpenStreetMap
+        through the Overpass API, based on the configuration from the config
+        file.
 
-        Then this data gets prepared by building up objects of the class Stops.
+        Then this data gets prepared by building up objects of the class Stops
+        and StopArea (when the Stops are members of a stop_area)
 
         It uses caching to leverage fast performance and spare the Overpass
         API. Special commands are used to refresh cached data.
@@ -193,7 +196,8 @@ class OsmConnector(object):
         :param refresh: A simple boolean indicating a data refresh or use of
             caching if possible.
 
-        :return stops: A dictionary of Stops constituting the obtained data.
+        :return stops: A dictionary of Stops and StopAreas constituting the
+            obtained data.
 
         """
 
@@ -231,12 +235,27 @@ class OsmConnector(object):
                 self.stops["node/" + str(stop.id)
                            ] = self._build_stop(stop, "node")
 
+        # Build stop_areas
+        for relation in result.relations:
+            # valid stop_area candidade?
+            if 'public_transport' in relation.tags:
+                if relation.tags["public_transport"] == "stop_area":
+                    self.stops["relation/" + str(relation.id)
+                               ] = self._build_stop_area(relation)
+
         # Cache data
         Cache.write_data('stops-' + self.selector, self.stops)
 
         # Maybe check for unnamed stop names
         if self.auto_stop_names:
             self._get_names_for_unnamed_stops()
+
+        # Warning about stops without stop_area
+        for ref, elem in self.stops.iteritems():
+            if type(elem) is Stop:
+                sys.stderr.write("Stop is not member of a stop_area." +
+                                 " Please fix in OpenStreetMap\n")
+                sys.stderr.write("http://osm.org/" + ref + "\n")
 
         return self.stops
 
@@ -345,6 +364,31 @@ class OsmConnector(object):
         s = Stop(stop.id, "node", stop.tags['name'], stop.lat, stop.lon)
         return s
 
+    def _build_stop_area(self, relation):
+        """Helper function to build a StopArea object
+
+        Returns a initiated StopArea object from raw data
+        """
+        stop_members = {}
+        for member in relation.members:
+            if (isinstance(member, overpy.RelationNode) and
+               member.role == "platform"):
+                stop = self.stops.pop("node/" + str(member.ref))
+                stop_members["node/" + str(member.ref)] = stop
+
+        if 'name' not in relation.tags:
+            sys.stderr.write("Stop area without name." +
+                             " Please fix in OpenStreetMap\n")
+            sys.stderr.write("http://osm.org/relation/" +
+                             str(relation.id) + "\n")
+            stop_area = StopArea(relation.id, stop_members,
+                                 "Stop area without name")
+        else:
+            stop_area = StopArea(relation.id, stop_members,
+                                 relation.tags["name"])
+        # print(stop_area)
+        return stop_area
+
     def _query_routes(self):
         """Helper function to query OpenStreetMap routes
 
@@ -392,7 +436,13 @@ class OsmConnector(object):
             ( .nodes;._; );
 
             /* Return tags for elements */
-            );out body;""" % (self.tags, self.bbox)
+            );out body;
+
+            /* Select stop area relations */   
+            foreach.nodes(
+            rel(bn:"platform")["public_transport"="stop_area"];
+            out body;
+            );""" % (self.tags, self.bbox)
         return api.query(query_str)
 
     def _generate_shape(self, route_variant, query_result_set):
@@ -441,8 +491,9 @@ class OsmConnector(object):
                 shape_sorter.reverse()
                 shape_sorter.extend(reversed(way_nodes))
             else:
-                sys.stderr.write("Route has non-matching ways: http://osm.org/relation/" + str(
-                    route_variant.id) + "\n")
+                sys.stderr.write("Route has non-matching ways: " +
+                                 "http://osm.org/relation/" +
+                                 str(route_variant.id) + "\n")
                 sys.stderr.write(
                     "  Problem at: http://osm.org/way/" + str(way) + "\n")
                 break
