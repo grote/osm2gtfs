@@ -39,18 +39,27 @@ class TripsCreatorAccra(TripsCreator):
                 trip_gtfs.trip_headsign = a_route.to
                 trip_gtfs.direction_id = route_index % 2
                 route_index += 1
+                DEFAULT_ROUTE_FREQUENCY = 30
+                DEFAULT_TRAVEL_TIME = 120
+
                 try:
                     ROUTE_FREQUENCY = int(line.frequency)
+                    if not ROUTE_FREQUENCY > 0 :
+                        print("frequency is invalid for route_master " + str(line.id))
+                        ROUTE_FREQUENCY = DEFAULT_ROUTE_FREQUENCY
                 except Exception as e:
                     print("frequency not a number for route_master " + str(line.id))
-                    ROUTE_FREQUENCY = 30
+                    ROUTE_FREQUENCY = DEFAULT_ROUTE_FREQUENCY
                 trip_gtfs.AddFrequency("05:00:00", "22:00:00", ROUTE_FREQUENCY * 60)
 
                 try:
                     TRAVEL_TIME = int(a_route.travel_time)
+                    if not TRAVEL_TIME > 0 :
+                        print("travel_time is invalid for route " + str(lia_routene.id))
+                        TRAVEL_TIME = DEFAULT_TRAVEL_TIME
                 except Exception as e:
                     print("travel_time not a number for route " + str(a_route.id))
-                    TRAVEL_TIME = 120
+                    TRAVEL_TIME = DEFAULT_TRAVEL_TIME
 
                 for index_stop, a_stop in enumerate(a_route.stops) :
                     stop_id = a_stop.split('/')[-1]
