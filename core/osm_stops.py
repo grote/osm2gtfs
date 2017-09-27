@@ -21,8 +21,10 @@ class Stop(object):
         if self.name is not None:
             rep += self.name
         if self.lat is not None and self.lon is not None:
-            rep += " http://www.openstreetmap.org/?mlat=" + str(self.lat) + "&mlon=" + str(self.lon)
-        rep += " (https://www.openstreetmap.org/" + self.type + "/" + str(self.id) + ")"
+            rep += " http://www.openstreetmap.org/?mlat=" + \
+                str(self.lat) + "&mlon=" + str(self.lon)
+        rep += " (https://www.openstreetmap.org/" + \
+            self.type + "/" + str(self.id) + ")"
         return rep
 
     @staticmethod

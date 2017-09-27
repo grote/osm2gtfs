@@ -23,7 +23,7 @@ class BaseRoute(object):
 
 class Route(BaseRoute):
 
-    def __init__(self, osm, fr, to, stops, master, ref, name, shape, travel_time = None):
+    def __init__(self, osm, fr, to, stops, master, ref, name, shape, travel_time=None):
         BaseRoute.__init__(self, osm, ref, name)
         self.fr = fr
         self.to = to
@@ -78,7 +78,7 @@ class Route(BaseRoute):
 
 class RouteMaster(BaseRoute):
 
-    def __init__(self, osm, ref, name, routes, frequency = None):
+    def __init__(self, osm, ref, name, routes, frequency=None):
         BaseRoute.__init__(self, osm, ref, name)
         self.routes = routes
         self.frequency = frequency

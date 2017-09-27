@@ -49,6 +49,7 @@ def create_stop_point(stop_data, schedule):
     )
     return gtfs_stop_point
 
+
 class StopsCreatorAccra(StopsCreator):
 
     def add_stops_to_schedule(self, schedule, data):
@@ -66,14 +67,14 @@ class StopsCreatorAccra(StopsCreator):
             for a_stop_point in stops_by_name[a_stop_name]:
                 gtfs_stop_point = create_stop_point(a_stop_point, schedule)
                 stop_point_has_parent_location = False
-                for a_stop_area in stop_areas :
+                for a_stop_area in stop_areas:
                     distance_to_parent_station = get_crow_fly_distance(
-                            (a_stop_area.stop_lat, a_stop_area.stop_lon), (a_stop_point.lat, a_stop_point.lon))
+                        (a_stop_area.stop_lat, a_stop_area.stop_lon), (a_stop_point.lat, a_stop_point.lon))
                     if distance_to_parent_station < 500:
                         gtfs_stop_point.parent_station = a_stop_area.stop_id
                         stop_point_has_parent_location = True
                         break
-                if not stop_point_has_parent_location :
+                if not stop_point_has_parent_location:
                     new_sa = create_stop_area(a_stop_point, schedule)
                     gtfs_stop_point.parent_station = new_sa.stop_id
                     stop_areas.append(new_sa)

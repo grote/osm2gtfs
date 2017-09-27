@@ -350,7 +350,8 @@ class OsmConnector(object):
                 stops.append(otype + "/" + str(stop_candidate.ref))
 
         shape = self._generate_shape(route_variant, query_result_set)
-        rv = Route(route_variant.id, fr, to, stops, rm, ref, name, shape, travel_time)
+        rv = Route(route_variant.id, fr, to, stops,
+                   rm, ref, name, shape, travel_time)
         print(rv)
         return rv
 
@@ -530,7 +531,6 @@ class OsmConnector(object):
         return False
 
     def _get_names_for_unnamed_stops(self):
-
         """Intelligently guess stop names for unnamed stops by sourrounding
         street names and amenities.
 
