@@ -1,5 +1,7 @@
 # coding=utf-8
 
+import transitfeed
+
 from core.osm_routes import Route, RouteMaster
 from core.osm_stops import Stop, StopArea
 
@@ -37,25 +39,27 @@ class StopsCreator(object):
         self.add_stops_to_routes(data)
 
     def add_stop(this, schedule, stop, parent_station=None, is_station=False):
-            # Add stop to GTFS object
-            stop_obj = schedule.AddStop(
-                lat=float(stop.lat),
-                lng=float(stop.lon),
-                name=stop.name,
-                stop_id=str(stop.id)
-            )
+
+            stop_dict = {"stop_lat": float(stop.lat),
+                         "stop_lon": float(stop.lon),
+                         "stop_name": stop.name}
 
             if is_station:
-                stop_obj.location_type = "1"
+                stop_dict["stop_id"] = "SA" + str(stop.id)
+                stop_dict["location_type"] = "1"
             else:
-                stop_obj.location_type = ""
+                stop_dict["stop_id"] = str(stop.id)
+                stop_dict["location_type"] = ""
 
             if parent_station is None:
-                stop_obj.parent_station = ""
+                stop_dict["parent_station"] = ""
             else:
-                stop_obj.parent_station = parent_station.stop_id
+                stop_dict["parent_station"] = parent_station.stop_id
 
-            return stop_obj
+            # Add stop to GTFS object
+            stop = transitfeed.Stop(field_dict=stop_dict)
+            schedule.AddStopObject(stop)
+            return stop
 
     def add_stops_to_routes(self, data):
 

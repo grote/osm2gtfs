@@ -381,8 +381,7 @@ class OsmConnector(object):
                              " Please fix in OpenStreetMap\n")
             sys.stderr.write("http://osm.org/relation/" +
                              str(relation.id) + "\n")
-            stop_area = StopArea(relation.id, stop_members,
-                                 "Stop area without name")
+            stop_area = StopArea(relation.id, stop_members, self.stop_no_name)
         else:
             stop_area = StopArea(relation.id, stop_members,
                                  relation.tags["name"])
@@ -438,7 +437,7 @@ class OsmConnector(object):
             /* Return tags for elements */
             );out body;
 
-            /* Select stop area relations */   
+            /* Select stop area relations */
             foreach.nodes(
             rel(bn:"platform")["public_transport"="stop_area"];
             out body;
