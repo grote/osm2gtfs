@@ -1,11 +1,11 @@
 # coding=utf-8
 
-import sys
 import json
-import transitfeed
 from datetime import datetime
+
+import transitfeed
+
 from creators.trips_creator import TripsCreator
-from core.osm_routes import Route, RouteMaster
 
 
 class TripsCreatorIncofer(TripsCreator):

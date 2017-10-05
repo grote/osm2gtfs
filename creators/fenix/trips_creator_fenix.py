@@ -75,7 +75,8 @@ class TripsCreatorFenix(TripsCreator):
                 route.last_update = datetime.strptime(linha['alterado_em'], "%d/%m/%Y")
                 # save duration
                 if linha['tempo_de_percurso'].encode('utf-8') == NO_DURATION:
-                    sys.stderr.write("ERROR: Route has no duration in Fenix data: " + str(route) + "\n")
+                    sys.stderr.write(
+                        "ERROR: Route has no duration in Fenix data: " + str(route) + "\n")
                     continue
                 duration_str = linha['tempo_de_percurso'].replace('aproximado', '')
                 (hours, tmp, minutes) = duration_str.partition(':')

@@ -4,7 +4,6 @@ import os
 import sys
 import json
 import datetime
-import logging
 from calendar import monthrange
 
 
@@ -103,7 +102,6 @@ class Configuration(object):
             except ValueError, e:
                 sys.stderr.write(
                     'Warning: "start_date" from config file %s\n' % str(e))
-                pass
 
         if not start_date:
             # Use first of current month if no start date was specified
@@ -124,7 +122,6 @@ class Configuration(object):
             except ValueError, e:
                 sys.stderr.write(
                     'Warning: "end_date" from config file %s\n' % str(e))
-                pass
 
         if not end_date:
 
