@@ -18,8 +18,8 @@ class Cache(object):
         hard drive.
 
         """
-        if not  os.path.isdir('data'): #checking is the dir exist
-                os.mkdir('data')
+        if not os.path.isdir('data'):  # checking is the dir exist
+            os.mkdir('data')
         with open('data/' + name + '.pkl', 'wb') as f:
             pickle.dump(content, f, pickle.HIGHEST_PROTOCOL)
 

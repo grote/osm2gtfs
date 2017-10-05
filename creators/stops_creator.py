@@ -38,28 +38,28 @@ class StopsCreator(object):
         # Add loose stop objects to route objects
         self.add_stops_to_routes(data)
 
-    def add_stop(this, schedule, stop, parent_station=None, is_station=False):
+    def add_stop(self, schedule, stop, parent_station=None, is_station=False):
 
-            stop_dict = {"stop_lat": float(stop.lat),
-                         "stop_lon": float(stop.lon),
-                         "stop_name": stop.name}
+        stop_dict = {"stop_lat": float(stop.lat),
+                     "stop_lon": float(stop.lon),
+                     "stop_name": stop.name}
 
-            if is_station:
-                stop_dict["stop_id"] = "SA" + str(stop.id)
-                stop_dict["location_type"] = "1"
-            else:
-                stop_dict["stop_id"] = str(stop.id)
-                stop_dict["location_type"] = ""
+        if is_station:
+            stop_dict["stop_id"] = "SA" + str(stop.id)
+            stop_dict["location_type"] = "1"
+        else:
+            stop_dict["stop_id"] = str(stop.id)
+            stop_dict["location_type"] = ""
 
-            if parent_station is None:
-                stop_dict["parent_station"] = ""
-            else:
-                stop_dict["parent_station"] = parent_station.stop_id
+        if parent_station is None:
+            stop_dict["parent_station"] = ""
+        else:
+            stop_dict["parent_station"] = parent_station.stop_id
 
-            # Add stop to GTFS object
-            stop = transitfeed.Stop(field_dict=stop_dict)
-            schedule.AddStopObject(stop)
-            return stop
+        # Add stop to GTFS object
+        stop = transitfeed.Stop(field_dict=stop_dict)
+        schedule.AddStopObject(stop)
+        return stop
 
     def add_stops_to_routes(self, data):
 
@@ -101,5 +101,5 @@ class StopsCreator(object):
             elif type(elem) is StopArea:
                 if stop_id in elem.stop_members:
                     return elem.stop_members[stop_id]
-        else:
-            raise RuntimeError("Unknown stop: " + str(stop))
+            else:
+                raise RuntimeError("Unknown stop: " + str(stop_id))
