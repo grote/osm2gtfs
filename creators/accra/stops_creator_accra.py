@@ -7,7 +7,8 @@ import math
 
 def get_crow_fly_distance(from_tuple, to_tuple):
     """
-    Uses the Haversine formmula to compute distance (https://en.wikipedia.org/wiki/Haversine_formula#The_haversine_formula)
+    Uses the Haversine formmula to compute distance
+    (https://en.wikipedia.org/wiki/Haversine_formula#The_haversine_formula)
     """
     lat1, lon1 = from_tuple
     lat2, lon2 = to_tuple
@@ -49,8 +50,10 @@ def create_stop_point(stop_data, schedule):
     )
     return gtfs_stop_point
 
+
 def get_stop_id(stop):
     return stop.id
+
 
 class StopsCreatorAccra(StopsCreator):
 
@@ -71,7 +74,9 @@ class StopsCreatorAccra(StopsCreator):
                 stop_point_has_parent_location = False
                 for a_stop_area in stop_areas:
                     distance_to_parent_station = get_crow_fly_distance(
-                        (a_stop_area.stop_lat, a_stop_area.stop_lon), (a_stop_point.lat, a_stop_point.lon))
+                        (a_stop_area.stop_lat, a_stop_area.stop_lon),
+                        (a_stop_point.lat, a_stop_point.lon)
+                    )
                     if distance_to_parent_station < 500:
                         gtfs_stop_point.parent_station = a_stop_area.stop_id
                         stop_point_has_parent_location = True
