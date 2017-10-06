@@ -49,6 +49,8 @@ def create_stop_point(stop_data, schedule):
     )
     return gtfs_stop_point
 
+def get_stop_id(stop):
+    return stop.id
 
 class StopsCreatorAccra(StopsCreator):
 
@@ -64,7 +66,7 @@ class StopsCreatorAccra(StopsCreator):
         for a_stop_name in stops_by_name:
             stop_areas = []
 
-            for a_stop_point in stops_by_name[a_stop_name]:
+            for a_stop_point in sorted(stops_by_name[a_stop_name], key=get_stop_id):
                 gtfs_stop_point = create_stop_point(a_stop_point, schedule)
                 stop_point_has_parent_location = False
                 for a_stop_area in stop_areas:
