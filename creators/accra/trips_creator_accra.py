@@ -6,11 +6,10 @@ from creators.trips_creator import TripsCreator
 
 
 class TripsCreatorAccra(TripsCreator):
-    ValueError = None
     service_weekday = None
 
     def add_trips_to_schedule(self, schedule, data):
-        self.ValueError = schedule.GetDefaultServicePeriod()
+        self.service_weekday = schedule.GetDefaultServicePeriod()
         self.service_weekday.SetStartDate(
             self.config['feed_info']['start_date'])
         self.service_weekday.SetEndDate(self.config['feed_info']['end_date'])
@@ -56,7 +55,7 @@ class TripsCreatorAccra(TripsCreator):
                     if not ROUTE_FREQUENCY > 0:
                         print("frequency is invalid for route_master " + str(line.id))
                         ROUTE_FREQUENCY = DEFAULT_ROUTE_FREQUENCY
-                except ValueError as e:
+                except (ValueError, TypeError) as e:
                     print("frequency not a number for route_master " + str(line.id))
                     ROUTE_FREQUENCY = DEFAULT_ROUTE_FREQUENCY
                 trip_gtfs.AddFrequency(
@@ -67,7 +66,7 @@ class TripsCreatorAccra(TripsCreator):
                     if not TRAVEL_TIME > 0:
                         print("travel_time is invalid for route " + str(a_route.id))
                         TRAVEL_TIME = DEFAULT_TRAVEL_TIME
-                except ValueError as e:
+                except (ValueError, TypeError) as e:
                     print("travel_time not a number for route " + str(a_route.id))
                     TRAVEL_TIME = DEFAULT_TRAVEL_TIME
 
