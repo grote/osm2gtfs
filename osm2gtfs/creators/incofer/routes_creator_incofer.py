@@ -5,35 +5,14 @@ from osm2gtfs.creators.routes_creator import RoutesCreator
 
 class RoutesCreatorIncofer(RoutesCreator):
 
-    def add_routes_to_schedule(self, schedule, data):
+    def _get_route_type(self, line):
+        return "Tram"
 
-        # Get routes information
-        lines = data.get_routes()
-        # debug
-        # print("DEBUG: creando itinerarios a partir de", str(len(lines)),
-        #      "lineas")
+    def _get_route_description(self, line):
+        return "Esta línea está a prueba"
 
-        # Loop through all lines (master_routes)
-        for line_ref, line in sorted(lines.iteritems()):
-            route = schedule.AddRoute(
-                short_name=line.route_id.encode('utf-8'),
-                long_name=line.name,
-                # TODO: infer transitfeed "route type" from OSM data
-                route_type="Tram",
-                route_id=line_ref)
+    def _get_route_color(self, line):
+        return "ff0000"
 
-            # AddRoute method add defaut agency as default
-            route.agency_id = schedule.GetDefaultAgency().agency_id
-
-            route.route_desc = "Esta línea está a prueba"
-
-            # TODO: get route_url from OSM or other source.
-            # url = "http://www.incofer.go.cr/tren-urbano-alajuela-rio-segundo"
-
-            # line.route_url = url
-            route.route_color = "ff0000"
-            route.route_text_color = "ffffff"
-
-            # debug
-            # print("información de la linea:", line.name, "agregada.")
-        return
+    def _get_route_text_color(self, line):
+        return "ffffff"
