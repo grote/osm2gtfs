@@ -10,3 +10,6 @@ src
 .idea/*
 !.idea/codeStyleSettings.xml
 *.egg-info
+
+#coverage files
+.coverage
