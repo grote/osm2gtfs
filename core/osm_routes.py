@@ -4,6 +4,12 @@
 class BaseRoute(object):
 
     def __init__(self, osm, ref, name):
+        """
+        Base route initializer
+        :param osm: ?
+        :param ref: ?
+        :param name: Name of the base route.
+        """
         self.id = osm
         self.ref = ref
         if name is not None:
@@ -41,21 +47,41 @@ class Route(BaseRoute):
         rep += "http://www.consorciofenix.com.br/horarios?q=" + str(self.ref)
         return rep
 
+    """
+    Sets the duration of the route
+    :param duration: timedelta
+    """
     def set_duration(self, duration):
         self.duration = duration
 
+    """
+    Returns the first stop from the stops dataset
+    Return None when there are no stops defined
+    :return object
+    """
     def get_first_stop(self):
         if len(self.stops) > 0:
             return self.stops[0]
         else:
             return None
 
+    """
+    Returns the first alt stop from the stops dataset
+    Return ??? when there are no alt defined
+    :return list
+    """
+    # TODO This is fenix specific, so ideally should not be at the core.
+    # This method will not be covered by tests.
     def get_first_alt_stop(self):
         if self.fr is not None:
             return self.fr
         else:
             return "???"
 
+    """
+    Return True if master is defined and it has at leas one route
+    :return bool
+    """
     def has_proper_master(self):
         return self.master is not None and len(self.master.routes) > 1
 
