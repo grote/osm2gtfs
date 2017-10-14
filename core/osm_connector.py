@@ -293,6 +293,12 @@ class OsmConnector(object):
         frequency = None
         if "frequency" in route_master.tags:
             frequency = route_master.tags['frequency']
+
+        if all(member is None for member in members.values()):
+            sys.stderr.write(
+                "No 'master' could be obtained from members. Skipping.\n")
+            members = {}
+
         rm = RouteMaster(route_master.id, ref, name, members, frequency)
         print(rm)
         return rm
