@@ -9,3 +9,4 @@ src
 # Android Studio files
 .idea/*
 !.idea/codeStyleSettings.xml
+*.egg-info

@@ -5,7 +5,7 @@ from datetime import datetime
 
 import transitfeed
 
-from creators.trips_creator import TripsCreator
+from osm2gtfs.creators.trips_creator import TripsCreator
 
 
 class TripsCreatorIncofer(TripsCreator):

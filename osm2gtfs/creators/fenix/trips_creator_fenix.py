@@ -5,8 +5,8 @@ import json
 import re
 import transitfeed
 from datetime import timedelta, datetime
-from creators.trips_creator import TripsCreator
-from core.osm_routes import Route, RouteMaster
+from osm2gtfs.creators.trips_creator import TripsCreator
+from osm2gtfs.core.osm_routes import Route, RouteMaster
 
 DEBUG_ROUTE = ""
 BLACKLIST = [

@@ -2,8 +2,8 @@
 
 import transitfeed
 
-from core.osm_routes import Route, RouteMaster
-from core.osm_stops import Stop, StopArea
+from osm2gtfs.core.osm_routes import Route, RouteMaster
+from osm2gtfs.core.osm_stops import Stop, StopArea
 
 
 class StopsCreator(object):

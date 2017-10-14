@@ -1,11 +1,11 @@
 # coding=utf-8
 
 import importlib
-from creators.agency_creator import AgencyCreator
-from creators.feed_info_creator import FeedInfoCreator
-from creators.routes_creator import RoutesCreator
-from creators.stops_creator import StopsCreator
-from creators.trips_creator import TripsCreator
+from osm2gtfs.creators.agency_creator import AgencyCreator
+from osm2gtfs.creators.feed_info_creator import FeedInfoCreator
+from osm2gtfs.creators.routes_creator import RoutesCreator
+from osm2gtfs.creators.stops_creator import StopsCreator
+from osm2gtfs.creators.trips_creator import TripsCreator
 
 
 class CreatorFactory(object):
@@ -29,7 +29,8 @@ class CreatorFactory(object):
         selector = self.selector
         try:
             module = importlib.import_module(
-                "creators." + selector + ".agency_creator_" + selector)
+                ".creators." + selector + ".agency_creator_" + selector,
+                package="osm2gtfs")
             agency_creator_override = getattr(
                 module, "AgencyCreator" + selector.capitalize())
             print "Agency creator: " + selector.capitalize()
@@ -42,7 +43,8 @@ class CreatorFactory(object):
         selector = self.selector
         try:
             module = importlib.import_module(
-                "creators." + selector + ".feed_info_creator_" + selector)
+                ".creators." + selector + ".feed_info_creator_" + selector,
+                package="osm2gtfs")
             feed_info_creator_override = getattr(
                 module, "FeedInfoCreator" + selector.capitalize())
             print "Feed info creator: " + selector.capitalize()
@@ -55,7 +57,8 @@ class CreatorFactory(object):
         selector = self.selector
         try:
             module = importlib.import_module(
-                "creators." + selector + ".routes_creator_" + selector)
+                ".creators." + selector + ".routes_creator_" + selector,
+                package="osm2gtfs")
             routes_creator_override = getattr(
                 module, "RoutesCreator" + selector.capitalize())
             print "Routes creator: " + selector.capitalize()
@@ -68,7 +71,8 @@ class CreatorFactory(object):
         selector = self.selector
         try:
             module = importlib.import_module(
-                "creators." + selector + ".stops_creator_" + selector)
+                ".creators." + selector + ".stops_creator_" + selector,
+                package="osm2gtfs")
             stops_creator_override = getattr(
                 module, "StopsCreator" + selector.capitalize())
             print "Stops creator: " + selector.capitalize()
@@ -81,7 +85,8 @@ class CreatorFactory(object):
         selector = self.selector
         try:
             module = importlib.import_module(
-                "creators." + selector + ".trips_creator_" + selector)
+                ".creators." + selector + ".trips_creator_" + selector,
+                package="osm2gtfs")
             trips_creator_override = getattr(
                 module, "TripsCreator" + selector.capitalize())
             print "Trips creator: " + selector.capitalize()

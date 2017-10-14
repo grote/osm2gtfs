@@ -2,7 +2,7 @@
 
 from datetime import timedelta, datetime
 
-from creators.trips_creator import TripsCreator
+from osm2gtfs.creators.trips_creator import TripsCreator
 
 
 class TripsCreatorAccra(TripsCreator):

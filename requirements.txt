@@ -1,2 +1,0 @@
-overpy>=0.4
-transitfeed

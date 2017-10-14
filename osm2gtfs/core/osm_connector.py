@@ -4,9 +4,9 @@ import sys
 import overpy
 from collections import OrderedDict
 from transitfeed import util
-from core.cache import Cache
-from core.osm_routes import Route, RouteMaster
-from core.osm_stops import Stop, StopArea
+from osm2gtfs.core.cache import Cache
+from osm2gtfs.core.osm_routes import Route, RouteMaster
+from osm2gtfs.core.osm_stops import Stop, StopArea
 
 
 class OsmConnector(object):
