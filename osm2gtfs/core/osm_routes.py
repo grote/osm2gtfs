@@ -4,8 +4,7 @@
 class BaseRoute(object):
 
     def __init__(self, osm, ref, name):
-        """
-        Base route initializer
+        """Base route initializer
         :param osm: ?
         :param ref: ?
         :param name: Name of the base route.
@@ -39,6 +38,8 @@ class Route(BaseRoute):
         self.travel_time = travel_time
         self.duration = None
 
+    # TODO This has fenix specific information.
+    # It might not be part of osm2gtfs core
     def __repr__(self):
         rep = BaseRoute.__repr__(self)
         if self.stops is not None:
@@ -47,42 +48,38 @@ class Route(BaseRoute):
         rep += "http://www.consorciofenix.com.br/horarios?q=" + str(self.ref)
         return rep
 
-    """
-    Sets the duration of the route
-    :param duration: timedelta
-    """
     def set_duration(self, duration):
+        """Sets the duration of the route
+        :param duration: timedelta
+        """
         self.duration = duration
 
-    """
-    Returns the first stop from the stops dataset
-    Return None when there are no stops defined
-    :return object
-    """
     def get_first_stop(self):
+        """Returns the first stop from the stops dataset
+        Return None when there are no stops defined
+        :return object
+        """
         if len(self.stops) > 0:
             return self.stops[0]
         else:
             return None
 
-    """
-    Returns the first alt stop from the stops dataset
-    Return ??? when there are no alt defined
-    :return list
-    """
     # TODO This is fenix specific, so ideally should not be at the core.
     # This method will not be covered by tests.
     def get_first_alt_stop(self):
+        """Returns the first alt stop from the stops dataset
+        Return ??? when there are no alt defined
+        :return list
+        """
         if self.fr is not None:
             return self.fr
         else:
             return "???"
 
-    """
-    Return True if master is defined and it has at leas one route
-    :return bool
-    """
     def has_proper_master(self):
+        """Returns True if master is defined and it has at leas one route
+        :return bool
+        """
         return self.master is not None and len(self.master.routes) > 1
 
     # TODO move to debug class?
