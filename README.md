@@ -44,6 +44,14 @@ Install dependencies by running
 * https://github.com/DinoTools/python-overpy
 * https://github.com/google/transitfeed
 
+Run the tests
+-------
+
+Run the tests to make sure everything is correct.
+
+  $ python -m unittest discover -v -t .
+
+
 License
 -------
 
