@@ -24,7 +24,7 @@ class Line(object):
     route_color = attr.ib(default="FFFFFF")
     route_text_color = attr.ib(default="000000")
     osm_url = attr.ib(default="http://osm.org/relation/" + str(osm_id))
-    frequency = attr.ib()
+    frequency = attr.ib(default=None)
 
     # Related route variants
     _itineraries = []
@@ -48,7 +48,8 @@ class Itinerary(object):
 
     """
     osm_id = attr.ib()
-    ref = attr.ib()
+    route_id = attr.ib()
+    name = attr.ib()
     fr = attr.ib()
     to = attr.ib()
     shape = attr.ib()
@@ -63,5 +64,14 @@ class Itinerary(object):
     # Useful information for further calculation
     duration = attr.ib(default=None)
 
+    # All stop osm ids of Itinerary
+    _stops = []
+
+    def add_stop(self, stop):
+        self._stops.append(stop.osm_id)
+
     def get_stop_by_position(self, pos):
         raise NotImplementedError("Should have implemented this")
+
+    def get_stops(self):
+        return self._stops
