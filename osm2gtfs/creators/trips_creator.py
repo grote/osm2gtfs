@@ -12,9 +12,8 @@ class TripsCreator(object):
             rep += str(self.config) + " | "
         return rep
 
-    def add_trips_to_feed(self, feed, data):
-        raise NotImplementedError("Should have implemented this")
 
+    def add_trips_to_feed(self, feed, data):
         """
         route_id  # Required: From Line
         service_id  # Required: To be generated
@@ -23,10 +22,11 @@ class TripsCreator(object):
         trip_headsign # Itinerary "to"
         direction_id  # Order of tinieraries in Line object
         wheelchair_accessible  # Itinerary "wheelchair_accessible"
-        bikes_allowed: # Itinerary "bikes_allowed"
+        bikes_allowed # Itinerary "bikes_allowed"
         trip_short_name  # To be avoided!
         block_id  # To be avoided!
         """
+        raise NotImplementedError("Should have implemented this")
 
     @staticmethod
     def interpolate_stop_times(trip):

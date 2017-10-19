@@ -2,8 +2,8 @@
 
 import transitfeed
 
-from osm2gtfs.core.osm_routes import Route, RouteMaster
-from osm2gtfs.core.osm_stops import Stop, StopArea
+from osm2gtfs.core.routes import Itinerary, Line
+from osm2gtfs.core.stops import Stop, StopArea
 
 
 class StopsCreator(object):
@@ -75,7 +75,7 @@ class StopsCreator(object):
         """
         Fill a route object with stop objects for of linked stop ids
         """
-        if isinstance(route, Route):
+        if isinstance(route, Itinerary):
             i = 0
             for stop in route.stops:
                 # Replace stop id with Stop objects
@@ -83,9 +83,10 @@ class StopsCreator(object):
                 route.stops[i] = self._get_stop(stop, stops)
                 i += 1
 
-        elif isinstance(route, RouteMaster):
-            for route_variant_ref, route_variant in route.routes.iteritems():
-                self._fill_stops(stops, route_variant)
+        elif isinstance(route, Line):
+            itineraries = route.get_itineraries()
+            for itinerary_ref, itinerary in itineraries:
+                self._fill_stops(stops, itinerary)
 
         else:
             raise RuntimeError("Unknown Route: " + str(route))

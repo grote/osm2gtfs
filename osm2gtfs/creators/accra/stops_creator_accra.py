@@ -35,7 +35,7 @@ def create_stop_area(stop_data, feed):
         lat=float(stop_data.lat),
         lng=float(stop_data.lon),
         name=stop_data.name,
-        stop_id="SA" + str(stop_data.id)
+        stop_id="SA" + str(stop_data.osm_id)
     )
     gtfs_stop_area.location_type = 1
     return gtfs_stop_area
@@ -46,13 +46,13 @@ def create_stop_point(stop_data, feed):
         lat=float(stop_data.lat),
         lng=float(stop_data.lon),
         name=stop_data.name,
-        stop_id=str(stop_data.id)
+        stop_id=str(stop_data.osm_id)
     )
     return gtfs_stop_point
 
 
 def get_stop_id(stop):
-    return stop.id
+    return stop.osm_id
 
 
 class StopsCreatorAccra(StopsCreator):
