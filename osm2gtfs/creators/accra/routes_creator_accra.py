@@ -1,6 +1,6 @@
 # coding=utf-8
 
-from creators.routes_creator import RoutesCreator
+from osm2gtfs.creators.routes_creator import RoutesCreator
 
 
 class RoutesCreatorAccra(RoutesCreator):

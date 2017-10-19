@@ -25,24 +25,27 @@ OpenStreetMap. And by extending the creator classes in code, different
 approaches for time information handling can be easily implemented. You can help
 with pull requests to improve this script.
 
-Use
+Install
 ------------
 
-    python osm2gtfs.py -c <config-file>
+Install by running
 
-Example:
-
-    $ python osm2gtfs.py -c creators/fenix/fenix.json
+    pip install -e .
 
 Requirements
 ------------
-
-Install dependencies by running
-
-    pip install -r requirements.txt
-
+Automatically installed by the previous step:
 * https://github.com/DinoTools/python-overpy
 * https://github.com/google/transitfeed
+
+Use
+------------
+
+    osm2gtfs -c <config-file>
+
+Example:
+
+    $ osm2gtfs -c osm2gtfs/creators/fenix/fenix.json
 
 License
 -------

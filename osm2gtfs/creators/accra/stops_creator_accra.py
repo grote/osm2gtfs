@@ -1,7 +1,7 @@
 # coding=utf-8
 
 
-from creators.stops_creator import StopsCreator
+from osm2gtfs.creators.stops_creator import StopsCreator
 import math
 
 
