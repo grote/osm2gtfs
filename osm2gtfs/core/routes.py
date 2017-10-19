@@ -24,12 +24,14 @@ class Line(object):
     route_color = attr.ib(default="FFFFFF")
     route_text_color = attr.ib(default="000000")
     osm_url = attr.ib(default="http://osm.org/relation/" + str(osm_id))
-    frequency = attr.ib()
+    frequency = attr.ib(default=None)
 
     # Related route variants
-    _itineraries = []
+    _itineraries = attr.ib(default=attr.Factory(list))
 
     def add_itinerary(self, itinerary):
+        if self.route_id.encode('utf-8') != itinerary.route_id.encode('utf-8'):
+            raise ValueError('Itinerary route ID (' + itinerary.route_id + ') does not match Line route ID (' + self.route_id + ')')
         self._itineraries.append(itinerary)
 
     def get_itineraries(self):
@@ -48,7 +50,8 @@ class Itinerary(object):
 
     """
     osm_id = attr.ib()
-    ref = attr.ib()
+    route_id = attr.ib()
+    name = attr.ib()
     fr = attr.ib()
     to = attr.ib()
     shape = attr.ib()
@@ -63,5 +66,14 @@ class Itinerary(object):
     # Useful information for further calculation
     duration = attr.ib(default=None)
 
+    # All stop objects of itinerary
+    _stop_objects = attr.ib(default=attr.Factory(list))
+
+    def add_stop(self, stop):
+        self._stop_objects.append(stop)
+
     def get_stop_by_position(self, pos):
         raise NotImplementedError("Should have implemented this")
+
+    def get_stops(self):
+        return self._stop_objects

@@ -22,8 +22,8 @@ class StopArea(object):
     name = attr.ib()
     lat = attr.ib()
     lon = attr.ib()
-    
-    _stop_members = []
+
+    stop_members = attr.ib(default=attr.Factory(list))
 
     def __init__(self, osm_id, stop_members, name=None):
         self.osm_id = osm_id
@@ -32,4 +32,6 @@ class StopArea(object):
         else:
             self.name = name
         self.stop_members = stop_members
-        self.lat, self.lon = Stop.get_center_of_nodes(stop_members.values())
+
+        from osm2gtfs.core.osm_connector import OsmConnector
+        self.lat, self.lon = OsmConnector.get_center_of_nodes(self.stop_members.values())
