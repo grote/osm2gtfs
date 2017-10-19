@@ -5,7 +5,7 @@ import re
 import transitfeed
 from datetime import timedelta, datetime
 from osm2gtfs.creators.trips_creator import TripsCreator
-from osm2gtfs.core.osm_routes import Route, RouteMaster
+from osm2gtfs.core.routes import Line, Itinerary
 
 DEBUG_ROUTE = ""
 BLACKLIST = [
@@ -82,7 +82,7 @@ class TripsCreatorFenix(TripsCreator):
 
     def add_route(self, feed, route, horarios, operacoes):
         line = feed.AddRoute(
-            short_name=route.ref,
+            short_name=route.route_id,
             long_name=route.name.decode('utf8'),
             route_type="Bus")
         line.agency_id = feed.GetDefaultAgency().agency_id
@@ -139,7 +139,7 @@ class TripsCreatorFenix(TripsCreator):
         if horarios is None or len(horarios) == 0:
             return
 
-        if isinstance(route, RouteMaster):
+        if isinstance(route, Line):
             # recurse into "Ida" and "Volta" routes
             for sub_route in route.routes.values():
                 self.add_trips_by_day(feed, line, service, sub_route, horarios, day)
@@ -270,7 +270,7 @@ class TripsCreatorFenix(TripsCreator):
 
     @staticmethod
     def add_trip_stops(feed, trip, route, start_time, end_time):
-        if isinstance(route, Route):
+        if isinstance(route, Itinerary):
             i = 1
             for stop in route.stops:
                 if i == 1:
