@@ -2,7 +2,7 @@
 import unittest
 from collections import OrderedDict
 from datetime import timedelta
-from core.osm_routes import Route, RouteMaster
+from osm2gtfs.core.osm_routes import Route, RouteMaster
 
 
 class TestOsmRoutes(unittest.TestCase):
