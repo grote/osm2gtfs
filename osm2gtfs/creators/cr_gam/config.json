@@ -33,6 +33,6 @@
         "end_date": "20170910"
     },
     "schedule_source": "https://raw.githubusercontent.com/jamescr/incofer-datos/master/input_incofer.json",
-    "output_file": "data/cr-incofer.zip",
-    "selector": "incofer"
+    "output_file": "data/cr-gam.zip",
+    "selector": "cr_gam"
 }

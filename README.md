@@ -26,10 +26,10 @@ for more information.
 Included cities
 -----------------
 
-* [Florianópolis, Brazil](./osm2gtfs/creators/fenix/fenix.json)
-* [Suburban trains in Costa Rica](./osm2gtfs/creators/incofer/incofer.json)
-* [Accra, Ghana](./osm2gtfs/creators/accra/accra.json)
-* [Managua, Ciudad Sandino](./osm2gtfs/creators/managua/managua.json) and [Estelí](./osm2gtfs/creators/esteli/esteli.json) in Nicaragua
+* [Florianópolis, Brazil](./osm2gtfs/creators/br_florianopolis/config.json)
+* [Suburban trains in Costa Rica](./osm2gtfs/creators/cr_gam/config.json)
+* [Accra, Ghana](./osm2gtfs/creators/gh_accra/config.json)
+* [Managua, Ciudad Sandino](./osm2gtfs/creators/ni_managua/config.json) and [Estelí](./osm2gtfs/creators/ni_esteli/config.json) in Nicaragua
 
 *Soon, also in your city*
 
@@ -53,7 +53,7 @@ Use
 
 Example:
 
-    $ osm2gtfs -c osm2gtfs/creators/fenix/fenix.json
+    osm2gtfs -c osm2gtfs/creators/br_florianopolis/config.json
 
 License
 -------

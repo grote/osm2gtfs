@@ -3,7 +3,7 @@
 from osm2gtfs.creators.routes_creator import RoutesCreator
 
 
-class RoutesCreatorAccra(RoutesCreator):
+class RoutesCreatorGhAccra(RoutesCreator):
 
     def add_routes_to_feed(self, feed, data):
         # Get routes information

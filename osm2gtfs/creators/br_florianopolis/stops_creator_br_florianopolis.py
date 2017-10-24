@@ -3,7 +3,7 @@
 from osm2gtfs.creators.stops_creator import StopsCreator
 
 
-class StopsCreatorFenix(StopsCreator):
+class StopsCreatorBrFlorianopolis(StopsCreator):
 
     # Override construction of stop_id
     def _define_stop_id(self, stop):

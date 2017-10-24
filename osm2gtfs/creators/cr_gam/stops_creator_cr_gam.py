@@ -3,7 +3,7 @@
 from osm2gtfs.creators.stops_creator import StopsCreator
 
 
-class StopsCreatorIncofer(StopsCreator):
+class StopsCreatorCrGam(StopsCreator):
 
     # Override construction of stop_id
     def _define_stop_id(self, stop):

@@ -7,7 +7,7 @@ import transitfeed
 from osm2gtfs.creators.trips_creator import TripsCreator
 
 
-class TripsCreatorIncofer(TripsCreator):
+class TripsCreatorCrGam(TripsCreator):
 
     def add_trips_to_feed(self, feed, data):
 

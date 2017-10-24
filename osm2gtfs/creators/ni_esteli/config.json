@@ -30,6 +30,6 @@
         "version":  "0.1"
     },
     "schedule_source": "https://github.com/mapanica/pt-data-esteli/raw/master/timetable.json",
-    "output_file": "data/ni-esteli.zip",
-    "selector": "esteli"
+    "output_file": "data/ni-esteli-gtfs.zip",
+    "selector": "ni_esteli"
 }

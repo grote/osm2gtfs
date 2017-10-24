@@ -7,7 +7,7 @@ from osm2gtfs.core.helper import Helper
 from osm2gtfs.core.elements import Line
 
 
-class TripsCreatorAccra(TripsCreator):
+class TripsCreatorGhAccra(TripsCreator):
     service_weekday = None
 
     def add_trips_to_feed(self, feed, data):
