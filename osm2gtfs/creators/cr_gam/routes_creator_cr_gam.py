@@ -5,7 +5,7 @@ from osm2gtfs.core.elements import Line, Itinerary, Station, Stop
 from osm2gtfs.creators.routes_creator import RoutesCreator
 
 
-class RoutesCreatorIncofer(RoutesCreator):
+class RoutesCreatorCrGam(RoutesCreator):
 
     def add_routes_to_feed(self, feed, data):
         '''

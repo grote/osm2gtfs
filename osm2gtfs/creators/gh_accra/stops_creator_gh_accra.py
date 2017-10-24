@@ -31,7 +31,7 @@ def get_stop_id(stop):
     return stop.osm_id
 
 
-class StopsCreatorAccra(StopsCreator):
+class StopsCreatorGhAccra(StopsCreator):
 
     def add_stops_to_feed(self, feed, data):
         stops = data.get_stops()

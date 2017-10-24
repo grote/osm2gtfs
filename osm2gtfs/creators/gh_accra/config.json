@@ -30,6 +30,6 @@
         "start_date": "20170901",
         "end_date": "20180730"
     },
-    "output_file": "data/accra.zip",
-    "selector": "accra"
+    "output_file": "data/gh-accra.zip",
+    "selector": "gh_accra"
 }

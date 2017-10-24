@@ -2,7 +2,7 @@
 *.log
 *.zip
 *.pkl
-config.json
+./config.json
 data
 src
 

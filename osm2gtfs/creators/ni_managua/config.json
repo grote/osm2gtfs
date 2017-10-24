@@ -34,5 +34,5 @@
     },
     "schedule_source": "https://raw.githubusercontent.com/mapanica/pt-data-managua/master/timetable.json",
     "output_file": "data/ni-managua-gtfs.zip",
-    "selector": "managua"
+    "selector": "ni_managua"
 }

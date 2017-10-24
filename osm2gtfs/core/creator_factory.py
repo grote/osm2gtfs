@@ -28,13 +28,14 @@ class CreatorFactory(object):
 
     def get_agency_creator(self):
         selector = self.selector
+
         try:
             module = importlib.import_module(
                 ".creators." + selector + ".agency_creator_" + selector,
                 package="osm2gtfs")
             agency_creator_override = getattr(
-                module, "AgencyCreator" + selector.capitalize())
-            print("Agency creator: " + selector.capitalize())
+                module, "AgencyCreator" + self._generate_class_name(selector))
+            print("Agency creator: " + selector)
             return agency_creator_override(self.config)
         except ImportError:
             print("Agency creator: Default")
@@ -42,13 +43,14 @@ class CreatorFactory(object):
 
     def get_feed_info_creator(self):
         selector = self.selector
+
         try:
             module = importlib.import_module(
                 ".creators." + selector + ".feed_info_creator_" + selector,
                 package="osm2gtfs")
             feed_info_creator_override = getattr(
-                module, "FeedInfoCreator" + selector.capitalize())
-            print("Feed info creator: " + selector.capitalize())
+                module, "FeedInfoCreator" + self._generate_class_name(selector))
+            print("Feed info creator: " + selector)
             return feed_info_creator_override(self.config)
         except ImportError:
             print("Feed info creator: Default")
@@ -56,13 +58,14 @@ class CreatorFactory(object):
 
     def get_routes_creator(self):
         selector = self.selector
+
         try:
             module = importlib.import_module(
                 ".creators." + selector + ".routes_creator_" + selector,
                 package="osm2gtfs")
             routes_creator_override = getattr(
-                module, "RoutesCreator" + selector.capitalize())
-            print("Routes creator: " + selector.capitalize())
+                module, "RoutesCreator" + self._generate_class_name(selector))
+            print("Routes creator: " + selector)
             return routes_creator_override(self.config)
         except ImportError:
             print("Routes creator: Default")
@@ -70,13 +73,14 @@ class CreatorFactory(object):
 
     def get_stops_creator(self):
         selector = self.selector
+
         try:
             module = importlib.import_module(
                 ".creators." + selector + ".stops_creator_" + selector,
                 package="osm2gtfs")
             stops_creator_override = getattr(
-                module, "StopsCreator" + selector.capitalize())
-            print("Stops creator: " + selector.capitalize())
+                module, "StopsCreator" + self._generate_class_name(selector))
+            print("Stops creator: " + selector)
             return stops_creator_override(self.config)
         except ImportError:
             print("Stops creator: Default")
@@ -84,13 +88,14 @@ class CreatorFactory(object):
 
     def get_schedule_creator(self):
         selector = self.selector
+
         try:
             module = importlib.import_module(
                 ".creators." + selector + ".schedule_creator_" + selector,
                 package="osm2gtfs")
             schedule_creator_override = getattr(
-                module, "ScheduleCreator" + selector.capitalize())
-            print("Schedule creator: " + selector.capitalize())
+                module, "ScheduleCreator" + self._generate_class_name(selector))
+            print("Schedule creator: " + selector)
             return schedule_creator_override(self.config)
         except ImportError:
             print("Schedule creator: Default")
@@ -98,14 +103,30 @@ class CreatorFactory(object):
 
     def get_trips_creator(self):
         selector = self.selector
+
         try:
             module = importlib.import_module(
                 ".creators." + selector + ".trips_creator_" + selector,
                 package="osm2gtfs")
             trips_creator_override = getattr(
-                module, "TripsCreator" + selector.capitalize())
-            print("Trips creator: " + selector.capitalize())
+                module, "TripsCreator" + self._generate_class_name(selector))
+            print("Trips creator: " + selector)
             return trips_creator_override(self.config)
         except ImportError:
             print("Trips creator: Default")
             return TripsCreator(self.config)
+
+    @staticmethod
+    def _generate_class_name(selector):
+        """
+        Converts the underscore selector into class names sticking to Python's
+        naming convention.
+        """
+        if "_" in selector:
+            split_selector = selector.split("_")
+            class_name = str()
+            for part in split_selector:
+                class_name += part.capitalize()
+        else:
+            class_name = selector.capitalize()
+        return class_name

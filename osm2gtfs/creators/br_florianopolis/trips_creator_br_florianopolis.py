@@ -25,10 +25,10 @@ SUNDAY = "Domingo"
 NO_DURATION = "não encontrado"
 
 
-class TripsCreatorFenix(TripsCreator):
+class TripsCreatorBrFlorianopolis(TripsCreator):
 
     def __init__(self, config):
-        super(TripsCreatorFenix, self).__init__(config)
+        super(TripsCreatorBrFlorianopolis, self).__init__(config)
 
         self.start_date = datetime.strptime(self.config['feed_info']['start_date'], "%Y%m%d")
 
