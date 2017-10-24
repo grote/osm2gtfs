@@ -10,3 +10,6 @@ src
 .idea/*
 !.idea/codeStyleSettings.xml
 *.egg-info
+
+Pipfile
+Pipfile.lock
