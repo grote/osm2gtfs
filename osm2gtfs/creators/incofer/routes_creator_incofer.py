@@ -16,7 +16,7 @@ class RoutesCreatorIncofer(RoutesCreator):
         # Loop through all lines (master_routes)
         for line_ref, line in sorted(lines.iteritems()):
             route = schedule.AddRoute(
-                short_name=line.ref.encode('utf-8'),
+                short_name=line.route_id.encode('utf-8'),
                 long_name=line.name,
                 # TODO: infer transitfeed "route type" from OSM data
                 route_type="Tram",

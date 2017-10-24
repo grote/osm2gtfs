@@ -13,4 +13,16 @@ class RoutesCreator(object):
         return rep
 
     def add_routes_to_schedule(self, schedule, data):
+        """
+        route_id  # Required: From Line
+        route_type  # Required: From Line
+
+        route_short_name  # Required: To be generated from Line or Itinerary
+        route_long_name  # Required: To be generated from Line or Itinerary
+
+        route_desc # From Line
+        route_url  # From Line
+        route_color # From Line
+        route_text_color  # From Line
+        """
         raise NotImplementedError("Should have implemented this")
