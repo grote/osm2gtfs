@@ -61,7 +61,8 @@ class StopsCreatorAccra(StopsCreator):
         stops = data.get_stops()
         stops_by_name = {}
 
-        for a_stop in stops.values():
+        for a_stop_id, a_stop in stops.items():
+            a_stop.osm_id = a_stop_id
             if a_stop.name not in stops_by_name:
                 stops_by_name[a_stop.name] = []
             stops_by_name[a_stop.name].append(a_stop)

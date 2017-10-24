@@ -17,3 +17,4 @@ setup(
         [console_scripts]
         osm2gtfs = osm2gtfs.osm2gtfs:main
     '''
+)
