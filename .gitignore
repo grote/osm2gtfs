@@ -11,5 +11,8 @@ src
 !.idea/codeStyleSettings.xml
 *.egg-info
 
+Pipfile
+Pipfile.lock
+
 #coverage files
 .coverage
