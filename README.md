@@ -47,6 +47,22 @@ Example:
 
     $ osm2gtfs -c osm2gtfs/creators/fenix/fenix.json
 
+Run the tests
+-------
+
+Run the tests to make sure everything is correct.
+
+  $ python -m unittest discover -v -t .
+
+
+Run the tests
+-------
+
+Run the tests to make sure everything is correct.
+
+  $ python -m unittest discover -v -t .
+
+
 License
 -------
 

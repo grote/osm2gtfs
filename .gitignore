@@ -13,3 +13,6 @@ src
 
 Pipfile
 Pipfile.lock
+
+#coverage files
+.coverage
