@@ -3,10 +3,11 @@
 import sys
 import overpy
 from collections import OrderedDict
+from math import cos, sin, atan2, sqrt, radians, degrees
 from transitfeed import util
 from osm2gtfs.core.cache import Cache
-from osm2gtfs.core.osm_routes import Route, RouteMaster
-from osm2gtfs.core.osm_stops import Stop, StopArea
+from osm2gtfs.core.routes import Itinerary, Line
+from osm2gtfs.core.stops import Stop, StopArea
 
 
 class OsmConnector(object):
@@ -41,7 +42,7 @@ class OsmConnector(object):
         # tags from config file for querying
         self.tags = ''
         for key, value in config["query"].get("tags", {}).iteritems():
-            self.tags += str('["' + key + '" = "' + value + '"]')
+            self.tags += unicode('["' + key + '" = "' + value + '"]')
         if not self.tags:
             # fallback
             self.tags = '["public_transport:version" = "2"]'
@@ -84,8 +85,8 @@ class OsmConnector(object):
         Data about routes is getting obtained from OpenStreetMap through the
         Overpass API, based on the configuration from the config file.
 
-        Then this data gets prepared by building up objects of RouteMaster and
-        RouteVariant objects that are related to each other.
+        Then this data gets prepared by building up objects of Line and
+        Itinerary objects that are related to each other.
 
         It uses caching to leverage fast performance and spare the Overpass
         API. Special commands are used to refresh cached data.
@@ -94,8 +95,8 @@ class OsmConnector(object):
         :param refresh: A simple boolean indicating a data refresh or use of
             caching if possible.
 
-        :return routes: A dictionary of RouteMaster objects with related
-            RouteVariant objects constituting the tree of data.
+        :return routes: A dictionary of Line objects with related
+            Itinerary objects constituting the tree of data.
 
         """
         # Preferably return cached data about routes
@@ -125,53 +126,62 @@ class OsmConnector(object):
 
         # Build routes from master relations
         for rmid, route_master in route_masters.iteritems():
-            members = OrderedDict()
+            itineraries = OrderedDict()
 
             # Build route variant members
             for member in route_master.members:
 
+                # Create Itinerary objects from member route variants
                 if member.ref in route_variants:
                     rv = route_variants.pop(member.ref)
-                    members[rv.id] = self._build_route_variant(rv, result)
+                    itineraries[rv.id] = self._build_itinerary(rv, result)
 
-                # Route master member was already used before or is not valid
+                # Route variant was already used or is not valid
                 else:
                     rv = result.get_relations(member.ref)
                     if bool(rv):
                         rv = rv.pop()
-                        sys.stderr.write("Route variant was assigned again:\n")
+                        sys.stderr.write("Itinerary was assigned again:\n")
                         sys.stderr.write(
                             "http://osm.org/relation/" + str(rv.id) + "\n")
-                        members[rv.id] = self._build_route_variant(rv, result)
+                        itineraries[rv.id] = self._build_itinerary(rv, result)
                     else:
                         sys.stderr.write(
-                            "Member relation is not a valid route variant:\n")
-                        sys.stderr.write("http://osm.org/relation/" +
-                                         str(member.ref) + "\n")
+                            "Member relation is not a valid itinerary:\n")
+                        sys.stderr.write("http://osm.org/relation/" + str(member.ref) + "\n")
 
-            rm = self._build_route_master(route_master, members)
+            # Create Line object from route master
+            line = self._build_line(route_master, itineraries)
 
-            # Make sure ref number is not already taken
-            if rm.ref in self.routes:
+            # Make sure route_id (ref) number is not already taken
+            if line.route_id in self.routes:
                 sys.stderr.write("'Ref' of route_master already taken\n")
                 sys.stderr.write(
                     "http://osm.org/relation/" + str(route_master.id) + "\n")
                 sys.stderr.write("Skipped. Please fix in OpenStreetMap\n")
             else:
-                self.routes[rm.ref] = rm
+                self.routes[line.route_id] = line
 
         # Build routes from variants (missing master relation)
         for rvid, route_variant in route_variants.iteritems():
-            sys.stderr.write("Route (variant) without masters\n")
-            rv = self._build_route_variant(route_variant, result)
-            # Make sure ref number is not already taken
-            if rv.ref in self.routes:
-                sys.stderr.write("Route (variant) with existing 'Ref'\n")
+            sys.stderr.write("Itinerary without master\n")
+            sys.stderr.write(
+                "http://osm.org/relation/" + str(route_variant.id) + "\n")
+            sys.stderr.write("Please fix in OpenStreetMap\n")
+            itinerary = self._build_itinerary(route_variant, result)
+
+            # Make sure route_id (ref) number is not already taken
+            if itinerary.route_id in self.routes:
+                sys.stderr.write("Itinerary with existing route id (ref)\n")
                 sys.stderr.write(
                     "http://osm.org/relation/" + str(route_variant.id) + "\n")
                 sys.stderr.write("Skipped. Please fix in OpenStreetMap\n")
             else:
-                self.routes[rv.ref] = rv
+                # Create Line from route variant
+                itineraries = OrderedDict()
+                itineraries[itinerary.osm_id] = itinerary
+                line = self._build_line(route_variant, itineraries)
+                self.routes[line.route_id] = line
 
         # Cache data
         Cache.write_data('routes-' + self.selector, self.routes)
@@ -259,48 +269,61 @@ class OsmConnector(object):
 
         return self.stops
 
-    def _build_route_master(self, route_master, members):
-        """Helper function to build a RouteMaster object
+    def _build_line(self, route_master, itineraries):
+        """Helper function to build a Line object
 
-        Returns a initiated RouteMaster object from raw data
+        Returns a initiated Line object from raw data
 
         """
         if 'ref' in route_master.tags:
             ref = route_master.tags['ref']
         else:
             sys.stderr.write(
-                "RouteMaster without 'ref'. Please fix in OpenStreetMap\n")
+                "Relation without 'ref'. Please fix in OpenStreetMap\n")
             sys.stderr.write(
                 "http://osm.org/relation/" + str(route_master.id) + "\n")
 
-            # Check if a ref can be taken from one of the members
+            # Check if a ref can be taken from one of the itineraries
             ref = False
-            for member in list(members.values()):
-                if not ref and member.ref:
-                    ref = member.ref
+            for itinerary in list(itineraries.values()):
+                if not ref and itinerary.route_id:
+                    ref = itinerary.route_id
                     sys.stderr.write(
                         "Using 'ref' from member variant instead\n")
-                    sys.stderr.write(
-                        "http://osm.org/relation/" + str(member.id) + "\n")
+                    sys.stderr.write(itinerary.osm_url + "\n")
 
             # Ignore whole Line if no reference number could be obtained
             if not ref:
                 sys.stderr.write(
-                    "No 'ref' could be obtained from members. Skipping.\n")
+                    "No 'ref' could be obtained. Skipping whole route.\n")
                 return
 
         name = route_master.tags['name']
         frequency = None
         if "frequency" in route_master.tags:
             frequency = route_master.tags['frequency']
-        rm = RouteMaster(route_master.id, ref, name, members, frequency)
-        print(rm)
-        return rm
 
-    def _build_route_variant(self, route_variant, query_result_set, rm=None):
-        """Helper function to build a RouteVariant object
+        if 'route_master' in route_master.tags:
+            route_type = route_master.tags['route_master'].capitalize()
 
-        Returns a initiated RouteVariant object from raw data
+        # If there was no route_master present we have a route relation here
+        elif 'route' in route_master.tags:
+            route_type = route_master.tags['route'].capitalize()
+
+        # Create Line (route master) object
+        line = Line(osm_id=route_master.id, route_id=ref,
+                    name=name, route_type=route_type, frequency=frequency)
+
+        # Add Itinerary objects (route variants) to Line (route master)
+        for itinerary in list(itineraries.values()):
+            line.add_itinerary(itinerary)
+
+        return line
+
+    def _build_itinerary(self, route_variant, query_result_set):
+        """Helper function to build a Itinerary object
+
+        Returns a initiated Itinerary object from raw data
 
         """
         if 'ref' in route_variant.tags:
@@ -310,6 +333,8 @@ class OsmConnector(object):
                 "RouteVariant without 'ref': " + str(route_variant.id) + "\n")
             sys.stderr.write(
                 "http://osm.org/relation/" + str(route_variant.id) + "\n")
+            sys.stderr.write(
+                "Whole Itinerary skipped. Please fix in OpenStreetMap\n")
             return
 
         if 'from' in route_variant.tags:
@@ -345,14 +370,14 @@ class OsmConnector(object):
                     otype = "way"
 
                 else:
-                    raise RuntimeError("Unknown type: " + str(stop_candidate))
+                    raise RuntimeError("Unknown type of itinerary member: " + str(stop_candidate))
 
                 stops.append(otype + "/" + str(stop_candidate.ref))
 
         shape = self._generate_shape(route_variant, query_result_set)
-        rv = Route(route_variant.id, fr, to, stops,
-                   rm, ref, name, shape, travel_time)
-        print(rv)
+        rv = Itinerary(osm_id=route_variant.id, fr=fr,
+                       to=to, stops=stops, shape=shape, route_id=ref,
+                       name=name, travel_time=travel_time)
         return rv
 
     def _build_stop(self, stop, stop_type):
@@ -368,7 +393,7 @@ class OsmConnector(object):
 
         # Ways don't have coordinates and they have to be calculated
         if stop_type == "way":
-            (stop.lat, stop.lon) = Stop.get_center_of_nodes(stop.get_nodes())
+            (stop.lat, stop.lon) = OsmConnector.get_center_of_nodes(stop.get_nodes())
 
         s = Stop(stop.id, "node", stop.tags['name'], stop.lat, stop.lon)
         return s
@@ -382,8 +407,13 @@ class OsmConnector(object):
         for member in relation.members:
             if (isinstance(member, overpy.RelationNode) and
                member.role == "platform"):
-                stop = self.stops.pop("node/" + str(member.ref))
-                stop_members["node/" + str(member.ref)] = stop
+                if "node/" + str(member.ref) in self.stops:
+                    stop = self.stops.pop("node/" + str(member.ref))
+                    stop_members["node/" + str(member.ref)] = stop
+                else:
+                    sys.stderr.write("Stop not found in stops: ")
+                    sys.stderr.write("http://osm.org/node/" +
+                                     str(member.ref) + "\n")
 
         if 'name' not in relation.tags:
             sys.stderr.write("Stop area without name." +
@@ -543,7 +573,7 @@ class OsmConnector(object):
             # If there is no name, query one intelligently from OSM
             if stop.name == "[" + self.stop_no_name + "]":
                 self._find_best_name_for_unnamed_stop(stop)
-                print stop
+                print(stop)
 
                 # Cache stops with newly created stop names
                 Cache.write_data('stops-' + self.selector, self.stops)
@@ -598,7 +628,7 @@ class OsmConnector(object):
         winner_distance = sys.maxint
         for candidate in candidates:
             if isinstance(candidate, overpy.Way):
-                lat, lon = Stop.get_center_of_nodes(
+                lat, lon = OsmConnector.get_center_of_nodes(
                     candidate.get_nodes(resolve_missing=True))
                 distance = util.ApproximateDistance(
                     lat,
@@ -619,3 +649,29 @@ class OsmConnector(object):
 
         # take name from winner
         stop.name = winner.tags["name"].encode('utf-8')
+
+    @staticmethod
+    def get_center_of_nodes(nodes):
+        """Helper function to get center coordinates of a group of nodes
+
+        """
+        x = 0
+        y = 0
+        z = 0
+
+        for node in nodes:
+            lat = radians(float(node.lat))
+            lon = radians(float(node.lon))
+
+            x += cos(lat) * cos(lon)
+            y += cos(lat) * sin(lon)
+            z += sin(lat)
+
+        x = float(x / len(nodes))
+        y = float(y / len(nodes))
+        z = float(z / len(nodes))
+
+        center_lat = degrees(atan2(z, sqrt(x * x + y * y)))
+        center_lon = degrees(atan2(y, x))
+
+        return center_lat, center_lon
