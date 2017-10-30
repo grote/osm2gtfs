@@ -13,3 +13,7 @@ src
 
 Pipfile
 Pipfile.lock
+
+__pycache__
+*.pbf
+*.csv
