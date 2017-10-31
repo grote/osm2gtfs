@@ -1,31 +1,3 @@
-
-#Query overpass pour les routes
-'''
-(
-            relation["route" = "bus"](5.4783,-0.4779,5.7844,0.0611)->.routes;
-            relation[type=route_master](br.routes)->.masters;
-            way(r.routes);
-            node(w);
-            ( .routes;.masters;._; );
-            /* Return tags for elements and roles for relation members. */
-            );out body;
-'''
-
-# Query overpass pour les stops
-'''
-(
-            relation["route" = "bus"](5.4783,-0.4779,5.7844,0.0611);
-            node(r:"platform")->.nodes;
-            way(r:"platform");
-            node(w);
-            ( .nodes;._; );
-            );out body;
-            foreach.nodes(
-            rel(bn:"platform")["public_transport"="stop_area"];
-            out body;
-            );
-'''
-
 import unittest
 import shutil
 import os
@@ -117,9 +89,6 @@ class TestAccra(unittest.TestCase):
         routes_creator.add_routes_to_schedule(schedule, data)
         stops_creator.add_stops_to_schedule(schedule, data)
         trips_creator.add_trips_to_schedule(schedule, data)
-
-        # Validate GTFS
-        schedule.Validate(transitfeed.ProblemReporter())
 
         # Write GTFS
         schedule.WriteGoogleTransitFeed(self.config.output)
