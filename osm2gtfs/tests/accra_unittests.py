@@ -1,9 +1,7 @@
 import unittest
-import shutil
 import os
 import overpy
 import transitfeed
-import filecmp
 import zipfile
 
 from mock import patch
