@@ -19,14 +19,33 @@ class Args():
         self.output = os.path.realpath(os.path.join(current_dir, "../../data/accra_tests.zip"))
 
 
+def is_valid_gtfs(gtfs):
+    # checking Accra GTFS files are present in both files
+    accra_gtfs_files = [
+        "agency.txt", "stops.txt", "routes.txt", "trips.txt",
+        "stop_times.txt", "calendar.txt", "frequencies.txt", "shapes.txt"
+    ]
+    zf = zipfile.ZipFile(gtfs)
+    info_list = zf.infolist()
+    gtfs_files_name = [i.filename for i in info_list]
+    for s in accra_gtfs_files:
+        if s not in gtfs_files_name:
+            return False
+    return True
+
+
 def is_identical_gtfs(gtfs1, gtfs2):
     zf1 = zipfile.ZipFile(gtfs1)
     zf2 = zipfile.ZipFile(gtfs2)
-    # only checking unzipped file size
     info_list1 = zf1.infolist()
-    info_list2 = zf1.infolist()
+    info_list2 = zf2.infolist()
+    # checking unzipped file size
     for info1 in info_list1:
         for info2 in info_list2:
+            if info1.filename == info2.filename:
+                print("Validation of {:} size : size1={:} size2={:}".format(
+                    info2.filename, info1.file_size, info2.file_size
+                ))
             if info1.filename == info2.filename and info1.file_size != info2.file_size:
                 return False
     return True
@@ -95,6 +114,8 @@ class TestAccra(unittest.TestCase):
         schedule.WriteGoogleTransitFeed(self.config.output)
         gtfs_expected_result = os.path.join(self.fixture_folder, "accra_tests.zip.ref")
         gtfs_generated_result = os.path.join(self.data_dir, "accra_tests.zip")
+        self.assertTrue(is_valid_gtfs(gtfs_generated_result))
+        self.assertTrue(is_valid_gtfs(gtfs_expected_result))
         self.assertTrue(is_identical_gtfs(gtfs_expected_result, gtfs_generated_result))
 
 
