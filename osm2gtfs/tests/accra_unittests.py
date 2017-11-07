@@ -3,6 +3,7 @@ import os
 import overpy
 import transitfeed
 import zipfile
+import csv
 
 from mock import patch
 from osm2gtfs.core.configuration import Configuration
@@ -49,6 +50,25 @@ def is_identical_gtfs(gtfs1, gtfs2):
             if info1.filename == info2.filename and info1.file_size != info2.file_size:
                 return False
     return True
+
+
+def get_gtfs_infos(gtfs):
+    gtfs_infos = {}
+    gtfs_infos["stop_points_count"] = 0
+    gtfs_infos["stop_areas_count"] = 0
+    gtfs_infos["routes_count"] = 0
+    with zipfile.ZipFile(gtfs) as zf:
+        reader = csv.DictReader(zf.open("stops.txt"))
+        for r in reader:
+            print r
+            if r["location_type"] == "1":
+                gtfs_infos["stop_areas_count"] += 1
+            else:
+                gtfs_infos["stop_points_count"] += 1
+        reader = csv.DictReader(zf.open("routes.txt"))
+        for r in reader:
+            gtfs_infos["routes_count"] += 1
+    return gtfs_infos
 
 
 class TestAccra(unittest.TestCase):
@@ -117,6 +137,11 @@ class TestAccra(unittest.TestCase):
         self.assertTrue(is_valid_gtfs(gtfs_generated_result))
         self.assertTrue(is_valid_gtfs(gtfs_expected_result))
         self.assertTrue(is_identical_gtfs(gtfs_expected_result, gtfs_generated_result))
+        self.assertTrue(is_identical_gtfs(gtfs_expected_result, gtfs_generated_result))
+        gtfs_infos = get_gtfs_infos(gtfs_generated_result)
+        self.assertEqual(gtfs_infos["stop_points_count"], 2529)
+        self.assertEqual(gtfs_infos["stop_areas_count"], 1656)
+        self.assertEqual(gtfs_infos["routes_count"], 277)
 
 
 def suite():
