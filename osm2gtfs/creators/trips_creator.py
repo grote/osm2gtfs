@@ -51,9 +51,9 @@ class TripsCreator(object):
                 if itinerary.route_id not in timetable.lines:
                     print('Route ID of itinerary not found in timetable, skipping it', itinerary.route_id)
                     continue
-                # Add itinerary shape to schedule
-                # print('Adding itinerary shape to schedule', itinerary.route_id)
-                shape_id = TripsCreator.add_shape(schedule, itinerary.route_id, itinerary)
+                # Add itinerary shape to schedule, using osm_id instead of route_id to differ itinerary shapes
+                # print('Adding itinerary shape to schedule', itinerary.osm_id)
+                shape_id = TripsCreator.add_shape(schedule, itinerary.osm_id, itinerary)
 
                 # Get operations for itinerary
                 # print('Getting operations for itinerary')
@@ -90,7 +90,7 @@ class TripsCreator(object):
             input_fr = trip["from"].encode('utf-8')
             input_to = trip["to"].encode('utf-8')
             if input_fr == fr and input_to == to:
-                trip_services = trip["service"]
+                trip_services = trip["services"]
                 for service in trip_services:
                     services.append(service.encode('utf-8'))
         return services
@@ -147,7 +147,7 @@ class TripsCreator(object):
         for trip in timetable.lines[itinerary.route_id]:
             fr = trip["from"].encode('utf-8')
             to = trip["to"].encode('utf-8')
-            trip_services = trip["service"]
+            trip_services = trip["services"]
             if (fr == itinerary.fr.encode('utf-8') and
                to == itinerary.to.encode('utf-8') and service in trip_services):
                 times = trip["times"]
@@ -165,7 +165,7 @@ class TripsCreator(object):
         for trip in timetable.lines[itinerary.route_id]:
             fr = trip["from"].encode('utf-8')
             to = trip["to"].encode('utf-8')
-            trip_services = trip["service"]
+            trip_services = trip["services"]
             if (fr == itinerary.fr.encode('utf-8') and
                to == itinerary.to.encode('utf-8') and service in trip_services):
                 for stop in trip["stations"]:
@@ -181,6 +181,11 @@ class TripsCreator(object):
             # print('Count of itinerary.get_stops()', len(itinerary.get_stops()))
             # print('Stops', stops)
             for itinerary_stop in itinerary.get_stops():
+                if itinerary_stop is None:
+                    print('Itinerary stop is None. Seems to be a problem with OSM data. We should really fix that.')
+                    print('itinerary route ID', itinerary.route_id)
+                    print('itinerary stop', itinerary_stop)
+                    continue
                 gtfs_stop = schedule.GetStop(str(itinerary_stop.osm_id))
                 time = "-"
                 try:
@@ -228,7 +233,7 @@ class TripsCreator(object):
         create GTFS shape and return shape_id to add on GTFS trip
         """
         import transitfeed
-        shape_id = str(itinerary_id)
+        shape_id = str(osm_id)
         try:
             feed.GetShape(shape_id)
         except KeyError:
