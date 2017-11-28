@@ -79,6 +79,7 @@ class TripsCreatorIncofer(TripsCreator):
                     operations.append("sunday")
         return operations
 
+    # pylint: disable=arguments-differ
     def _create_service_period(self, schedule, operation):
         try:
             service = schedule.GetServicePeriod(operation)
@@ -172,7 +173,7 @@ def load_times(route, operation, filename='data/input_incofer.json'):
 
     # route_directions = input_data["itinerario"][route.ref]["horarios"]
     times = None
-    for direction in input_data["itinerario"][route.ref]:
+    for direction in input_data["itinerario"][route.route_id]:
 
         fr = direction["from"].encode('utf-8')
         to = direction["to"].encode('utf-8')
