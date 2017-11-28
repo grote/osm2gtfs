@@ -163,8 +163,8 @@ def load_times(route, data, operation):
 
     # route_directions = data.schedule["itinerario"][route.ref]["horarios"]
     times = None
-    for direction in data.schedule["itinerario"][route.ref]:
 
+    for direction in data.schedule["itinerario"][route.route_id]:
         fr = direction["from"].encode('utf-8')
         to = direction["to"].encode('utf-8')
         data_operation = direction["operacion"].encode('utf-8')
