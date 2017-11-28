@@ -76,12 +76,10 @@ class StopsCreator(object):
         Fill a route object with stop objects for of linked stop ids
         """
         if isinstance(route, Itinerary):
-            i = 0
             for stop in route.stops:
                 # Replace stop id with Stop objects
                 # TODO: Remove here and use references in TripsCreatorFenix
-                route.stops[i] = self._get_stop(stop, stops)
-                i += 1
+                route.add_stop(self._get_stop(stop, stops))
 
         elif isinstance(route, Line):
             itineraries = route.get_itineraries()
