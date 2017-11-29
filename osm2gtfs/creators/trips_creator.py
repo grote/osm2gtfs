@@ -12,26 +12,13 @@ class TripsCreator(object):
             rep += str(self.config) + " | "
         return rep
 
-
     def add_trips_to_feed(self, feed, data):
-        """
-        route_id  # Required: From Line
-        service_id  # Required: To be generated
-        trip_id  # Required: To be generated
-
-        trip_headsign # Itinerary "to"
-        direction_id  # Order of tinieraries in Line object
-        wheelchair_accessible  # Itinerary "wheelchair_accessible"
-        bikes_allowed # Itinerary "bikes_allowed"
-        trip_short_name  # To be avoided!
-        block_id  # To be avoided!
-        """
         raise NotImplementedError("Should have implemented this")
 
     @staticmethod
     def interpolate_stop_times(trip):
         """
-        interpolate stop_times, because Navitia does not handle this itself by now
+        Interpolate stop_times, because Navitia does not handle this itself
         """
         for secs, stop_time, is_timepoint in trip.GetTimeInterpolatedStops():
             if not is_timepoint:

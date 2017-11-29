@@ -1,7 +1,7 @@
 # coding=utf-8
 
+import sys
 import transitfeed
-
 from osm2gtfs.core.routes import Itinerary, Line
 from osm2gtfs.core.stops import Stop, StopArea
 
@@ -85,11 +85,11 @@ class StopsCreator(object):
 
         elif isinstance(route, Line):
             itineraries = route.get_itineraries()
-            for itinerary_ref, itinerary in itineraries:
+            for itinerary in itineraries:
                 self._fill_stops(stops, itinerary)
 
         else:
-            raise RuntimeError("Unknown Route: " + str(route))
+            sys.stderr.write("Unknown route: " + str(route) + "\n")
 
     def _get_stop(self, stop_id, stops):
         for ref, elem in stops.iteritems():
@@ -100,4 +100,4 @@ class StopsCreator(object):
                 if stop_id in elem.stop_members:
                     return elem.stop_members[stop_id]
             else:
-                raise RuntimeError("Unknown stop: " + str(stop_id))
+                sys.stderr.write("Unknown stop: " + str(stop_id) + "\n")

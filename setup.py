@@ -13,7 +13,9 @@ setup(
     install_requires=['attrs', 'overpy>=0.4', 'transitfeed'],
     packages=find_packages(),
     include_package_data=True,
-    entry_points='''
-        [console_scripts]
-        osm2gtfs = osm2gtfs.osm2gtfs:main
-    '''
+    entry_points={
+        'console_scripts': [
+            'osm2gtfs = osm2gtfs.osm2gtfs:main'
+        ]
+    },
+)

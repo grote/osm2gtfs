@@ -51,7 +51,7 @@ class Configuration(object):
 
         else:
             source_file = self.data['schedule_source']
-            cached_file = 'schedule-source-' + self.data['selector']
+            cached_file = self.data['selector'] + '-schedule'
 
             # Preferably return cached data about schedule
             if refresh is False:

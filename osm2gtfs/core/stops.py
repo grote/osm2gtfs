@@ -16,6 +16,7 @@ class Stop(object):
                       str(osm_type) + "/" + str(osm_id))
 
 
+@attr.s
 class StopArea(object):
 
     osm_id = attr.ib()
