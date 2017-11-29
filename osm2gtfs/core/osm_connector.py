@@ -27,20 +27,20 @@ class OsmConnector(object):
         stops, that are going to be shared and used by the ther components
         of the program.
 
-        :param config: configuration information from the config file
+        :param config: configuration object including data from config file
 
         """
-        self.config = config
+        self.config = config.data
 
         # bbox from config file for querying
-        self.bbox = (str(config['query']['bbox']["s"]) + "," +
-                     str(config['query']['bbox']["w"]) + "," +
-                     str(config['query']['bbox']["n"]) + "," +
-                     str(config['query']['bbox']["e"]))
+        self.bbox = (str(self.config['query']['bbox']["s"]) + "," +
+                     str(self.config['query']['bbox']["w"]) + "," +
+                     str(self.config['query']['bbox']["n"]) + "," +
+                     str(self.config['query']['bbox']["e"]))
 
         # tags from config file for querying
         self.tags = ''
-        for key, value in config["query"].get("tags", {}).iteritems():
+        for key, value in self.config["query"].get("tags", {}).iteritems():
             self.tags += str('["' + key + '" = "' + value + '"]')
         if not self.tags:
             # fallback
@@ -50,18 +50,18 @@ class OsmConnector(object):
 
         # Define name for stops without one
         self.stop_no_name = 'No name'
-        if 'stops' in config and 'name_without' in config['stops']:
-            self.stop_no_name = config['stops']['name_without'].encode()
+        if 'stops' in self.config and 'name_without' in self.config['stops']:
+            self.stop_no_name = self.config['stops']['name_without'].encode()
 
         # Check if auto stop name logic should be used
         self.auto_stop_names = False
-        if 'stops' in config and 'name_auto' in config['stops']:
-            if config['stops']['name_auto'] == "yes":
+        if 'stops' in self.config and 'name_auto' in self.config['stops']:
+            if self.config['stops']['name_auto'] == "yes":
                 self.auto_stop_names = True
 
         # Selector
-        if 'selector' in config:
-            self.selector = config['selector']
+        if 'selector' in self.config:
+            self.selector = self.config['selector']
         else:
             self.selector = 'no-selector'
 

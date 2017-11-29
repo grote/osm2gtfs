@@ -18,7 +18,6 @@ class StopsCreator(object):
         return rep
 
     def add_stops_to_feed(self, feed, data):
-
         # Get stops information
         stops = data.get_stops()
 
@@ -39,7 +38,6 @@ class StopsCreator(object):
         self.add_stops_to_routes(data)
 
     def add_stop(self, feed, stop, parent_station=None, is_station=False):
-
         stop_dict = {"stop_lat": float(stop.lat),
                      "stop_lon": float(stop.lon),
                      "stop_name": stop.name}
@@ -62,7 +60,6 @@ class StopsCreator(object):
         return stop
 
     def add_stops_to_routes(self, data):
-
         routes = data.routes
         stops = data.stops
 
@@ -75,8 +72,8 @@ class StopsCreator(object):
         return
 
     def _fill_stops(self, stops, route):
-        """Fill a route object with stop objects for of linked stop ids
-
+        """
+        Fill a route object with stop objects for of linked stop ids
         """
         if isinstance(route, Route):
             i = 0

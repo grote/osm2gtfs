@@ -7,7 +7,7 @@ import transitfeed
 class AgencyCreator(object):
 
     def __init__(self, config):
-        self.config = config
+        self.config = config.data
 
     def __repr__(self):
         rep = ""
