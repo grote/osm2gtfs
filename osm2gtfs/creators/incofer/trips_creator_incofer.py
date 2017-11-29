@@ -20,7 +20,8 @@ class TripsCreatorIncofer(TripsCreator):
             # print("DEBUG. procesando la línea:", line.name)
 
             # itinerary (osm route | non existent gtfs element)
-            for itinerary_id, itinerary in line.routes.iteritems():
+            itineraries = line.get_itineraries()
+            for itinerary_id, itinerary in itineraries:
                 # debug
                 # print("DEBUG. procesando el itinerario", itinerary.name)
 
@@ -78,6 +79,7 @@ class TripsCreatorIncofer(TripsCreator):
                     operations.append("sunday")
         return operations
 
+    # pylint: disable=arguments-differ
     def _create_service_period(self, schedule, operation):
         try:
             service = schedule.GetServicePeriod(operation)
