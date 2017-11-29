@@ -31,22 +31,24 @@ def get_crow_fly_distance(from_tuple, to_tuple):
 
 
 def create_stop_area(stop_data, feed):
+    stop_id = stop_data.osm_id.split('/')[-1]
     gtfs_stop_area = feed.AddStop(
         lat=float(stop_data.lat),
         lng=float(stop_data.lon),
         name=stop_data.name,
-        stop_id="SA" + str(stop_data.osm_id)
+        stop_id="SA" + str(stop_id)
     )
     gtfs_stop_area.location_type = 1
     return gtfs_stop_area
 
 
 def create_stop_point(stop_data, feed):
+    stop_id = stop_data.osm_id.split('/')[-1]
     gtfs_stop_point = feed.AddStop(
         lat=float(stop_data.lat),
         lng=float(stop_data.lon),
         name=stop_data.name,
-        stop_id=str(stop_data.osm_id)
+        stop_id=str(stop_id)
     )
     return gtfs_stop_point
 
