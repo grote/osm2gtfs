@@ -47,7 +47,7 @@ class OsmConnector(object):
             # fallback
             self.tags = '["public_transport:version" = "2"]'
             print("No tags found for querying from OpenStreetMap.")
-            print("Using tag 'public_transport:version=2")
+            print("Using tag 'public_transport:version=2'")
 
         # Define name for stops without one
         self.stop_no_name = 'No name'
@@ -252,8 +252,8 @@ class OsmConnector(object):
                     try:
                         self.stops["relation/" + str(relation.id)
                                    ] = self._build_stop_area(relation)
-                    except RuntimeError:
-                        print('Cannot add stop area', relation.id)
+                    except (ValueError, TypeError) as e:
+                        sys.stderr.write('Cannot add stop area: ' + str(relation.id))
 
         # Cache data
         Cache.write_data('stops-' + self.selector, self.stops)
@@ -304,14 +304,14 @@ class OsmConnector(object):
         frequency = None
         if "frequency" in route_master.tags:
             frequency = route_master.tags['frequency']
-            
-        colour = "FFFFFF"
+
+        color = "FFFFFF"
         if "colour" in route_master.tags:
-            colour = OsmConnector.get_hex_code_for_color(route_master.tags['colour'])
-            
-        text_colour = OsmConnector.get_complementary_color(colour)
+            color = OsmConnector.get_hex_code_for_color(route_master.tags['colour'])
+
+        text_color = OsmConnector.get_complementary_color(color)
         if "text_colour" in route_master.tags:
-            text_colour = OsmConnector.get_hex_code_for_color(route_master.tags['text_colour'])
+            text_color = OsmConnector.get_hex_code_for_color(route_master.tags['text_colour'])
 
         if 'route_master' in route_master.tags:
             route_type = route_master.tags['route_master'].capitalize()
@@ -323,15 +323,16 @@ class OsmConnector(object):
         # Create Line (route master) object
         line = Line(osm_id=route_master.id, route_id=ref,
                     name=name, route_type=route_type, frequency=frequency,
-                    route_color=colour, route_text_color=text_colour)
+                    route_color=color, route_text_color=text_color)
 
         # Add Itinerary objects (route variants) to Line (route master)
         for itinerary in list(itineraries.values()):
             try:
                 line.add_itinerary(itinerary)
             except ValueError:
-                print('Itinerary ID does not match line ID. Please fix in OSM.')
-                print(line.osm_url)
+                sys.stderr.write(
+                    "Itinerary ID does not match line ID. Please fix in OSM.\n")
+                sys.stderr.write(line.osm_url)
                 itinerary.route_id = line.route_id
                 line.add_itinerary(itinerary)
 
@@ -387,7 +388,8 @@ class OsmConnector(object):
                     otype = "way"
 
                 else:
-                    raise RuntimeError("Unknown type of itinerary member: " + str(stop_candidate))
+                    sys.stderr.write("Unknown type of itinerary member: " +
+                                     str(stop_candidate) + "\n")
 
                 stops.append(otype + "/" + str(stop_candidate.ref))
 
@@ -410,7 +412,7 @@ class OsmConnector(object):
 
         # Ways don't have coordinates and they have to be calculated
         if stop_type == "way":
-            (stop.lat, stop.lon) = OsmConnector.get_center_of_nodes(stop.get_nodes())
+            (stop.lat, stop.lon) = self.get_center_of_nodes(stop.get_nodes())
 
         s = Stop(stop.id, "node", unicode(stop.tags['name']), stop.lat, stop.lon)
         return s
@@ -432,7 +434,8 @@ class OsmConnector(object):
                     sys.stderr.write("http://osm.org/node/" +
                                      str(member.ref) + "\n")
         if len(stop_members) < 1:
-            raise RuntimeError('Cannot build stop area with no members')
+            sys.stderr.write("Cannot build stop area with no members\n")
+
         if 'name' not in relation.tags:
             sys.stderr.write("Stop area without name." +
                              " Please fix in OpenStreetMap\n")
@@ -646,7 +649,7 @@ class OsmConnector(object):
         winner_distance = sys.maxint
         for candidate in candidates:
             if isinstance(candidate, overpy.Way):
-                lat, lon = OsmConnector.get_center_of_nodes(
+                lat, lon = self.get_center_of_nodes(
                     candidate.get_nodes(resolve_missing=True))
                 distance = util.ApproximateDistance(
                     lat,
@@ -678,8 +681,7 @@ class OsmConnector(object):
         z = 0
 
         if len(nodes) < 1:
-            raise ValueError('Cannot find the center of zero nodes')
-
+            sys.stderr.write("Cannot find the center of zero nodes\n")
         for node in nodes:
             lat = radians(float(node.lat))
             lon = radians(float(node.lon))
@@ -720,7 +722,7 @@ class OsmConnector(object):
             return 'FFFF00'
         print('Color not known: ' + color)
         return 'FA8072'
-    
+
     @staticmethod
     def get_complementary_color(color):
         """

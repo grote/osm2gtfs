@@ -31,7 +31,10 @@ class Line(object):
 
     def add_itinerary(self, itinerary):
         if self.route_id.encode('utf-8') != itinerary.route_id.encode('utf-8'):
-            raise ValueError('Itinerary route ID (' + itinerary.route_id + ') does not match Line route ID (' + self.route_id + ')')
+            raise ValueError('Itinerary route ID (' +
+                             itinerary.route_id +
+                             ') does not match Line route ID (' +
+                             self.route_id + ')')
         self._itineraries.append(itinerary)
 
     def get_itineraries(self):

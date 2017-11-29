@@ -79,7 +79,6 @@ class TripsCreatorIncofer(TripsCreator):
                     operations.append("sunday")
         return operations
 
-    # pylint: disable=arguments-differ
     def _create_service_period(self, schedule, operation):
         try:
             service = schedule.GetServicePeriod(operation)

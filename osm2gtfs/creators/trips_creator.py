@@ -13,18 +13,7 @@ class TripsCreator(object):
         return rep
 
     def add_trips_to_schedule(self, schedule, data):
-        """
-        route_id  # Required: From Line
-        service_id  # Required: To be generated
-        trip_id  # Required: To be generated
 
-        trip_headsign # Itinerary "to"
-        direction_id  # Order of tinieraries in Line object
-        wheelchair_accessible  # Itinerary "wheelchair_accessible"
-        bikes_allowed # Itinerary "bikes_allowed"
-        trip_short_name  # To be avoided!
-        block_id  # To be avoided!
-        """
         raise NotImplementedError("Should have implemented this")
 
     @staticmethod
