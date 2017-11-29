@@ -12,7 +12,7 @@ class TripsCreator(object):
             rep += str(self.config) + " | "
         return rep
 
-    def add_trips_to_schedule(self, schedule, data):
+    def add_trips_to_feed(self, feed, data):
         raise NotImplementedError("Should have implemented this")
 
     @staticmethod
@@ -27,18 +27,18 @@ class TripsCreator(object):
                 trip.ReplaceStopTimeObject(stop_time)
 
     @staticmethod
-    def add_shape(schedule, route_id, osm_r):
+    def add_shape(feed, route_id, osm_r):
         """
         create GTFS shape and return shape_id to add on GTFS trip
         """
         import transitfeed
         shape_id = str(route_id)
         try:
-            schedule.GetShape(shape_id)
+            feed.GetShape(shape_id)
         except KeyError:
             shape = transitfeed.Shape(shape_id)
             for point in osm_r.shape:
                 shape.AddPoint(
                     lat=float(point["lat"]), lon=float(point["lon"]))
-            schedule.AddShapeObject(shape)
+            feed.AddShapeObject(shape)
         return shape_id

@@ -12,5 +12,5 @@ class RoutesCreator(object):
             rep += str(self.config) + " | "
         return rep
 
-    def add_routes_to_schedule(self, schedule, data):
+    def add_routes_to_feed(self, feed, data):
         raise NotImplementedError("Should have implemented this")

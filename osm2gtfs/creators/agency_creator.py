@@ -15,8 +15,8 @@ class AgencyCreator(object):
             rep += str(self.config) + " | "
         return rep
 
-    def add_agency_to_schedule(self, schedule):
-        schedule.AddAgencyObject(self.prepare_agency())
+    def add_agency_to_feed(self, feed):
+        feed.AddAgencyObject(self.prepare_agency())
 
     def prepare_agency(self):
         """

@@ -10,7 +10,7 @@ from osm2gtfs.creators.trips_creator import TripsCreator
 
 class TripsCreatorIncofer(TripsCreator):
 
-    def add_trips_to_schedule(self, schedule, data):
+    def add_trips_to_feed(self, feed, data):
 
         lines = data.routes
 
@@ -25,7 +25,7 @@ class TripsCreatorIncofer(TripsCreator):
                 # print("DEBUG. procesando el itinerario", itinerary.name)
 
                 # shape for itinerary
-                shape_id = TripsCreator.add_shape(schedule, itinerary_id, itinerary)
+                shape_id = TripsCreator.add_shape(feed, itinerary_id, itinerary)
 
                 # service periods | días de opearación (c/u con sus horarios)
                 operations = self._get_itinerary_operation(itinerary)
@@ -33,14 +33,14 @@ class TripsCreatorIncofer(TripsCreator):
                 # operation (gtfs service period)
                 for operation in operations:
                     service_period = self._create_service_period(
-                        schedule, operation)
+                        feed, operation)
 
                     horarios = load_times(itinerary, operation)
                     estaciones = load_stations(itinerary, operation)
 
-                    route = schedule.GetRoute(line_id)
+                    route = feed.GetRoute(line_id)
 
-                    add_trips_for_route(schedule, route, itinerary,
+                    add_trips_for_route(feed, route, itinerary,
                                         service_period, shape_id, estaciones,
                                         horarios)
         return
@@ -78,9 +78,9 @@ class TripsCreatorIncofer(TripsCreator):
                     operations.append("sunday")
         return operations
 
-    def _create_service_period(self, schedule, operation):
+    def _create_service_period(self, feed, operation):
         try:
-            service = schedule.GetServicePeriod(operation)
+            service = feed.GetServicePeriod(operation)
             if service is not None:
                 return service
         except KeyError:
@@ -106,18 +106,18 @@ class TripsCreatorIncofer(TripsCreator):
 
         service.SetStartDate(self.config['feed_info']['start_date'])
         service.SetEndDate(self.config['feed_info']['end_date'])
-        schedule.AddServicePeriodObject(service)
-        return schedule.GetServicePeriod(operation)
+        feed.AddServicePeriodObject(service)
+        return feed.GetServicePeriod(operation)
 
 
-def add_trips_for_route(schedule, gtfs_route, itinerary, service_period,
+def add_trips_for_route(feed, gtfs_route, itinerary, service_period,
                         shape_id, estaciones, horarios):
     # debug
     # print("DEBUG Adding trips for itinerary", itinerary.name)
 
     for viaje in horarios:
         indice = 0
-        trip = gtfs_route.AddTrip(schedule, headsign=itinerary.name,
+        trip = gtfs_route.AddTrip(feed, headsign=itinerary.name,
                                   service_period=service_period)
         while indice < len(estaciones):
             tiempo = viaje[indice]
@@ -128,7 +128,7 @@ def add_trips_for_route(schedule, gtfs_route, itinerary, service_period,
 
                 for stop in itinerary.stops:
                     if stop.name == estacion:
-                        parada = schedule.GetStop(str(stop.id))
+                        parada = feed.GetStop(str(stop.id))
                         trip.AddStopTime(parada, stop_time=str(tiempo_parada))
                         continue
 

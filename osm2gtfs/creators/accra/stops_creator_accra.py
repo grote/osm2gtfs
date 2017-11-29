@@ -30,8 +30,8 @@ def get_crow_fly_distance(from_tuple, to_tuple):
     return d * 1000  # meters
 
 
-def create_stop_area(stop_data, schedule):
-    gtfs_stop_area = schedule.AddStop(
+def create_stop_area(stop_data, feed):
+    gtfs_stop_area = feed.AddStop(
         lat=float(stop_data.lat),
         lng=float(stop_data.lon),
         name=stop_data.name,
@@ -41,8 +41,8 @@ def create_stop_area(stop_data, schedule):
     return gtfs_stop_area
 
 
-def create_stop_point(stop_data, schedule):
-    gtfs_stop_point = schedule.AddStop(
+def create_stop_point(stop_data, feed):
+    gtfs_stop_point = feed.AddStop(
         lat=float(stop_data.lat),
         lng=float(stop_data.lon),
         name=stop_data.name,
@@ -57,7 +57,7 @@ def get_stop_id(stop):
 
 class StopsCreatorAccra(StopsCreator):
 
-    def add_stops_to_schedule(self, schedule, data):
+    def add_stops_to_feed(self, feed, data):
         stops = data.get_stops()
         stops_by_name = {}
 
@@ -70,7 +70,7 @@ class StopsCreatorAccra(StopsCreator):
             stop_areas = []
 
             for a_stop_point in sorted(stops_by_name[a_stop_name], key=get_stop_id):
-                gtfs_stop_point = create_stop_point(a_stop_point, schedule)
+                gtfs_stop_point = create_stop_point(a_stop_point, feed)
                 stop_point_has_parent_location = False
                 for a_stop_area in stop_areas:
                     distance_to_parent_station = get_crow_fly_distance(
@@ -82,6 +82,6 @@ class StopsCreatorAccra(StopsCreator):
                         stop_point_has_parent_location = True
                         break
                 if not stop_point_has_parent_location:
-                    new_sa = create_stop_area(a_stop_point, schedule)
+                    new_sa = create_stop_area(a_stop_point, feed)
                     gtfs_stop_point.parent_station = new_sa.stop_id
                     stop_areas.append(new_sa)
