@@ -1,7 +1,6 @@
 # coding=utf-8
 
 import sys
-import json
 import re
 import transitfeed
 from datetime import timedelta, datetime
@@ -60,12 +59,8 @@ class TripsCreatorFenix(TripsCreator):
         feed.AddServicePeriodObject(self.service_saturday)
         feed.AddServicePeriodObject(self.service_sunday)
 
-        # Get Fenix data from JSON file
-        json_data = []
-        with open('data/linhas.json') as f:
-            for line in f:
-                json_data.append(json.loads(line))
-        linhas = json_data[0]['data']
+        # Get Fenix schedule data from source file
+        linhas = data.schedule['data']
 
         # Try to find OSM routes in Fenix data
         for route_ref, route in sorted(routes.iteritems()):

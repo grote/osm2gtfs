@@ -81,10 +81,10 @@ class TestAccra(unittest.TestCase):
         args = Args(self.config_file)
         self.config = Configuration(args)
         # deactivation of Overpass calls for unnamed stops
-        self.config.config['stops']['name_auto'] = "no"
+        self.config.data['stops']['name_auto'] = "no"
 
     def test_refresh_routes_cache(self):
-        data = OsmConnector(self.config.config)
+        data = OsmConnector(self.config)
         cache_file = os.path.join(self.data_dir, "routes-accra.pkl")
         mocked_overpass_data_file = os.path.join(self.fixture_folder, "overpass-routes.xml")
         if os.path.isfile(cache_file):
@@ -100,7 +100,7 @@ class TestAccra(unittest.TestCase):
         self.assertEqual(len(routes), 277, 'Wrong count of routes in the cache file')
 
     def test_refresh_stops_cache(self):
-        data = OsmConnector(self.config.config)
+        data = OsmConnector(self.config)
         cache_file = os.path.join(self.data_dir, "stops-accra.pkl")
         mocked_overpass_data_file = os.path.join(self.fixture_folder, "overpass-stops.xml")
         if os.path.isfile(cache_file):
@@ -122,12 +122,12 @@ class TestAccra(unittest.TestCase):
         self.assertTrue(os.path.isfile(stops_file), "The stops cache file doesn't exists")
         self.assertTrue(os.path.isfile(routes_cache_file), "The routes cache file doesn't exists")
 
-        data = OsmConnector(self.config.config)
+        data = OsmConnector(self.config)
 
         # Define (transitfeed) schedule object for GTFS creation
         feed = transitfeed.Schedule()
         # Initiate creators for GTFS components through an object factory
-        factory = CreatorFactory(self.config.config)
+        factory = CreatorFactory(self.config)
         agency_creator = factory.get_agency_creator()
         feed_info_creator = factory.get_feed_info_creator()
         routes_creator = factory.get_routes_creator()
