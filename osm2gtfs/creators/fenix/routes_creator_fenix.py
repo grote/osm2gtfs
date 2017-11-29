@@ -5,7 +5,7 @@ from osm2gtfs.creators.routes_creator import RoutesCreator
 
 class RoutesCreatorFenix(RoutesCreator):
 
-    def add_routes_to_schedule(self, schedule, data):
+    def add_routes_to_feed(self, feed, data):
 
         # Get routes information
         data.get_routes()

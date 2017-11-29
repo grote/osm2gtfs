@@ -5,7 +5,7 @@ from osm2gtfs.creators.routes_creator import RoutesCreator
 
 class RoutesCreatorIncofer(RoutesCreator):
 
-    def add_routes_to_schedule(self, schedule, data):
+    def add_routes_to_feed(self, feed, data):
 
         # Get routes information
         lines = data.get_routes()
@@ -15,7 +15,7 @@ class RoutesCreatorIncofer(RoutesCreator):
 
         # Loop through all lines (master_routes)
         for line_ref, line in sorted(lines.iteritems()):
-            route = schedule.AddRoute(
+            route = feed.AddRoute(
                 short_name=line.ref.encode('utf-8'),
                 long_name=line.name,
                 # TODO: infer transitfeed "route type" from OSM data
@@ -23,7 +23,7 @@ class RoutesCreatorIncofer(RoutesCreator):
                 route_id=line_ref)
 
             # AddRoute method add defaut agency as default
-            route.agency_id = schedule.GetDefaultAgency().agency_id
+            route.agency_id = feed.GetDefaultAgency().agency_id
 
             route.route_desc = "Esta línea está a prueba"
 
