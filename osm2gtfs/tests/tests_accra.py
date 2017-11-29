@@ -125,7 +125,7 @@ class TestAccra(unittest.TestCase):
         data = OsmConnector(self.config.config)
 
         # Define (transitfeed) schedule object for GTFS creation
-        schedule = transitfeed.Schedule()
+        feed = transitfeed.Schedule()
         # Initiate creators for GTFS components through an object factory
         factory = CreatorFactory(self.config.config)
         agency_creator = factory.get_agency_creator()
@@ -135,14 +135,14 @@ class TestAccra(unittest.TestCase):
         trips_creator = factory.get_trips_creator()
 
         # Add data to schedule object
-        agency_creator.add_agency_to_schedule(schedule)
-        feed_info_creator.add_feed_info_to_schedule(schedule)
-        routes_creator.add_routes_to_schedule(schedule, data)
-        stops_creator.add_stops_to_schedule(schedule, data)
-        trips_creator.add_trips_to_schedule(schedule, data)
+        agency_creator.add_agency_to_feed(feed)
+        feed_info_creator.add_feed_info_to_feed(feed)
+        routes_creator.add_routes_to_feed(feed, data)
+        stops_creator.add_stops_to_feed(feed, data)
+        trips_creator.add_trips_to_feed(feed, data)
 
         # Write GTFS
-        schedule.WriteGoogleTransitFeed(self.config.output)
+        feed.WriteGoogleTransitFeed(self.config.output)
         gtfs_expected_result = os.path.join(self.fixture_folder, "accra_tests.zip.ref")
         gtfs_generated_result = os.path.join(self.data_dir, "accra_tests.zip")
         self.assertTrue(is_valid_gtfs(gtfs_generated_result), 'The generated GTFS is not valid')

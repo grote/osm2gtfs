@@ -8,8 +8,8 @@ from osm2gtfs.creators.trips_creator import TripsCreator
 class TripsCreatorAccra(TripsCreator):
     service_weekday = None
 
-    def add_trips_to_schedule(self, schedule, data):
-        self.service_weekday = schedule.GetDefaultServicePeriod()
+    def add_trips_to_feed(self, feed, data):
+        self.service_weekday = feed.GetDefaultServicePeriod()
         self.service_weekday.SetStartDate(
             self.config['feed_info']['start_date'])
         self.service_weekday.SetEndDate(self.config['feed_info']['end_date'])
@@ -21,7 +21,7 @@ class TripsCreatorAccra(TripsCreator):
             if type(line).__name__ != "RouteMaster":
                 continue
 
-            line_gtfs = schedule.AddRoute(
+            line_gtfs = feed.AddRoute(
                 short_name=line.ref,
                 long_name=line.name.decode('utf8'),
                 # we change the route_long_name with the 'from' and 'to' tags
@@ -29,16 +29,16 @@ class TripsCreatorAccra(TripsCreator):
                 # the line code (route_short_name)
                 route_type="Bus",
                 route_id=line.id)
-            line_gtfs.agency_id = schedule.GetDefaultAgency().agency_id
+            line_gtfs.agency_id = feed.GetDefaultAgency().agency_id
             line_gtfs.route_desc = ""
             line_gtfs.route_color = "1779c2"
             line_gtfs.route_text_color = "ffffff"
 
             route_index = 0
             for a_route_ref, a_route in line.routes.iteritems():
-                trip_gtfs = line_gtfs.AddTrip(schedule)
+                trip_gtfs = line_gtfs.AddTrip(feed)
                 trip_gtfs.shape_id = TripsCreator.add_shape(
-                    schedule, a_route_ref, a_route)
+                    feed, a_route_ref, a_route)
                 trip_gtfs.direction_id = route_index % 2
                 route_index += 1
 
@@ -75,14 +75,14 @@ class TripsCreatorAccra(TripsCreator):
                     departure_time = datetime(2008, 11, 22, 6, 0, 0)
 
                     if index_stop == 0:
-                        trip_gtfs.AddStopTime(schedule.GetStop(
+                        trip_gtfs.AddStopTime(feed.GetStop(
                             str(stop_id)), stop_time=departure_time.strftime("%H:%M:%S"))
                     elif index_stop == len(a_route.stops) - 1:
                         departure_time += timedelta(minutes=TRAVEL_TIME)
-                        trip_gtfs.AddStopTime(schedule.GetStop(
+                        trip_gtfs.AddStopTime(feed.GetStop(
                             str(stop_id)), stop_time=departure_time.strftime("%H:%M:%S"))
                     else:
-                        trip_gtfs.AddStopTime(schedule.GetStop(str(stop_id)))
+                        trip_gtfs.AddStopTime(feed.GetStop(str(stop_id)))
 
                 for secs, stop_time, is_timepoint in trip_gtfs.GetTimeInterpolatedStops():
                     if not is_timepoint:

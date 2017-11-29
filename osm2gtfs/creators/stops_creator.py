@@ -17,7 +17,7 @@ class StopsCreator(object):
             rep += str(self.config) + " | "
         return rep
 
-    def add_stops_to_schedule(self, schedule, data):
+    def add_stops_to_feed(self, feed, data):
 
         # Get stops information
         stops = data.get_stops()
@@ -26,19 +26,19 @@ class StopsCreator(object):
         for elem in stops.values():
             if type(elem) is StopArea:
                 if len(elem.stop_members) > 1:
-                    parent_station = self.add_stop(schedule, elem, None, True)
+                    parent_station = self.add_stop(feed, elem, None, True)
                     for stop in elem.stop_members.values():
-                        self.add_stop(schedule, stop, parent_station)
+                        self.add_stop(feed, stop, parent_station)
                 else:
                     stop = elem.stop_members.values()[0]
-                    self.add_stop(schedule, stop)
+                    self.add_stop(feed, stop)
             else:
-                self.add_stop(schedule, elem)
+                self.add_stop(feed, elem)
 
         # Add loose stop objects to route objects
         self.add_stops_to_routes(data)
 
-    def add_stop(self, schedule, stop, parent_station=None, is_station=False):
+    def add_stop(self, feed, stop, parent_station=None, is_station=False):
 
         stop_dict = {"stop_lat": float(stop.lat),
                      "stop_lon": float(stop.lon),
@@ -58,7 +58,7 @@ class StopsCreator(object):
 
         # Add stop to GTFS object
         stop = transitfeed.Stop(field_dict=stop_dict)
-        schedule.AddStopObject(stop)
+        feed.AddStopObject(stop)
         return stop
 
     def add_stops_to_routes(self, data):
