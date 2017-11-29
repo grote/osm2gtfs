@@ -1,0 +1,35 @@
+{
+    "query": {
+        "bbox": {
+            "n": "13.1308234",
+            "s": "13.0534171",
+            "e": "-86.3197351",
+            "w": "-86.3999775"
+        },
+        "tags": {
+            "route": "bus",
+            "network": "NI-Estelí"
+        }
+    },
+    "stops": {
+        "name_without": "Parada sin nombre",
+        "name_auto": "no"
+    },
+    "agency": {
+        "agency_id": "NI-Estelí",
+        "agency_name": "Estelí",
+        "agency_url": "https://wiki.openstreetmap.org/wiki/ES:Wikiproyecto_Nicaragua/Transporte_p%C3%BAblico/Estel%C3%AD",
+        "agency_timezone": "America/Managua",
+        "agency_lang": "ES",
+        "agency_phone": "",
+        "agency_fare_url": ""
+    },
+    "feed_info": {
+        "publisher_name": "Nico Alt",
+        "publisher_url": "https://nico.dorfbrunnen.eu",
+        "version":  "0.1"
+    },
+    "schedule_source": "https://github.com/mapanica/pt-data-esteli/raw/master/timetable.json",
+    "output_file": "data/ni-esteli.zip",
+    "selector": "esteli"
+}
