@@ -24,12 +24,12 @@ class TripsCreatorAccra(TripsCreator):
 
             line_gtfs = feed.AddRoute(
                 short_name=line.route_id,
-                long_name=line.name.decode('utf8'),
+                long_name=line.name,
                 # we change the route_long_name with the 'from' and 'to' tags
                 # of the last route as the route_master name tag contains
                 # the line code (route_short_name)
                 route_type="Bus",
-                route_id=line.id)
+                route_id=line.osm_id)
             line_gtfs.agency_id = feed.GetDefaultAgency().agency_id
             line_gtfs.route_desc = ""
             line_gtfs.route_color = "1779c2"
@@ -37,17 +37,18 @@ class TripsCreatorAccra(TripsCreator):
 
             route_index = 0
             itineraries = line.get_itineraries()
-            for a_route_ref, a_route in itineraries:
+            for a_route in itineraries:
                 trip_gtfs = line_gtfs.AddTrip(feed)
                 trip_gtfs.shape_id = TripsCreator.add_shape(
-                    feed, a_route_ref, a_route)
+                    feed, a_route.route_id, a_route)
                 trip_gtfs.direction_id = route_index % 2
                 route_index += 1
 
                 if a_route.fr and a_route.to:
                     trip_gtfs.trip_headsign = a_route.to
                     line_gtfs.route_long_name = a_route.fr.decode(
-                        'utf8') + " ↔ ".decode('utf8') + a_route.to.decode('utf8')
+                        'utf8') + " ↔ ".decode(
+                        'utf8') + a_route.to.decode('utf8')
 
                 DEFAULT_ROUTE_FREQUENCY = 30
                 DEFAULT_TRAVEL_TIME = 120
@@ -55,10 +56,12 @@ class TripsCreatorAccra(TripsCreator):
                 try:
                     ROUTE_FREQUENCY = int(line.frequency)
                     if not ROUTE_FREQUENCY > 0:
-                        print("frequency is invalid for route_master " + str(line.osm_id))
+                        print("frequency is invalid for route_master " + str(
+                            line.osm_id))
                         ROUTE_FREQUENCY = DEFAULT_ROUTE_FREQUENCY
                 except (ValueError, TypeError) as e:
-                    print("frequency not a number for route_master " + str(line.osm_id))
+                    print("frequency not a number for route_master " + str(
+                            line.osm_id))
                     ROUTE_FREQUENCY = DEFAULT_ROUTE_FREQUENCY
                 trip_gtfs.AddFrequency(
                     "05:00:00", "22:00:00", ROUTE_FREQUENCY * 60)
@@ -66,10 +69,12 @@ class TripsCreatorAccra(TripsCreator):
                 try:
                     TRAVEL_TIME = int(a_route.travel_time)
                     if not TRAVEL_TIME > 0:
-                        print("travel_time is invalid for route " + str(a_route.osm_id))
+                        print("travel_time is invalid for route " + str(
+                                a_route.osm_id))
                         TRAVEL_TIME = DEFAULT_TRAVEL_TIME
                 except (ValueError, TypeError) as e:
-                    print("travel_time not a number for route " + str(a_route.osm_id))
+                    print("travel_time not a number for route " + str(
+                                a_route.osm_id))
                     TRAVEL_TIME = DEFAULT_TRAVEL_TIME
 
                 for index_stop, a_stop in enumerate(a_route.stops):
@@ -78,11 +83,13 @@ class TripsCreatorAccra(TripsCreator):
 
                     if index_stop == 0:
                         trip_gtfs.AddStopTime(feed.GetStop(
-                            str(stop_id)), stop_time=departure_time.strftime("%H:%M:%S"))
+                            str(stop_id)), stop_time=departure_time.strftime(
+                                "%H:%M:%S"))
                     elif index_stop == len(a_route.stops) - 1:
                         departure_time += timedelta(minutes=TRAVEL_TIME)
                         trip_gtfs.AddStopTime(feed.GetStop(
-                            str(stop_id)), stop_time=departure_time.strftime("%H:%M:%S"))
+                            str(stop_id)), stop_time=departure_time.strftime(
+                                "%H:%M:%S"))
                     else:
                         trip_gtfs.AddStopTime(feed.GetStop(str(stop_id)))
 
