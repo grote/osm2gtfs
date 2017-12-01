@@ -17,4 +17,4 @@ jobs:
       script: pylint --disable=C,R osm2gtfs
 
     - stage: accra non regression test
-      script: python PYTHONPATH=./osm2gtfs osm2gtfs/tests/accra_unittests.py
+      script: python osm2gtfs/tests/accra_unittests.py
