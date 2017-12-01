@@ -15,3 +15,7 @@ jobs:
     - stage: pylint
       before_script: pip install pylint
       script: pylint --disable=C,R osm2gtfs
+
+    - stage: accra non regression test
+      before_script: pip install unittest
+      script: python PYTHONPATH=./osm2gtfs osm2gtfs/tests/accra_unittests.py
