@@ -20,7 +20,8 @@ class TripsCreatorIncofer(TripsCreator):
             # print("DEBUG. procesando la línea:", line.name)
 
             # itinerary (osm route | non existent gtfs element)
-            for itinerary_id, itinerary in line.routes.iteritems():
+            itineraries = line.get_itineraries()
+            for itinerary_id, itinerary in itineraries:
                 # debug
                 # print("DEBUG. procesando el itinerario", itinerary.name)
 
@@ -171,7 +172,7 @@ def load_times(route, operation, filename='data/input_incofer.json'):
 
     # route_directions = input_data["itinerario"][route.ref]["horarios"]
     times = None
-    for direction in input_data["itinerario"][route.ref]:
+    for direction in input_data["itinerario"][route.route_id]:
 
         fr = direction["from"].encode('utf-8')
         to = direction["to"].encode('utf-8')

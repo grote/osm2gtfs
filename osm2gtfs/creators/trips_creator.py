@@ -13,6 +13,7 @@ class TripsCreator(object):
         return rep
 
     def add_trips_to_schedule(self, schedule, data):
+
         raise NotImplementedError("Should have implemented this")
 
     @staticmethod

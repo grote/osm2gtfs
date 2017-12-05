@@ -1,9 +1,9 @@
 # coding=utf-8
 
+import sys
 import transitfeed
-
-from osm2gtfs.core.osm_routes import Route, RouteMaster
-from osm2gtfs.core.osm_stops import Stop, StopArea
+from osm2gtfs.core.routes import Itinerary, Line
+from osm2gtfs.core.stops import Stop, StopArea
 
 
 class StopsCreator(object):
@@ -45,10 +45,10 @@ class StopsCreator(object):
                      "stop_name": stop.name}
 
         if is_station:
-            stop_dict["stop_id"] = "SA" + str(stop.id)
+            stop_dict["stop_id"] = "SA" + str(stop.osm_id)
             stop_dict["location_type"] = "1"
         else:
-            stop_dict["stop_id"] = str(stop.id)
+            stop_dict["stop_id"] = str(stop.osm_id)
             stop_dict["location_type"] = ""
 
         if parent_station is None:
@@ -78,7 +78,7 @@ class StopsCreator(object):
         """Fill a route object with stop objects for of linked stop ids
 
         """
-        if isinstance(route, Route):
+        if isinstance(route, Itinerary):
             i = 0
             for stop in route.stops:
                 # Replace stop id with Stop objects
@@ -86,12 +86,13 @@ class StopsCreator(object):
                 route.stops[i] = self._get_stop(stop, stops)
                 i += 1
 
-        elif isinstance(route, RouteMaster):
-            for route_variant_ref, route_variant in route.routes.iteritems():
-                self._fill_stops(stops, route_variant)
+        elif isinstance(route, Line):
+            itineraries = route.get_itineraries()
+            for itinerary_ref, itinerary in itineraries:
+                self._fill_stops(stops, itinerary)
 
         else:
-            raise RuntimeError("Unknown Route: " + str(route))
+            sys.stderr.write("Unknown route: " + str(route) + "\n")
 
     def _get_stop(self, stop_id, stops):
         for ref, elem in stops.iteritems():
@@ -102,4 +103,4 @@ class StopsCreator(object):
                 if stop_id in elem.stop_members:
                     return elem.stop_members[stop_id]
             else:
-                raise RuntimeError("Unknown stop: " + str(stop_id))
+                sys.stderr.write("Unknown stop: " + str(stop_id) + "\n")
