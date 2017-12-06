@@ -1,5 +1,6 @@
 # coding=utf-8
 
+import os
 import json
 import re
 from datetime import datetime
@@ -31,15 +32,15 @@ class TripsCreator(object):
         block_id  # To be avoided!
         """
         # Get route information
-        # print('Getting line information')
-        lines = data.routes
+        # lines = data.schedule # TODO: For later on
+
+        if os.path.isfile('data/schedule.json'):
+            with open('data/schedule.json', 'rb') as f:
+                lines = json.load(f)
 
         # Loop though all lines
         for line_id, line in lines.iteritems():
-            # print('Loop for line_id', line_id)
-            if line_id in timetable.excluded_lines:
-                print('Ignoring line ID: ' + line_id)
-                continue
+
             # Loop through all itineraries
             # print('Getting itinerary information from line', line.route_id)
             itineraries = line.get_itineraries()
