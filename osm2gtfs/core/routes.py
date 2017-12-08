@@ -33,6 +33,7 @@ class Line(object):
         '''
         Populates the object with information obtained from the tags
         '''
+        from osm2gtfs.core.osm_connector import OsmConnector
         self.name = self.tags['name']
 
         if "colour" in self.tags:

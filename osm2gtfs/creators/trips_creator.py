@@ -1,7 +1,5 @@
 # coding=utf-8
 
-import os
-import json
 import re
 from datetime import datetime
 from transitfeed import ServicePeriod
@@ -32,11 +30,7 @@ class TripsCreator(object):
         block_id  # To be avoided!
         """
         # Get route information
-        # lines = data.schedule # TODO: For later on
-
-        if os.path.isfile('data/schedule.json'):
-            with open('data/schedule.json', 'rb') as f:
-                lines = json.load(f)
+        lines = data.schedule
 
         # Loop though all lines
         for line_id, line in lines.iteritems():
@@ -52,9 +46,9 @@ class TripsCreator(object):
                 if itinerary.route_id not in timetable.lines:
                     print('Route ID of itinerary not found in timetable, skipping it', itinerary.route_id)
                     continue
-                # Add itinerary shape to schedule, using osm_id instead of route_id to differ itinerary shapes
-                # print('Adding itinerary shape to schedule', itinerary.osm_id)
-                shape_id = TripsCreator.add_shape(schedule, itinerary.osm_id, itinerary)
+                # Add itinerary shape to feed, using osm_id instead of route_id to differ itinerary shapes
+                # print('Adding itinerary shape to feed', itinerary.osm_id)
+                shape_id = TripsCreator.add_shape(feed, itinerary.osm_id, itinerary)
 
                 # Get operations for itinerary
                 # print('Getting operations for itinerary')
@@ -64,16 +58,17 @@ class TripsCreator(object):
                 for service in services:
                     # print('Loop for service', service)
                     # print('Create service period')
-                    service_period = self._create_service_period(schedule, service)
+                    service_period = self._create_service_period(feed, service)
                     # print('Load timetable')
-                    gtfs_timetable = self._load_timetable(timetable, itinerary, service)
+                    gtfs_timetable = self._load_timetable(timetable,
+                        itinerary, service)
                     # print('Load stops')
                     stops = self._load_stops(timetable, itinerary, service)
                     # print('Get route from line id', line_id)
-                    route = schedule.GetRoute(line_id)
+                    route = feed.GetRoute(line_id)
 
                     # print('Add trips for route')
-                    self._add_trips_for_route(schedule, route, itinerary,
+                    self._add_trips_for_route(feed, route, itinerary,
                                               service_period, shape_id, stops,
                                               gtfs_timetable)
         return
@@ -96,9 +91,9 @@ class TripsCreator(object):
                     services.append(service.encode('utf-8'))
         return services
 
-    def _create_service_period(self, schedule, service):
+    def _create_service_period(self, feed, service):
         try:
-            gtfs_service = schedule.GetServicePeriod(service)
+            gtfs_service = feed.GetServicePeriod(service)
             if gtfs_service is not None:
                 return gtfs_service
         except KeyError:
@@ -140,8 +135,8 @@ class TripsCreator(object):
 
         gtfs_service.SetStartDate(self.config['feed_info']['start_date'])
         gtfs_service.SetEndDate(self.config['feed_info']['end_date'])
-        schedule.AddServicePeriodObject(gtfs_service)
-        return schedule.GetServicePeriod(service)
+        feed.AddServicePeriodObject(gtfs_service)
+        return feed.GetServicePeriod(service)
 
     def _load_timetable(self, timetable, itinerary, service):
         times = None
@@ -173,10 +168,10 @@ class TripsCreator(object):
                     stops.append(unicode(stop))
         return stops
 
-    def _add_trips_for_route(self, schedule, gtfs_route, itinerary, service_period,
+    def _add_trips_for_route(self, feed, gtfs_route, itinerary, service_period,
                              shape_id, stops, gtfs_timetable):
         for trip in gtfs_timetable:
-            gtfs_trip = gtfs_route.AddTrip(schedule, headsign=itinerary.name,
+            gtfs_trip = gtfs_route.AddTrip(feed, headsign=itinerary.name,
                                            service_period=service_period)
             # print('Count of stops', len(stops))
             # print('Count of itinerary.get_stops()', len(itinerary.get_stops()))
@@ -187,7 +182,7 @@ class TripsCreator(object):
                     print('itinerary route ID', itinerary.route_id)
                     print('itinerary stop', itinerary_stop)
                     continue
-                gtfs_stop = schedule.GetStop(str(itinerary_stop.osm_id))
+                gtfs_stop = feed.GetStop(str(itinerary_stop.osm_id))
                 time = "-"
                 try:
                     time = trip[stops.index(itinerary_stop.name)]
@@ -229,12 +224,12 @@ class TripsCreator(object):
             print(e)
 
     @staticmethod
-    def add_shape(feed, route_id, osm_r):
+    def add_shape(feed, route_id, itinerary):
         """
         create GTFS shape and return shape_id to add on GTFS trip
         """
         import transitfeed
-        shape_id = str(osm_id)
+        shape_id = str(route_id)
         try:
             feed.GetShape(shape_id)
         except KeyError:

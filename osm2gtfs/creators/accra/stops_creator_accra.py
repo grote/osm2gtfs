@@ -1,8 +1,7 @@
 # coding=utf-8
 
-
-from osm2gtfs.creators.stops_creator import StopsCreator
 import math
+from osm2gtfs.creators.stops_creator import StopsCreator
 
 
 def get_crow_fly_distance(from_tuple, to_tuple):
@@ -63,7 +62,7 @@ class StopsCreatorAccra(StopsCreator):
         stops = data.get_stops()
         stops_by_name = {}
 
-        for a_stop_id, a_stop in stops.items():
+        for a_stop_id, a_stop in stops['regular'].items():
             a_stop.osm_id = a_stop_id
             if a_stop.name not in stops_by_name:
                 stops_by_name[a_stop.name] = []

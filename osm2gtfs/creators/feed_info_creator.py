@@ -18,9 +18,8 @@ class FeedInfoCreator(object):
         feed_info = self.prepare_feed_info()
         feed.AddFeedInfoObject(feed_info)
 
-        # Missing feed_info workaround (https://github.com/google/transitfeed/issues/395)
-        # noinspection PyProtectedMember
-        # pylint: disable=protected-access
+        # Missing feed_info workaround
+        # https://github.com/google/transitfeed/issues/395
         feed.AddTableColumns('feed_info', feed_info._ColumnNames())
 
     def prepare_feed_info(self):
