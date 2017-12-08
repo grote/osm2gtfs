@@ -1,14 +1,13 @@
 # coding=utf-8
 
 import sys
-import overpy
 from collections import OrderedDict
 from math import cos, sin, atan2, sqrt, radians, degrees
+import overpy
 from transitfeed import util
 from osm2gtfs.core.cache import Cache
 from osm2gtfs.core.routes import Itinerary, Line
-from osm2gtfs.core.stops import Stop, StopArea
-
+from osm2gtfs.core.stops import Stop, Station
 
 class OsmConnector(object):
     """The OsmConnector class retrieves information about transit networks from
@@ -148,7 +147,8 @@ class OsmConnector(object):
                     else:
                         sys.stderr.write(
                             "Member relation is not a valid itinerary:\n")
-                        sys.stderr.write("http://osm.org/relation/" + str(member.ref) + "\n")
+                        sys.stderr.write("http://osm.org/relation/" + str(
+                            member.ref) + "\n")
 
             # Create Line object from route master
             line = self._build_line(route_master, itineraries)
@@ -197,7 +197,7 @@ class OsmConnector(object):
         file.
 
         Then this data gets prepared by building up objects of the class Stops
-        and StopArea (when the Stops are members of a stop_area)
+        and Station (when the Stops are members of a stop_area)
 
         It uses caching to leverage fast performance and spare the Overpass
         API. Special commands are used to refresh cached data.
@@ -206,7 +206,7 @@ class OsmConnector(object):
         :param refresh: A simple boolean indicating a data refresh or use of
             caching if possible.
 
-        :return stops: A dictionary of Stops and StopAreas constituting the
+        :return stops: A dictionary of Stops and Stations constituting the
             obtained data.
 
         """
@@ -216,7 +216,8 @@ class OsmConnector(object):
             # Check if stops data is already built in this object
             if not self.stops:
                 # If not, try to get stops data from file cache
-                self.stops = Cache.read_data(self.selector + '-stops')
+                self.stops = Cache.read_data(
+                    self.selector + '-stops')
 
             if bool(self.stops):
                 # Maybe check for unnamed stop names
@@ -231,29 +232,32 @@ class OsmConnector(object):
 
         # Obtain raw data about routes from OpenStreetMap
         result = self._query_stops()
+        self.stops['regular'] = {}
+        self.stops['stations'] = {}
 
         # Build stops from ways (polygons)
         for stop in result.ways:
-            if self._is_valid_stop_candidate(stop):
-                self.stops["way/" + str(stop.id)
-                           ] = self._build_stop(stop, "way")
+            osm_type = "way"
+            stop_object = self._build_stop(stop, osm_type)
+            if stop_object:
+                self.stops['regular'][osm_type + "/" + str(
+                    stop.id)] = stop_object
 
         # Build stops from nodes
         for stop in result.nodes:
-            if self._is_valid_stop_candidate(stop):
-                self.stops["node/" + str(stop.id)
-                           ] = self._build_stop(stop, "node")
+            osm_type = "node"
+            stop_object = self._build_stop(stop, osm_type)
+            if stop_object:
+                self.stops['regular'][osm_type + "/" + str(
+                    stop.id)] = stop_object
 
-        # Build stop_areas
-        for relation in result.relations:
-            # valid stop_area candidade?
-            if 'public_transport' in relation.tags:
-                if relation.tags["public_transport"] == "stop_area":
-                    try:
-                        self.stops["relation/" + str(relation.id)
-                                   ] = self._build_stop_area(relation)
-                    except (ValueError, TypeError) as e:
-                        sys.stderr.write('Cannot add stop area: ' + str(relation.id))
+        # Build stations from stop_area relations
+        for stop in result.relations:
+            osm_type = "relation"
+            stop_object = self._build_station(stop, osm_type)
+            if stop_object:
+                self.stops['stations'][osm_type + "/" + str(
+                    stop.id)] = stop_object
 
         # Cache data
         Cache.write_data(self.selector + '-stops', self.stops)
@@ -261,13 +265,6 @@ class OsmConnector(object):
         # Maybe check for unnamed stop names
         if self.auto_stop_names:
             self._get_names_for_unnamed_stops()
-
-        # Warning about stops without stop_area
-        for ref, elem in self.stops.iteritems():
-            if type(elem) is Stop:
-                sys.stderr.write("Stop is not member of a stop_area." +
-                                 " Please fix in OpenStreetMap\n")
-                sys.stderr.write("http://osm.org/" + ref + "\n")
 
         return self.stops
 
@@ -357,54 +354,121 @@ class OsmConnector(object):
                        shape=shape, tags=route_variant.tags)
         return rv
 
-    def _build_stop(self, stop, stop_type):
+    def _build_stop(self, stop, osm_type):
         """Helper function to build a Stop object
 
         Returns a initiated Stop object from raw data
 
         """
 
-        # Make sure name is not empty
-        if 'name' not in stop.tags:
-            stop.tags['name'] = "[" + self.stop_no_name + "]"
+        if self._is_valid_stop_candidate(stop):
 
-        # Ways don't have coordinates and they have to be calculated
-        if stop_type == "way":
-            (stop.lat, stop.lon) = self.get_center_of_nodes(stop.get_nodes())
+            # Make sure name is not empty
+            if 'name' not in stop.tags:
+                stop.tags['name'] = "[" + self.stop_no_name + "]"
 
-        s = Stop(stop.id, "node", unicode(stop.tags['name']), stop.lat, stop.lon)
-        return s
+            # Make sure to allow uft-8 character encoding
+            stop.tags['name'] = stop.tags['name'].encode('utf-8')
 
-    def _build_stop_area(self, relation):
-        """Helper function to build a StopArea object
+            # Ways don't have a pair of coordinates and need to be calculated
+            if osm_type == "way":
+                (stop.lat, stop.lon) = self.get_center_of_nodes(
+                    stop.get_nodes())
 
-        Returns a initiated StopArea object from raw data
-        """
-        stop_members = {}
-        for member in relation.members:
-            if (isinstance(member, overpy.RelationNode) and
-               member.role == "platform"):
-                if "node/" + str(member.ref) in self.stops:
-                    stop = self.stops.pop("node/" + str(member.ref))
-                    stop_members["node/" + str(member.ref)] = stop
-                else:
-                    sys.stderr.write("Stop not found in stops: ")
-                    sys.stderr.write("http://osm.org/node/" +
-                                     str(member.ref) + "\n")
-        if len(stop_members) < 1:
-            sys.stderr.write("Cannot build stop area with no members\n")
+            # Create and return Stop object
+            stop = Stop(osm_id=stop.id, osm_type=osm_type, tags=stop.tags,
+                        lat=stop.lat, lon=stop.lon, name=stop.tags['name'])
+            return stop
 
-        if 'name' not in relation.tags:
-            sys.stderr.write("Stop area without name." +
-                             " Please fix in OpenStreetMap\n")
-            sys.stderr.write("http://osm.org/relation/" +
-                             str(relation.id) + "\n")
-            stop_area = StopArea(relation.id, stop_members, self.stop_no_name)
         else:
-            stop_area = StopArea(relation.id, stop_members,
-                                 relation.tags["name"])
-        # print(stop_area)
-        return stop_area
+            sys.stderr.write(
+                "Warning: Potential stop was not approved and is ignored")
+            sys.stderr.write(
+                " Check tagging: http://osm.org/" + osm_type + "/" + str(
+                    stop.id) + "\n")
+            return False
+
+    def _build_station(self, stop_area, osm_type):
+        """Helper function to build Station objects from stop_areas
+
+        The function creates a Station object for the stop_area
+        flagged as location_type = 1. This means station, that can
+        group stops.
+
+        The members of this relation add this station their parent.
+
+        Returns a initiated Station object from raw data
+
+        """
+
+        # Check whether a valid stop_area candidade
+        if 'public_transport' in stop_area.tags and stop_area.tags[
+                        'public_transport'] == 'stop_area':
+
+            # Analzyse member objects (stops) of this stop area
+            members = {}
+            for member in stop_area.members:
+                if (isinstance(member, overpy.RelationNode) and
+                   member.role == "platform"):
+
+                    if "node/" + str(member.ref) in self.stops['regular']:
+
+                        # Collect the Stop objects that are members
+                        # of this Station
+                        members["node/" + str(member.ref)] = self.stops[
+                            'regular']["node/" + str(member.ref)]
+                    else:
+                        sys.stderr.write(
+                            "Error: Station member was not found in data")
+                        sys.stderr.write("http://osm.org/relation/" +
+                                         str(stop_area.id) + "\n")
+                        sys.stderr.write("http://osm.org/node/" +
+                                         str(member.ref) + "\n")
+            if len(members) < 1:
+                # Stop areas with only one stop, are not stations they just
+                # group different elements of one stop together.
+                sys.stderr.write(
+                    "Error: Station with no members has been discarted:\n")
+                sys.stderr.write("http://osm.org/relation/" +
+                                 str(stop_area.id) + "\n")
+                return False
+
+            elif len(members) is 1:
+                sys.stderr.write(
+                    "Warning: Station has only one platform and is discarted\n")
+                sys.stderr.write("http://osm.org/relation/" +
+                                 str(stop_area.id) + "\n")
+                return False
+
+            # Check name of stop area
+            if 'name' not in stop_area.tags:
+                sys.stderr.write("Warning: Stop area without name." +
+                                 " Please fix in OpenStreetMap\n")
+                sys.stderr.write("http://osm.org/relation/" +
+                                 str(stop_area.id) + "\n")
+                stop_area.name = self.stop_no_name
+            else:
+                stop_area.name = stop_area.tags["name"]
+
+            # Calculate coordinates for stop area based on the center of it's
+            # members
+            stop_area.lat, stop_area.lon = self.get_center_of_nodes(
+                members.values())
+
+            # Create and return Station object
+            station = Station(osm_id=stop_area.id, tags=stop_area.tags,
+                              lat=stop_area.lat, lon=stop_area.lon,
+                              name=stop_area.name)
+            station.set_members(members)
+            return station
+
+        else:
+            sys.stderr.write(
+                "Warning: Potential station was not approved and is ignored")
+            sys.stderr.write(
+                " Check tagging: http://osm.org/" + osm_type + "/" + str(
+                    stop_area.id) + "\n")
+            return False
 
     def _query_routes(self):
         """Helper function to query OpenStreetMap routes
@@ -523,21 +587,22 @@ class OsmConnector(object):
     def _is_valid_stop_candidate(self, stop):
         """Helper function to check if a stop candidate has a valid tagging
 
-        Returns True or False
+        :return bool: Returns True or False
 
         """
+        valid = False
         if 'public_transport' in stop.tags:
             if stop.tags['public_transport'] == 'platform':
-                return True
+                valid = True
             elif stop.tags['public_transport'] == 'station':
-                return True
-        elif 'highway' in stop.tags:
+                valid = True
+        if 'highway' in stop.tags:
             if stop.tags['highway'] == 'bus_stop':
-                return True
-        elif 'amenity' in stop.tags:
+                valid = True
+        if 'amenity' in stop.tags:
             if stop.tags['amenity'] == 'bus_station':
-                return True
-        return False
+                valid = True
+        return valid
 
     def _get_names_for_unnamed_stops(self):
         """Intelligently guess stop names for unnamed stops by sourrounding
@@ -547,7 +612,7 @@ class OsmConnector(object):
 
         """
         # Loop through all stops
-        for stop in self.stops.values():
+        for stop in self.stops['regular'].values():
 
             # If there is no name, query one intelligently from OSM
             if stop.name == "[" + self.stop_no_name + "]":
@@ -678,6 +743,12 @@ class OsmConnector(object):
             return 'FFFFFF'
         if color == u'yellow':
             return 'FFFF00'
+        if color == u'brown':
+            return 'A52A2A'
+        if color == u'coral':
+            return 'FF7F50'
+        if color == u'turquoise':
+            return '40E0D0'
         print('Color not known: ' + color)
         return 'FA8072'
 

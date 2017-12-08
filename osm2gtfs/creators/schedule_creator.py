@@ -32,6 +32,8 @@ class ScheduleCreator(object):
     def _load_schedule_source(self):
         """
         This function loads and verifies the content of the file.
+        In the standard schedule creator it assumes a json file. This function
+        can be overridden to support any type of file format or structure.
         """
 
         schedule_source = self.config.get_schedule_source()

@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # coding=utf-8
 
-import transitfeed
 import sys
 import argparse
+import transitfeed
 from core.configuration import Configuration
 from core.osm_connector import OsmConnector
 from core.creator_factory import CreatorFactory
