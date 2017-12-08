@@ -300,30 +300,9 @@ class OsmConnector(object):
                     "No 'ref' could be obtained. Skipping whole route.\n")
                 return
 
-        name = route_master.tags['name']
-        frequency = None
-        if "frequency" in route_master.tags:
-            frequency = route_master.tags['frequency']
-
-        color = "FFFFFF"
-        if "colour" in route_master.tags:
-            color = OsmConnector.get_hex_code_for_color(route_master.tags['colour'])
-
-        text_color = OsmConnector.get_complementary_color(color)
-        if "text_colour" in route_master.tags:
-            text_color = OsmConnector.get_hex_code_for_color(route_master.tags['text_colour'])
-
-        if 'route_master' in route_master.tags:
-            route_type = route_master.tags['route_master'].capitalize()
-
-        # If there was no route_master present we have a route relation here
-        elif 'route' in route_master.tags:
-            route_type = route_master.tags['route'].capitalize()
-
         # Create Line (route master) object
         line = Line(osm_id=route_master.id, route_id=ref,
-                    name=name, route_type=route_type, frequency=frequency,
-                    route_color=color, route_text_color=text_color)
+                    tags=route_master.tags)
 
         # Add Itinerary objects (route variants) to Line (route master)
         for itinerary in list(itineraries.values()):
@@ -331,7 +310,7 @@ class OsmConnector(object):
                 line.add_itinerary(itinerary)
             except ValueError:
                 sys.stderr.write(
-                    "Itinerary ID does not match line ID. Please fix in OSM.\n")
+                    "Itinerary ID doesn't match line ID. Please fix in OSM.\n")
                 sys.stderr.write(line.osm_url)
                 itinerary.route_id = line.route_id
                 line.add_itinerary(itinerary)
@@ -355,26 +334,6 @@ class OsmConnector(object):
                 "Whole Itinerary skipped. Please fix in OpenStreetMap\n")
             return
 
-        if 'from' in route_variant.tags:
-            fr = route_variant.tags['from']
-        else:
-            fr = None
-
-        if 'to' in route_variant.tags:
-            to = route_variant.tags['to']
-        else:
-            to = None
-
-        if 'name' in route_variant.tags:
-            name = route_variant.tags['name']
-        else:
-            name = None
-
-        if 'travel_time' in route_variant.tags:
-            travel_time = route_variant.tags['travel_time']
-        else:
-            travel_time = None
-
         stops = []
 
         # Add ids for stops of this route variant
@@ -394,9 +353,8 @@ class OsmConnector(object):
                 stops.append(otype + "/" + str(stop_candidate.ref))
 
         shape = self._generate_shape(route_variant, query_result_set)
-        rv = Itinerary(osm_id=route_variant.id, fr=fr,
-                       to=to, stops=stops, shape=shape, route_id=ref,
-                       name=name, travel_time=travel_time)
+        rv = Itinerary(osm_id=route_variant.id, route_id=ref, stops=stops,
+                       shape=shape, tags=route_variant.tags)
         return rv
 
     def _build_stop(self, stop, stop_type):
