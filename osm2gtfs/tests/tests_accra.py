@@ -96,7 +96,7 @@ class TestAccra(unittest.TestCase):
             data.get_routes(refresh=True)
         self.assertTrue(os.path.isfile(cache_file), 'The routes cache file creation failed')
         cache = Cache()
-        routes = cache.read_data('routes-accra')
+        routes = cache.read_data('accra-routes')
         self.assertEqual(len(routes), 277, 'Wrong count of routes in the cache file')
 
     def test_refresh_stops_cache(self):
@@ -112,7 +112,7 @@ class TestAccra(unittest.TestCase):
             data.get_stops(refresh=True)
         self.assertTrue(os.path.isfile(cache_file), 'The stops cache file creation failed')
         cache = Cache()
-        stops = cache.read_data('stops-accra')
+        stops = cache.read_data('accra-stops')
         self.assertEqual(len(stops), 2529, 'Wrong count of stops in the cache file')
 
     def test_gtfs_from_cache(self):

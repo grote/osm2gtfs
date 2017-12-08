@@ -1,9 +1,6 @@
 # coding=utf-8
 
-import sys
 import transitfeed
-from osm2gtfs.core.routes import Itinerary, Line
-from osm2gtfs.core.stops import Stop, StopArea
 
 
 class StopsCreator(object):
@@ -18,84 +15,70 @@ class StopsCreator(object):
         return rep
 
     def add_stops_to_feed(self, feed, data):
-        # Get stops information
-        stops = data.get_stops()
+        """
+        This function adds the Stops from the data to the GTFS feed.
+        It also unites stops in stations based on stop_areas in OpenStreetMap.
+        """
+        all_stops = data.get_stops()
+        regular_stops = all_stops['regular']
+        parent_stations = all_stops['stations']
 
-        # add all stops to GTFS
-        for elem in stops.values():
-            if type(elem) is StopArea:
-                if len(elem.stop_members) > 1:
-                    parent_station = self.add_stop(feed, elem, None, True)
-                    for stop in elem.stop_members.values():
-                        self.add_stop(feed, stop, parent_station)
-                else:
-                    stop = elem.stop_members.values()[0]
-                    self.add_stop(feed, stop)
-            else:
-                self.add_stop(feed, elem)
+        # Loop through all stations and prepare stops
+        for station in parent_stations.values():
 
-        # Add loose stop objects to route objects
-        self.add_stops_to_routes(data)
+            # Add station to feed as stop
+            gtfs_stop_id = self._add_stop_to_feed(station, feed)
 
-    def add_stop(self, feed, stop, parent_station=None, is_station=False):
-        stop_dict = {"stop_lat": float(stop.lat),
-                     "stop_lon": float(stop.lon),
-                     "stop_name": stop.name}
+            # Loop through member stops of a station
+            for member in station.get_members():
 
-        if is_station:
-            stop_dict["stop_id"] = "SA" + str(stop.id)
-            stop_dict["location_type"] = "1"
+                # Set parent station of each member Stop
+                regular_stops[member].set_parent_station(gtfs_stop_id)
+
+        # Loop through regular stops
+        for stop in regular_stops.values():
+            # Add stop to feed
+            self._add_stop_to_feed(stop, feed)
+
+    def get_gtfs_stop_id(self, stop):
+        """
+        This function returns the GTFS stop id to be used for a stop.
+        It can be overridden by custom cretors to change how stop_ids are made
+        up.
+
+        :return gtfs_stop_id: A string with the stop_id for use in the GTFS
+        """
+
+        if "gtfs_id" in stop.tags:
+            #  Use a GTFS stop_id coming from OpenStreetMap data
+            return stop.tags['gtfs_id']
         else:
-            stop_dict["stop_id"] = str(stop.id)
-            stop_dict["location_type"] = ""
+            # Use a GTFS stop_id mathing to OpenStreetMap objects
+            return stop.osm_type + "/" + str(stop.osm_id)
 
-        if parent_station is None:
-            stop_dict["parent_station"] = ""
-        else:
-            stop_dict["parent_station"] = parent_station.stop_id
+    def _add_stop_to_feed(self, stop, feed):
+        """
+        This function adds a Stop or Station object as a stop to GTFS.
+        It can be overridden by custom cretors to change how stop_ids are made
+        up.
+
+        :return stop_id: A string with the stop_id in the GTFS
+        """
+        try:
+            parent_station = stop.get_parent_station()
+        except AttributeError as e:
+            parent_station = ""
+
+        field_dict = {'stop_id': self.get_gtfs_stop_id(stop),
+                      'stop_name': stop.name,
+                      'stop_lat': float(stop.lat),
+                      'stop_lon': float(stop.lon),
+                      'location_type': stop.location_type,
+                      'parent_station': parent_station
+                      }
 
         # Add stop to GTFS object
-        stop = transitfeed.Stop(field_dict=stop_dict)
-        feed.AddStopObject(stop)
-        return stop
+        feed.AddStopObject(transitfeed.Stop(field_dict=field_dict))
 
-    def add_stops_to_routes(self, data):
-        routes = data.routes
-        stops = data.stops
-
-        # Loop through routes
-        for ref, route in routes.iteritems():
-            # Replace stop ids with Stop objects
-            self._fill_stops(stops, route)
-
-        data.routes = routes
-        return
-
-    def _fill_stops(self, stops, route):
-        """
-        Fill a route object with stop objects for of linked stop ids
-        """
-        if isinstance(route, Itinerary):
-            for stop in route.stops:
-                # Replace stop id with Stop objects
-                # TODO: Remove here and use references in TripsCreatorFenix
-                route.add_stop(self._get_stop(stop, stops))
-
-        elif isinstance(route, Line):
-            itineraries = route.get_itineraries()
-            for itinerary in itineraries:
-                self._fill_stops(stops, itinerary)
-
-        else:
-            sys.stderr.write("Unknown route: " + str(route) + "\n")
-
-    def _get_stop(self, stop_id, stops):
-        for ref, elem in stops.iteritems():
-            if type(elem) is Stop:
-                if ref == stop_id:
-                    return elem
-            elif type(elem) is StopArea:
-                if stop_id in elem.stop_members:
-                    return elem.stop_members[stop_id]
-            else:
-                sys.stderr.write("Unknown stop: " + str(stop_id) + "\n")
+        # Return the stop_id of the stop added
+        return field_dict['stop_id']

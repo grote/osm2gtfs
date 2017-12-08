@@ -23,7 +23,7 @@ class TripsCreatorAccra(TripsCreator):
                 continue
 
             line_gtfs = feed.AddRoute(
-                short_name=line.route_id,
+                short_name=line.osm_id,
                 long_name=line.name,
                 # we change the route_long_name with the 'from' and 'to' tags
                 # of the last route as the route_master name tag contains
