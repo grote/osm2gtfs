@@ -53,8 +53,11 @@ class TripsCreatorAccra(TripsCreator):
                 DEFAULT_ROUTE_FREQUENCY = 30
                 DEFAULT_TRAVEL_TIME = 120
 
+                frequency = None
+                if "frequency" in line.tags:
+                    frequency = line.tags['frequency']
                 try:
-                    ROUTE_FREQUENCY = int(line.frequency)
+                    ROUTE_FREQUENCY = int(frequency)
                     if not ROUTE_FREQUENCY > 0:
                         print("frequency is invalid for route_master " + str(
                             line.osm_id))
@@ -66,16 +69,17 @@ class TripsCreatorAccra(TripsCreator):
                 trip_gtfs.AddFrequency(
                     "05:00:00", "22:00:00", ROUTE_FREQUENCY * 60)
 
-                try:
-                    TRAVEL_TIME = int(a_route.travel_time)
-                    if not TRAVEL_TIME > 0:
-                        print("travel_time is invalid for route " + str(
-                                a_route.osm_id))
+                if 'travel_time' in a_route.tags:
+                    try:
+                        TRAVEL_TIME = int(a_route.tags['travel_time'])
+                        if not TRAVEL_TIME > 0:
+                            print("travel_time is invalid for route " + str(
+                                    a_route.osm_id))
+                            TRAVEL_TIME = DEFAULT_TRAVEL_TIME
+                    except (ValueError, TypeError) as e:
+                        print("travel_time not a number for route " + str(
+                                    a_route.osm_id))
                         TRAVEL_TIME = DEFAULT_TRAVEL_TIME
-                except (ValueError, TypeError) as e:
-                    print("travel_time not a number for route " + str(
-                                a_route.osm_id))
-                    TRAVEL_TIME = DEFAULT_TRAVEL_TIME
 
                 for index_stop, a_stop in enumerate(a_route.stops):
                     stop_id = a_stop.split('/')[-1]

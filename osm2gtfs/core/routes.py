@@ -16,18 +16,41 @@ class Line(object):
     """
     osm_id = attr.ib()
     route_id = attr.ib()
-    name = attr.ib()
-    route_type = attr.ib()  # Required (Tram, Subway, Rail, Bus, ...)
+    tags = attr.ib()
 
+    name = attr.ib(default=None)
+    route_type = attr.ib(default=None)  # Required (Tram, Subway, Bus, ...)
     route_desc = attr.ib(default=None)
     route_url = attr.ib(default=None)
     route_color = attr.ib(default="FFFFFF")
     route_text_color = attr.ib(default="000000")
     osm_url = attr.ib(default="http://osm.org/relation/" + str(osm_id))
-    frequency = attr.ib(default=None)
 
     # Related route variants
     _itineraries = attr.ib(default=attr.Factory(list))
+
+    def __attrs_post_init__(self):
+        '''
+        Populates the object with information obtained from the tags
+        '''
+        self.name = self.tags['name']
+
+        if "colour" in self.tags:
+            self.route_color = OsmConnector.get_hex_code_for_color(
+                self.tags['colour'])
+
+        text_color = OsmConnector.get_complementary_color(self.route_color)
+        if "text_colour" in self.tags:
+            self.route_text_color = OsmConnector.get_hex_code_for_color(
+                self.tags['text_colour'])
+
+        if 'self' in self.tags:
+            # TODO: Get the type from itineraries/routes or config file
+            route_type = self.tags['self'].capitalize()
+
+        # If there was no self present we have a route relation here
+        elif 'route' in self.tags:
+            route_type = self.tags['route'].capitalize()
 
     def add_itinerary(self, itinerary):
 
@@ -55,23 +78,34 @@ class Itinerary(object):
     """
     osm_id = attr.ib()
     route_id = attr.ib()
-    name = attr.ib()
-    fr = attr.ib()
-    to = attr.ib()
-    shape = attr.ib()
     stops = attr.ib()
-    travel_time = attr.ib()
+    shape = attr.ib()
+    tags = attr.ib()
 
-    route_url = attr.ib(default=None)
-    wheelchair_accessible = attr.ib(default=0)
-    bikes_allowed = attr.ib(default=0)
-    osm_url = attr.ib(default="http://osm.org/relation/" + str(osm_id))
-
-    # Useful information for further calculation
+    name = attr.ib(default=None)
+    fr = attr.ib(default=None)
+    to = attr.ib(default=None)
     duration = attr.ib(default=None)
+    osm_url = attr.ib(default="http://osm.org/relation/" + str(osm_id))
 
     # All stop objects of itinerary
     _stop_objects = attr.ib(default=attr.Factory(list))
+
+    def __attrs_post_init__(self):
+        '''
+        Populates the object with information obtained from the tags
+        '''
+        if 'from' in self.tags:
+            self.fr = self.tags['from']
+
+        if 'to' in self.tags:
+            self.to = self.tags['to']
+
+        if 'name' in self.tags:
+            self.name = self.tags['name']
+
+        if 'duration' in self.tags:
+            self.name = self.tags['duration']
 
     def add_stop(self, stop):
         self._stop_objects.append(stop)
