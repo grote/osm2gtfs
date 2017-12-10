@@ -1,6 +1,7 @@
 # coding=utf-8
 
 import re
+import sys
 from datetime import datetime
 from transitfeed import ServicePeriod
 
@@ -17,63 +18,56 @@ class TripsCreator(object):
         return rep
 
     def add_trips_to_feed(self, feed, data):
-        """
-        route_id  # Required: From Line
-        service_id  # Required: To be generated
-        trip_id  # Required: To be generated
-
-        trip_headsign # Itinerary "to"
-        direction_id  # Order of tinieraries in Line object
-        wheelchair_accessible  # Itinerary "wheelchair_accessible"
-        bikes_allowed # Itinerary "bikes_allowed"
-        trip_short_name  # To be avoided!
-        block_id  # To be avoided!
-        """
-        # Get route information
-        lines = data.schedule
 
         # Loop though all lines
-        for line_id, line in lines.iteritems():
+        for line_id, line in data.routes.iteritems():
 
             # Loop through all itineraries
-            # print('Getting itinerary information from line', line.route_id)
             itineraries = line.get_itineraries()
             for itinerary in itineraries:
-                # print('Loop for itinerary.route_id', itinerary.route_id)
-                if itinerary.route_id.encode('utf-8') != line_id.encode('utf-8'):
-                    raise RuntimeError('Itinerary route ID (' + itinerary.route_id + ') does not match Line route ID (' + line_id + ')')
 
-                if itinerary.route_id not in timetable.lines:
-                    print('Route ID of itinerary not found in timetable, skipping it', itinerary.route_id)
+                # Check if itinerary and line are having the same reference
+                if itinerary.route_id.encode('utf-8') != line_id.encode('utf-8'):
+                    sys.stderr.write(
+                        "Itinerary route ID (" + itinerary.route_id + "))")
+                    sys.stderr.write(
+                        " doesn't match Line route ID (" + line_id + ")\n")
+
+                # Check if time informaiton in schedule can be found for
+                # the itinerary
+                if itinerary.route_id not in data.schedule.lines:
+                    sys.stderr.write(
+                        "Route ID of itinerary not found in schedule.\n")
+                    sys.stderr.write(
+                        "Skipping it: " + str(itinerary.route_id)+ "\n")
                     continue
-                # Add itinerary shape to feed, using osm_id instead of route_id to differ itinerary shapes
-                # print('Adding itinerary shape to feed', itinerary.osm_id)
-                shape_id = TripsCreator.add_shape(feed, itinerary.osm_id, itinerary)
+
+                # Add itinerary shape to feed.
+                shape_id = TripsCreator.add_shape(
+                    feed, itinerary.osm_id, itinerary)
 
                 # Get operations for itinerary
-                # print('Getting operations for itinerary')
-                services = self._get_itinerary_services(timetable, itinerary)
+                services = self._get_itinerary_services(
+                    data.schedule, itinerary)
 
                 # Loop through all services
                 for service in services:
-                    # print('Loop for service', service)
-                    # print('Create service period')
+
                     service_period = self._create_service_period(feed, service)
-                    # print('Load timetable')
-                    gtfs_timetable = self._load_timetable(timetable,
-                        itinerary, service)
+                    # print('Load data.schedule')
+                    gtfs_schedule = self._load_schedule(data.schedule,
+                                                        itinerary, service)
                     # print('Load stops')
-                    stops = self._load_stops(timetable, itinerary, service)
+                    stops = self._load_stops(data.schedule, itinerary, service)
                     # print('Get route from line id', line_id)
                     route = feed.GetRoute(line_id)
-
                     # print('Add trips for route')
                     self._add_trips_for_route(feed, route, itinerary,
                                               service_period, shape_id, stops,
-                                              gtfs_timetable)
+                                              gtfs_schedule)
         return
 
-    def _get_itinerary_services(self, timetable, itinerary):
+    def _get_itinerary_services(self, schedule, itinerary):
         """
         Returns a list with services of given itinerary.
         """
@@ -82,7 +76,7 @@ class TripsCreator(object):
 
         services = []
 
-        for trip in timetable.lines[itinerary.route_id]:
+        for trip in schedule.lines[itinerary.route_id]:
             input_fr = trip["from"].encode('utf-8')
             input_to = trip["to"].encode('utf-8')
             if input_fr == fr and input_to == to:
@@ -138,27 +132,28 @@ class TripsCreator(object):
         feed.AddServicePeriodObject(gtfs_service)
         return feed.GetServicePeriod(service)
 
-    def _load_timetable(self, timetable, itinerary, service):
+    def _load_schedule(self, schedule, itinerary, service):
         times = None
-        for trip in timetable.lines[itinerary.route_id]:
+        for trip in schedule.lines[itinerary.route_id]:
             fr = trip["from"].encode('utf-8')
             to = trip["to"].encode('utf-8')
             trip_services = trip["services"]
-            if (fr == itinerary.fr.encode('utf-8') and
-               to == itinerary.to.encode('utf-8') and service in trip_services):
+            if (fr == itinerary.fr.encode(
+                    'utf-8') and to == itinerary.to.encode(
+                        'utf-8') and service in trip_services):
                 times = trip["times"]
 
         if times is None:
             print("Problems found with Itinerary from " +
                   itinerary.fr.encode('utf-8') + " to " +
                   itinerary.to.encode('utf-8')
-                  )
-            print("Couldn't load times from timetable.")
+                 )
+            print("Couldn't load times from schedule.")
         return times
 
-    def _load_stops(self, timetable, itinerary, service):
+    def _load_stops(self, schedule, itinerary, service):
         stops = []
-        for trip in timetable.lines[itinerary.route_id]:
+        for trip in schedule.lines[itinerary.route_id]:
             fr = trip["from"].encode('utf-8')
             to = trip["to"].encode('utf-8')
             trip_services = trip["services"]
@@ -169,8 +164,8 @@ class TripsCreator(object):
         return stops
 
     def _add_trips_for_route(self, feed, gtfs_route, itinerary, service_period,
-                             shape_id, stops, gtfs_timetable):
-        for trip in gtfs_timetable:
+                             shape_id, stops, gtfs_schedule):
+        for trip in gtfs_schedule:
             gtfs_trip = gtfs_route.AddTrip(feed, headsign=itinerary.name,
                                            service_period=service_period)
             # print('Count of stops', len(stops))
