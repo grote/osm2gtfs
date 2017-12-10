@@ -37,40 +37,35 @@ class StopsCreator(object):
 
         # Loop through regular stops
         for stop in regular_stops.values():
+
             # Add stop to feed
-            self._add_stop_to_feed(stop, feed)
-
-    def get_gtfs_stop_id(self, stop):
-        """
-        This function returns the GTFS stop id to be used for a stop.
-        It can be overridden by custom cretors to change how stop_ids are made
-        up.
-
-        :return gtfs_stop_id: A string with the stop_id for use in the GTFS
-        """
-
-        if "gtfs_id" in stop.tags:
-            #  Use a GTFS stop_id coming from OpenStreetMap data
-            return stop.tags['gtfs_id']
-        else:
-            # Use a GTFS stop_id mathing to OpenStreetMap objects
-            return stop.osm_type + "/" + str(stop.osm_id)
+            gtfs_stop_id = self._add_stop_to_feed(stop, feed)
 
     def _add_stop_to_feed(self, stop, feed):
         """
-        This function adds a Stop or Station object as a stop to GTFS.
-        It can be overridden by custom cretors to change how stop_ids are made
+        This function adds a single Stop or Station object as a stop to GTFS.
+        It can be overridden by custom creators to change how stop_ids are made
         up.
 
         :return stop_id: A string with the stop_id in the GTFS
         """
         try:
             parent_station = stop.get_parent_station()
-        except AttributeError as e:
+        except AttributeError:
             parent_station = ""
 
-        field_dict = {'stop_id': self.get_gtfs_stop_id(stop),
-                      'stop_name': stop.name,
+        # Send stop_id creation through overridable function
+        gtfs_stop_id = self._define_stop_id(stop)
+
+        # Save defined stop_id to the object for furhter use in other creators
+        stop.set_stop_id(gtfs_stop_id)
+
+        # Set stop name
+        stop_name = self._define_stop_name(stop)
+
+        # Collect all data together for the stop creation
+        field_dict = {'stop_id': self._define_stop_id(stop),
+                      'stop_name': stop_name,
                       'stop_lat': float(stop.lat),
                       'stop_lon': float(stop.lon),
                       'location_type': stop.location_type,
@@ -80,5 +75,39 @@ class StopsCreator(object):
         # Add stop to GTFS object
         feed.AddStopObject(transitfeed.Stop(field_dict=field_dict))
 
+        if type(stop_name).__name__ == "unicode":
+            stop_name = stop_name.encode('utf-8')
+
+        print("Added stop: " + stop_name +
+              " - " + stop.osm_url)
+
         # Return the stop_id of the stop added
         return field_dict['stop_id']
+
+    def _define_stop_id(self, stop):
+        """
+        This function returns the GTFS stop id to be used for a stop.
+        It can be overridden by custom creators to change how stop_ids are made
+        up.
+
+        :return stop_id: A string with the stop_id for use in the GTFS
+        """
+
+        #  Use a GTFS stop_id coming from OpenStreetMap data
+        if "ref:gtfs" in stop.tags:
+            stop_id = stop.tags['ref:gtfs']
+        elif "ref" in stop.tags:
+            stop_id = stop.tags['ref']
+
+        # Use a GTFS stop_id matching to OpenStreetMap objects
+        else:
+            stop_id = stop.osm_type + "/" + str(stop.osm_id)
+
+        return stop_id
+
+    def _define_stop_name(self, stop):
+        """
+        Returns the stop name for the use in the GTFS feed.
+        Can be easily overridden in any creator.
+        """
+        return stop.name

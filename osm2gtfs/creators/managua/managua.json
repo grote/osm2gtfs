@@ -13,7 +13,7 @@
         }
     },
     "stops": {
-        "name_without": "Parada sin nombre - Agregaselo en rutas.mapanica.net",
+        "name_without": "Parada sin nombre",
         "name_auto": "no"
     },
     "agency": {
@@ -29,8 +29,8 @@
         "publisher_name": "MapaNica.net",
         "publisher_url": "https://mapanica.net",
         "version":  "0.1",
-        "start_date": "20171101",
-        "end_date": "20181031"
+        "start_date": "20171201",
+        "end_date": "20180331"
     },
     "schedule_source": "https://raw.githubusercontent.com/mapanica/pt-data-managua/master/timetable.json",
     "output_file": "data/ni-managua-gtfs.zip",

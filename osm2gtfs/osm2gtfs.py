@@ -65,8 +65,8 @@ def main():
     # Add data to feed
     agency_creator.add_agency_to_feed(feed)
     feed_info_creator.add_feed_info_to_feed(feed)
-    routes_creator.add_routes_to_feed(feed, data)
     stops_creator.add_stops_to_feed(feed, data)
+    routes_creator.add_routes_to_feed(feed, data)
     schedule_creator.add_schedule_to_data(data)
     trips_creator.add_trips_to_feed(feed, data)
 

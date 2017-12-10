@@ -2,7 +2,9 @@
 
 import re
 from datetime import datetime
+import transitfeed
 from transitfeed import ServicePeriod
+from osm2gtfs.core.helper import Helper
 
 
 class TripsCreator(object):
@@ -18,80 +20,222 @@ class TripsCreator(object):
 
     def add_trips_to_feed(self, feed, data):
         """
-        route_id  # Required: From Line
-        service_id  # Required: To be generated
-        trip_id  # Required: To be generated
+        This function generates and adds trips to the GTFS feed.
 
-        trip_headsign # Itinerary "to"
-        direction_id  # Order of tinieraries in Line object
-        wheelchair_accessible  # Itinerary "wheelchair_accessible"
-        bikes_allowed # Itinerary "bikes_allowed"
-        trip_short_name  # To be avoided!
-        block_id  # To be avoided!
+        It is the place where geographic information and schedule is
+        getting joined to produce a routable GTFS.
         """
-        # Get route information
-        lines = data.schedule
+        all_trips_count = 0
 
-        # Loop though all lines
-        for line_id, line in lines.iteritems():
+        # Go though all lines
+        for line_id, line in data.routes.iteritems():
 
-            # Loop through all itineraries
-            # print('Getting itinerary information from line', line.route_id)
+            print("\nGenerating schedule for line: [" + str(
+                line_id) + "] - " + line.name)
+
+            # Loop through it's itineraries
             itineraries = line.get_itineraries()
             for itinerary in itineraries:
-                # print('Loop for itinerary.route_id', itinerary.route_id)
-                if itinerary.route_id.encode('utf-8') != line_id.encode('utf-8'):
-                    raise RuntimeError('Itinerary route ID (' + itinerary.route_id + ') does not match Line route ID (' + line_id + ')')
+                trips_count = 0
 
-                if itinerary.route_id not in timetable.lines:
-                    print('Route ID of itinerary not found in timetable, skipping it', itinerary.route_id)
-                    continue
-                # Add itinerary shape to feed, using osm_id instead of route_id to differ itinerary shapes
-                # print('Adding itinerary shape to feed', itinerary.osm_id)
-                shape_id = TripsCreator.add_shape(feed, itinerary.osm_id, itinerary)
+                # Verify data before proceeding
+                if self._verify_data(data.schedule, line, itinerary):
 
-                # Get operations for itinerary
-                # print('Getting operations for itinerary')
-                services = self._get_itinerary_services(timetable, itinerary)
+                    # Prepare itinerary's trips and schedule
+                    prepared_trips = self._prepare_trips(feed, data.schedule,
+                                                         itinerary)
 
-                # Loop through all services
-                for service in services:
-                    # print('Loop for service', service)
-                    # print('Create service period')
-                    service_period = self._create_service_period(feed, service)
-                    # print('Load timetable')
-                    gtfs_timetable = self._load_timetable(timetable,
-                        itinerary, service)
-                    # print('Load stops')
-                    stops = self._load_stops(timetable, itinerary, service)
-                    # print('Get route from line id', line_id)
-                    route = feed.GetRoute(line_id)
+                    # Add itinerary shape to feed.
+                    shape_id = self._add_shape_to_feed(
+                        feed, "relation/" + str(itinerary.osm_id), itinerary)
 
-                    # print('Add trips for route')
-                    self._add_trips_for_route(feed, route, itinerary,
-                                              service_period, shape_id, stops,
-                                              gtfs_timetable)
+                    # Add trips of each itinerary to the GTFS feed
+                    for trip_builder in prepared_trips:
+
+                        trip_builder['all_stops'] = data.get_stops()
+                        trips_count += self._add_itinerary_trips(
+                            feed, itinerary, line, trip_builder, shape_id)
+
+                # Print out status messge about added trips
+                print(" Itinerary: [" + str(itinerary.route_id) + "] " +
+                      itinerary.to.encode("utf-8") + " (added " + str(
+                          trips_count) + " trips, serving " + str(
+                              len(itinerary.get_stops())) + " stops) - " +
+                      itinerary.osm_url)
+                all_trips_count += trips_count
+
+        print("\nTotal of added trips to this GTFS: " +
+              str(all_trips_count) + "\n\n")
         return
 
-    def _get_itinerary_services(self, timetable, itinerary):
+    def _prepare_trips(self, feed, schedule, itinerary):
         """
-        Returns a list with services of given itinerary.
-        """
-        fr = itinerary.fr.encode('utf-8')
-        to = itinerary.to.encode('utf-8')
+        Prepare information necessary to generate trips
 
+        :return trips: List of different objects
+        """
+
+        # Define a list with service days of given itinerary.
         services = []
-
-        for trip in timetable.lines[itinerary.route_id]:
-            input_fr = trip["from"].encode('utf-8')
-            input_to = trip["to"].encode('utf-8')
-            if input_fr == fr and input_to == to:
+        for trip in schedule['lines'][itinerary.route_id]:
+            input_fr = trip["from"]
+            input_to = trip["to"]
+            if input_fr == itinerary.fr and input_to == itinerary.to:
                 trip_services = trip["services"]
                 for service in trip_services:
-                    services.append(service.encode('utf-8'))
-        return services
+                    services.append(service)
 
-    def _create_service_period(self, feed, service):
+        if not services:
+            print(" Warning: From and to values didn't match with schedule.")
+
+        # Loop through all service days
+        trips = []
+        for service in services:
+
+            # Define GTFS feed service period
+            service_period = self._create_gtfs_service_period(feed, service)
+
+            # Get schedule for this itinierary's trips
+            trips_schedule = self._load_itinerary_schedule(schedule,
+                                                           itinerary, service)
+
+            # Get the stops, which are listed in the schedule
+            scheduled_stops = self._load_scheduled_stops(
+                schedule, itinerary, service)
+
+            # Prepare a trips builder container with useful data for later
+            trips.append({'service_period': service_period,
+                          'stops': scheduled_stops, 'schedule': trips_schedule})
+        return trips
+
+    def _verify_data(self, schedule, line, itinerary):
+        """
+        Verifies line, itinerary and it's schedule data for trip creation
+        """
+
+        # Check if itinerary and line are having the same reference
+        if itinerary.route_id != line.route_id:
+            print("Warning: The route id of the itinerary (" +
+                  str(itinerary.route_id) + ") doesn't match route id of line (" +
+                  str(line.route_id) + ")")
+            print(" " + itinerary.osm_url)
+            print(" " + line.osm_url)
+            return True
+
+        # Check if time information in schedule can be found for
+        # the itinerary
+        if itinerary.route_id not in schedule['lines']:
+            print(" Warning: Route not found in schedule.")
+            return False
+
+        return True
+
+    def _add_shape_to_feed(self, feed, shape_id, itinerary):
+        """
+        Create GTFS shape and return shape_id to add on GTFS trip
+        """
+        shape_id = str(shape_id)
+
+        # Only add a shape if there isn't one with this shape_id
+        try:
+            feed.GetShape(shape_id)
+        except KeyError:
+            shape = transitfeed.Shape(shape_id)
+            for point in itinerary.shape:
+                shape.AddPoint(
+                    lat=float(point["lat"]), lon=float(point["lon"]))
+            feed.AddShapeObject(shape)
+        return shape_id
+
+    def _add_itinerary_trips(self, feed, itinerary, line, trip_builder,
+                             shape_id):
+        """
+        Add all trips of an itinerary to the GTFS feed.
+        """
+        # Obtain GTFS route to add trips to it.
+        route = feed.GetRoute(line.route_id)
+        trips_count = 0
+
+        # Loop through each timeslot for a trip
+        for trip in trip_builder['schedule']:
+            gtfs_trip = route.AddTrip(feed, headsign=itinerary.to,
+                                      service_period=trip_builder['service_period'])
+            trips_count += 1
+
+            # Go through all stops of an itinerary
+            for itinerary_stop_id in itinerary.get_stops():
+
+                # Load full stop object
+                try:
+                    itinerary_stop = trip_builder[
+                        'all_stops']['regular'][itinerary_stop_id]
+                except ValueError:
+                    print("Itinerary (" + itinerary.route_url +
+                          ") misses a stop:")
+                    print(" Please review:" + itinerary_stop.osm_url)
+                    continue
+
+                try:
+                    # Load respective GTFS stop object
+                    gtfs_stop = feed.GetStop(str(itinerary_stop.stop_id))
+                except ValueError:
+                    print("Warning: Stop in itinerary was not found in GTFS.")
+                    print(" " + itinerary_stop.osm_url)
+
+                # Make sure we compare same unicode encoding
+                if type(itinerary_stop.name) is str:
+                    itinerary_stop.name = itinerary_stop.name.decode('utf-8')
+
+                time = "-"
+                # Check if we have specific time information for this stop.
+                try:
+                    time = trip[trip_builder['stops'].index(itinerary_stop.name)]
+                except ValueError:
+                    pass
+
+                # Validate time information
+                if time != "-":
+                    try:
+                        time_at_stop = str(
+                            datetime.strptime(time, "%H:%M").time())
+                    except ValueError:
+                        print("Warning: Time for a stop was not valid.")
+                        print(" " + itinerary_stop.name +
+                              " - " + itinerary_stop.osm_id)
+                        break
+                    gtfs_trip.AddStopTime(gtfs_stop, stop_time=time_at_stop)
+
+                # Add stop without time information, too (we interpolate later)
+                else:
+                    try:
+                        gtfs_trip.AddStopTime(gtfs_stop)
+                    except ValueError:
+                        print("Warning: Could not add first a stop to trip.")
+                        print(" " + itinerary_stop.name +
+                              " - " + itinerary_stop.osm_id)
+                        break
+
+                # Add reference to shape
+                gtfs_trip.shape_id = shape_id
+
+                # Add empty attributes to make navitia happy
+                gtfs_trip.block_id = ""
+                gtfs_trip.wheelchair_accessible = ""
+                gtfs_trip.bikes_allowed = ""
+                gtfs_trip.direction_id = ""
+
+            # Calculate all times of stops, which were added with no time
+            Helper.interpolate_stop_times(gtfs_trip)
+        return trips_count
+
+    def _create_gtfs_service_period(self, feed, service):
+        """
+        Generate a transitfeed ServicePeriod object
+        from a time string according to the standard schedule:
+        https://github.com/grote/osm2gtfs/wiki/Schedule
+
+        :return: ServicePeriod object
+        """
         try:
             gtfs_service = feed.GetServicePeriod(service)
             if gtfs_service is not None:
@@ -138,104 +282,38 @@ class TripsCreator(object):
         feed.AddServicePeriodObject(gtfs_service)
         return feed.GetServicePeriod(service)
 
-    def _load_timetable(self, timetable, itinerary, service):
+    def _load_itinerary_schedule(self, schedule, itinerary, service):
+        """
+        Load the part of the provided schedule that fits to a particular
+        itinerary.
+
+        :return times: List of strings
+        """
         times = None
-        for trip in timetable.lines[itinerary.route_id]:
-            fr = trip["from"].encode('utf-8')
-            to = trip["to"].encode('utf-8')
+        for trip in schedule['lines'][itinerary.route_id]:
             trip_services = trip["services"]
-            if (fr == itinerary.fr.encode('utf-8') and
-               to == itinerary.to.encode('utf-8') and service in trip_services):
+            if (trip[
+                    "from"] == itinerary.fr and trip[
+                        "to"] == itinerary.to and service in trip_services):
                 times = trip["times"]
 
         if times is None:
-            print("Problems found with Itinerary from " +
-                  itinerary.fr.encode('utf-8') + " to " +
-                  itinerary.to.encode('utf-8')
-                  )
-            print("Couldn't load times from timetable.")
+            print("Warning: Couldn't load times from schedule for route")
         return times
 
-    def _load_stops(self, timetable, itinerary, service):
+    def _load_scheduled_stops(self, schedule, itinerary, service):
+        """
+        Load the name of stops that have time information in the provided
+        schedule.
+
+        :return stops: List of strings
+        """
         stops = []
-        for trip in timetable.lines[itinerary.route_id]:
-            fr = trip["from"].encode('utf-8')
-            to = trip["to"].encode('utf-8')
+        for trip in schedule['lines'][itinerary.route_id]:
             trip_services = trip["services"]
-            if (fr == itinerary.fr.encode('utf-8') and
-               to == itinerary.to.encode('utf-8') and service in trip_services):
+            if (trip[
+                    "from"] == itinerary.fr and trip[
+                        "to"] == itinerary.to and service in trip_services):
                 for stop in trip["stations"]:
-                    stops.append(unicode(stop))
+                    stops.append(stop)
         return stops
-
-    def _add_trips_for_route(self, feed, gtfs_route, itinerary, service_period,
-                             shape_id, stops, gtfs_timetable):
-        for trip in gtfs_timetable:
-            gtfs_trip = gtfs_route.AddTrip(feed, headsign=itinerary.name,
-                                           service_period=service_period)
-            # print('Count of stops', len(stops))
-            # print('Count of itinerary.get_stops()', len(itinerary.get_stops()))
-            # print('Stops', stops)
-            for itinerary_stop in itinerary.get_stops():
-                if itinerary_stop is None:
-                    print('Itinerary stop is None. Seems to be a problem with OSM data. We should really fix that.')
-                    print('itinerary route ID', itinerary.route_id)
-                    print('itinerary stop', itinerary_stop)
-                    continue
-                gtfs_stop = feed.GetStop(str(itinerary_stop.osm_id))
-                time = "-"
-                try:
-                    time = trip[stops.index(itinerary_stop.name)]
-                except ValueError:
-                    pass
-                if time != "-":
-                    try:
-                        time_at_stop = str(datetime.strptime(time, "%H:%M").time())
-                    except ValueError:
-                        print('Time seems invalid, skipping time', time)
-                        break
-                    gtfs_trip.AddStopTime(gtfs_stop, stop_time=time_at_stop)
-                else:
-                    try:
-                        gtfs_trip.AddStopTime(gtfs_stop)
-                    except Exception:
-                        print('Skipping trip because no time were found', itinerary.route_id, stops, itinerary_stop.name)
-                        break
-                # add empty attributes to make navitia happy
-                gtfs_trip.block_id = ""
-                gtfs_trip.wheelchair_accessible = ""
-                gtfs_trip.bikes_allowed = ""
-                gtfs_trip.shape_id = shape_id
-                gtfs_trip.direction_id = ""
-            TripsCreator.interpolate_stop_times(gtfs_trip)
-
-    @staticmethod
-    def interpolate_stop_times(trip):
-        """
-        Interpolate stop_times, because Navitia does not handle this itself
-        """
-        try:
-            for secs, stop_time, is_timepoint in trip.GetTimeInterpolatedStops():
-                if not is_timepoint:
-                    stop_time.arrival_secs = secs
-                    stop_time.departure_secs = secs
-                    trip.ReplaceStopTimeObject(stop_time)
-        except ValueError as e:
-            print(e)
-
-    @staticmethod
-    def add_shape(feed, route_id, itinerary):
-        """
-        create GTFS shape and return shape_id to add on GTFS trip
-        """
-        import transitfeed
-        shape_id = str(route_id)
-        try:
-            feed.GetShape(shape_id)
-        except KeyError:
-            shape = transitfeed.Shape(shape_id)
-            for point in itinerary.shape:
-                shape.AddPoint(
-                    lat=float(point["lat"]), lon=float(point["lon"]))
-            feed.AddShapeObject(shape)
-        return shape_id

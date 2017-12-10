@@ -13,15 +13,41 @@ class RoutesCreatorIncofer(RoutesCreator):
         Override routes to feed method, to prepare routes with stops
         for the handling in the custom trips creators.
         '''
-        routes = data.routes
-        stops = data.stops
+        routes = data.get_routes()
+        stops = data.get_stops()
 
         # Loop through routes
         for ref, route in routes.iteritems():
             # Replace stop ids with Stop objects
-            self._fill_stops(stops, route)
+            self._fill_stops(stops['regular'], route)
 
-        data.routes = routes
+        # debug
+        # print("DEBUG: creando itinerarios a partir de", str(len(lines)),
+        #      "lineas")
+
+        # Loop through all lines (master_routes)
+        for line_ref, line in sorted(routes.iteritems()):
+            route = feed.AddRoute(
+                short_name=line.route_id.encode('utf-8'),
+                long_name=line.name,
+                # TODO: infer transitfeed "route type" from OSM data
+                route_type="Tram",
+                route_id=line_ref)
+
+            # AddRoute method add defaut agency as default
+            route.agency_id = feed.GetDefaultAgency().agency_id
+
+            route.route_desc = "Test line"
+
+            # TODO: get route_url from OSM or other source.
+            # url = "http://www.incofer.go.cr/tren-urbano-alajuela-rio-segundo"
+
+            # line.route_url = url
+            route.route_color = "ff0000"
+            route.route_text_color = "ffffff"
+
+            # debug
+            # print("información de la linea:", line.name, "agregada.")
         return
 
     def _fill_stops(self, stops, route):
