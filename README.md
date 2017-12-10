@@ -28,10 +28,10 @@ for more information.
 Included cities
 -----------------
 
-* [Florianópolis, Brazil](https://github.com/grote/osm2gtfs/blob/master/osm2gtfs/creators/fenix/fenix.json)
-* [Suburban trains in Costa Rica](https://github.com/grote/osm2gtfs/blob/master/osm2gtfs/creators/incofer/incofer.json)
-* [Accra, Ghana](https://github.com/grote/osm2gtfs/blob/master/osm2gtfs/creators/accra/accra.json)
-* [Managua, Ciudad Sandino](https://github.com/grote/osm2gtfs/blob/master/osm2gtfs/creators/managua/managua.json) and [Estelí](https://github.com/grote/osm2gtfs/blob/master/osm2gtfs/creators/esteli/esteli.json) in Nicaragua
+* [Florianópolis, Brazil](./osm2gtfs/creators/fenix/fenix.json)
+* [Suburban trains in Costa Rica](./osm2gtfs/creators/incofer/incofer.json)
+* [Accra, Ghana](./osm2gtfs/creators/accra/accra.json)
+* [Managua, Ciudad Sandino](./osm2gtfs/creators/managua/managua.json) and [Estelí](./osm2gtfs/creators/esteli/esteli.json) in Nicaragua
 
 *Soon, also in your city*
 

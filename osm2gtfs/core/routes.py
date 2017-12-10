@@ -11,7 +11,7 @@ class Line(object):
     variants of the same service line.
 
     In OpenStreetMap this is usually represented as "route_master" relation.
-    In GTFS this is usually represented as "route"
+    In GTFS this is usually represented as "route".
 
     """
     osm_id = attr.ib()
@@ -19,47 +19,53 @@ class Line(object):
     tags = attr.ib()
 
     name = attr.ib(default=None)
-    route_type = attr.ib(default=None)  # Required (Tram, Subway, Bus, ...)
+    route_type = attr.ib(default=None)
     route_desc = attr.ib(default=None)
-    route_url = attr.ib(default=None)
-    route_color = attr.ib(default="FFFFFF")
-    route_text_color = attr.ib(default="000000")
-    osm_url = attr.ib(default="http://osm.org/relation/" + str(osm_id))
+    route_color = attr.ib(default="#FFFFFF")
+    route_text_color = attr.ib(default="#000000")
+    osm_url = attr.ib(default=None)
 
     # Related route variants
     _itineraries = attr.ib(default=attr.Factory(list))
 
     def __attrs_post_init__(self):
+        '''Populates the object with information obtained from the tags
+
         '''
-        Populates the object with information obtained from the tags
-        '''
-        from osm2gtfs.core.osm_connector import OsmConnector
+        from osm2gtfs.core.helper import Helper
+
+        # Disabling some pylint errors as pylint currently doesn't support any
+        # custom decorators or descriptors
+        # https://github.com/PyCQA/pylint/issues/1694
+
+        # pylint: disable=unsupported-membership-test,unsubscriptable-object
         self.name = self.tags['name']
+        self.osm_url = "https://osm.org/relation/" + str(self.osm_id)
 
-        if "colour" in self.tags:
-            self.route_color = OsmConnector.get_hex_code_for_color(
-                self.tags['colour'])
+        # pylint: disable=unsupported-membership-test,unsubscriptable-object
+        if 'colour' in self.tags:
+            self.route_color = self.tags['colour']
 
-        text_color = OsmConnector.get_complementary_color(self.route_color)
-        if "text_colour" in self.tags:
-            self.route_text_color = OsmConnector.get_hex_code_for_color(
-                self.tags['text_colour'])
+        # pylint: disable=unsupported-membership-test,unsubscriptable-object
+        if 'ref:colour_tx' in self.tags:
+            self.route_text_color = self.tags['ref:colour_tx']
 
-        if 'self' in self.tags:
-            # TODO: Get the type from itineraries/routes or config file
-            route_type = self.tags['self'].capitalize()
-
-        # If there was no self present we have a route relation here
+        # pylint: disable=unsupported-membership-test,unsubscriptable-object
+        if 'route_master' in self.tags:
+            self.route_type = self.tags['route_master'].capitalize()
         elif 'route' in self.tags:
-            route_type = self.tags['route'].capitalize()
+            self.route_type = self.tags['route'].capitalize()
+        else:
+            self.route_type = "Bus"
 
     def add_itinerary(self, itinerary):
 
-        if self.route_id.encode('utf-8') != itinerary.route_id.encode('utf-8'):
+        if self.route_id != itinerary.route_id:
             raise ValueError('Itinerary route ID (' +
                              itinerary.route_id +
                              ') does not match Line route ID (' +
                              self.route_id + ')')
+        # pylint: disable=no-member
         self._itineraries.append(itinerary)
 
     def get_itineraries(self):
@@ -79,40 +85,49 @@ class Itinerary(object):
     """
     osm_id = attr.ib()
     route_id = attr.ib()
-    stops = attr.ib()
     shape = attr.ib()
     tags = attr.ib()
 
     name = attr.ib(default=None)
+    line = attr.ib(default=None)
+    osm_url = attr.ib(default=None)
     fr = attr.ib(default=None)
     to = attr.ib(default=None)
     duration = attr.ib(default=None)
-    osm_url = attr.ib(default="http://osm.org/relation/" + str(osm_id))
 
     # All stop objects of itinerary
-    _stop_objects = attr.ib(default=attr.Factory(list))
+    stops = attr.ib(default=attr.Factory(list))
 
     def __attrs_post_init__(self):
         '''
         Populates the object with information obtained from the tags
         '''
+
+        self.osm_url = "https://osm.org/relation/" + str(self.osm_id)
+
+        # Disabling some pylint errors as pylint currently doesn't support any
+        # custom decorators or descriptors
+        # https://github.com/PyCQA/pylint/issues/1694
+
+        # pylint: disable=unsupported-membership-test,unsubscriptable-object
         if 'from' in self.tags:
             self.fr = self.tags['from']
 
+        # pylint: disable=unsupported-membership-test,unsubscriptable-object
         if 'to' in self.tags:
             self.to = self.tags['to']
 
+        # pylint: disable=unsupported-membership-test,unsubscriptable-object
         if 'name' in self.tags:
             self.name = self.tags['name']
 
+        # pylint: disable=unsupported-membership-test,unsubscriptable-object
         if 'duration' in self.tags:
-            self.name = self.tags['duration']
+            self.duration = self.tags['duration']
 
     def add_stop(self, stop):
-        self._stop_objects.append(stop)
-
-    def get_stop_by_position(self, pos):
-        raise NotImplementedError("Should have implemented this")
+        # pylint: disable=no-member
+        self.stops.append(stop)
 
     def get_stops(self):
-        return self._stop_objects
+        return self.stops

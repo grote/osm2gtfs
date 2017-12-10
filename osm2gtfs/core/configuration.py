@@ -85,7 +85,7 @@ class Configuration(object):
 
         # Cache data
         Cache.write_file(cached_file, schedule_source)
-        self._schedule_source = schedule_source
+        self._schedule_source = schedule_source.read()
         return self._schedule_source
 
     def _load_config(self, args):

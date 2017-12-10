@@ -20,13 +20,13 @@
         "agency_name": "Estelí",
         "agency_url": "https://wiki.openstreetmap.org/wiki/ES:Wikiproyecto_Nicaragua/Transporte_p%C3%BAblico/Estel%C3%AD",
         "agency_timezone": "America/Managua",
-        "agency_lang": "ES",
+        "agency_lang": "es",
         "agency_phone": "",
         "agency_fare_url": ""
     },
     "feed_info": {
-        "publisher_name": "Nico Alt",
-        "publisher_url": "https://nico.dorfbrunnen.eu",
+        "publisher_name": "MapaNica.net",
+        "publisher_url": "https://mapanica.net",
         "version":  "0.1"
     },
     "schedule_source": "https://github.com/mapanica/pt-data-esteli/raw/master/timetable.json",

@@ -3,6 +3,7 @@
 from datetime import timedelta, datetime
 
 from osm2gtfs.creators.trips_creator import TripsCreator
+from osm2gtfs.core.helper import Helper
 from osm2gtfs.core.routes import Line
 
 
@@ -21,9 +22,10 @@ class TripsCreatorAccra(TripsCreator):
         for route_ref, line in sorted(lines.iteritems()):
             if not isinstance(line, Line):
                 continue
+            print("Generating schedule for line: " + route_ref)
 
             line_gtfs = feed.AddRoute(
-                short_name=line.osm_id,
+                short_name=str(line.route_id),
                 long_name=line.name,
                 # we change the route_long_name with the 'from' and 'to' tags
                 # of the last route as the route_master name tag contains
@@ -39,8 +41,8 @@ class TripsCreatorAccra(TripsCreator):
             itineraries = line.get_itineraries()
             for a_route in itineraries:
                 trip_gtfs = line_gtfs.AddTrip(feed)
-                trip_gtfs.shape_id = TripsCreator.add_shape(
-                    feed, a_route.route_id, a_route)
+                trip_gtfs.shape_id = self._add_shape_to_feed(
+                    feed, a_route.osm_id, a_route)
                 trip_gtfs.direction_id = route_index % 2
                 route_index += 1
 
@@ -103,4 +105,4 @@ class TripsCreatorAccra(TripsCreator):
                         stop_time.departure_secs = secs
                         trip_gtfs.ReplaceStopTimeObject(stop_time)
 
-                TripsCreator.interpolate_stop_times(trip_gtfs)
+                Helper.interpolate_stop_times(trip_gtfs)

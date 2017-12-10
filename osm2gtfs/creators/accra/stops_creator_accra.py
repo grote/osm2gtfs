@@ -30,7 +30,7 @@ def get_crow_fly_distance(from_tuple, to_tuple):
 
 
 def create_stop_area(stop_data, feed):
-    stop_id = stop_data.osm_id.split('/')[-1]
+    stop_id = stop_data.osm_id
     gtfs_stop_area = feed.AddStop(
         lat=float(stop_data.lat),
         lng=float(stop_data.lon),
@@ -42,7 +42,7 @@ def create_stop_area(stop_data, feed):
 
 
 def create_stop_point(stop_data, feed):
-    stop_id = stop_data.osm_id.split('/')[-1]
+    stop_id = stop_data.osm_id
     gtfs_stop_point = feed.AddStop(
         lat=float(stop_data.lat),
         lng=float(stop_data.lon),
@@ -62,8 +62,7 @@ class StopsCreatorAccra(StopsCreator):
         stops = data.get_stops()
         stops_by_name = {}
 
-        for a_stop_id, a_stop in stops['regular'].items():
-            a_stop.osm_id = a_stop_id
+        for internal_stop_id, a_stop in stops['regular'].items():
             if a_stop.name not in stops_by_name:
                 stops_by_name[a_stop.name] = []
             stops_by_name[a_stop.name].append(a_stop)
