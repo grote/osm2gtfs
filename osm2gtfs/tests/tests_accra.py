@@ -83,10 +83,6 @@ class TestAccra(unittest.TestCase):
         # deactivation of Overpass calls for unnamed stops
         self.config.config['stops']['name_auto'] = "no"
 
-    def suite(self):
-        tests = ['test_refresh_routes_cache', 'test_refresh_stops_cache', 'test_gtfs_from_cache']
-        return unittest.TestSuite(map(TestAccra, tests))
-
     def test_refresh_routes_cache(self):
         data = OsmConnector(self.config.config)
         cache_file = os.path.join(self.data_dir, "routes-accra.pkl")
@@ -160,6 +156,16 @@ class TestAccra(unittest.TestCase):
                          "Wrong stop_areas count in the generated GTFS")
         self.assertEqual(gtfs_infos["routes_count"], 277,
                          "Wrong routes count in the generated GTFS")
+
+
+def load_tests(loader, tests, pattern):
+    # pylint require to use the variables
+    loader = loader
+    tests = tests
+    pattern = pattern
+    test_cases = ['test_refresh_routes_cache', 'test_refresh_stops_cache', 'test_gtfs_from_cache']
+    suite = unittest.TestSuite(map(TestAccra, test_cases))
+    return suite
 
 if __name__ == '__main__':
     unittest.main()
