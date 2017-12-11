@@ -87,7 +87,6 @@ class TestAccra(unittest.TestCase):
         tests = ['test_refresh_routes_cache', 'test_refresh_stops_cache', 'test_gtfs_from_cache']
         return unittest.TestSuite(map(TestAccra, tests))
 
-
     def test_refresh_routes_cache(self):
         data = OsmConnector(self.config.config)
         cache_file = os.path.join(self.data_dir, "routes-accra.pkl")
