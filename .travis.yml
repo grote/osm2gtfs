@@ -15,3 +15,6 @@ jobs:
     - stage: pylint
       before_script: pip install pylint
       script: pylint --disable=C,R osm2gtfs
+
+    - stage: non regression test
+      script: python -m unittest discover

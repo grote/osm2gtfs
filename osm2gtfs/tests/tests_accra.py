@@ -158,9 +158,11 @@ class TestAccra(unittest.TestCase):
                          "Wrong routes count in the generated GTFS")
 
 
-def suite():
-    tests = ['test_refresh_routes_cache', 'test_refresh_stops_cache', 'test_gtfs_from_cache']
-    return unittest.TestSuite(map(TestAccra, tests))
+def load_tests(loader, tests, pattern):
+    # pylint: disable=unused-argument
+    test_cases = ['test_refresh_routes_cache', 'test_refresh_stops_cache', 'test_gtfs_from_cache']
+    suite = unittest.TestSuite(map(TestAccra, test_cases))
+    return suite
 
 if __name__ == '__main__':
-    unittest.main(defaultTest='suite')
+    unittest.main()
