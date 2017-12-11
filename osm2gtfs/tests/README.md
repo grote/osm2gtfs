@@ -18,6 +18,10 @@ The generated GTFS is checked against a reference GTFS file (accra_tests.zip.ref
 in the `tests/fixtures/accra/` folder. For the moment, only the size of each GTFS file is compared to the reference.
 
 #### How to run
-To run the tests on Accra (from the root `osm2gtfs` folder) :
+To run all the tests (from the root `osm2gtfs` folder) :
 
-    $ python osm2gtfs/tests/accra_unittests.py
+    $ python -m unittest discover
+
+To run only the Accra tests :
+
+    $ python osm2gtfs/tests/tests_accra.py
