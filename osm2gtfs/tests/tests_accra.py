@@ -83,7 +83,7 @@ class TestAccra(unittest.TestCase):
         # deactivation of Overpass calls for unnamed stops
         self.config.config['stops']['name_auto'] = "no"
 
-    def suite():
+    def suite(self):
         tests = ['test_refresh_routes_cache', 'test_refresh_stops_cache', 'test_gtfs_from_cache']
         return unittest.TestSuite(map(TestAccra, tests))
 
