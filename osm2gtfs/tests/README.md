@@ -7,10 +7,9 @@ Accra
 
 There are 3 unittests for the Accra GTFS generation
 
-1. Generation of the cache stops Data from an Overpass result Mock
-1. Generation of the cache routes Data from an Overpass result Mock
-1. Generation of the GTFS ZIP File using the previously generated cache data
-and
+1. Obtain mock-up data on stops from OpenStreetMap and cache it,
+1. Obtain mock-up data on routes from OpenStreetMap and cache it,
+1. Generate GTFS file from using the previously generated cache data.
 
 #### Validation of the GTFS
 

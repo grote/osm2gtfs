@@ -159,10 +159,7 @@ class TestAccra(unittest.TestCase):
 
 
 def load_tests(loader, tests, pattern):
-    # pylint require to use the variables
-    loader = loader
-    tests = tests
-    pattern = pattern
+    # pylint: disable=unused-argument
     test_cases = ['test_refresh_routes_cache', 'test_refresh_stops_cache', 'test_gtfs_from_cache']
     suite = unittest.TestSuite(map(TestAccra, test_cases))
     return suite
