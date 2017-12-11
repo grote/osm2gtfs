@@ -4,7 +4,9 @@ import os
 import sys
 import json
 import datetime
+from urllib2 import urlopen
 from calendar import monthrange
+from osm2gtfs.core.cache import Cache
 
 
 class Configuration(object):
@@ -23,13 +25,68 @@ class Configuration(object):
 
         """
         # Load config file from argument of standard location
-        self.config = self._load_config(args)
+        self.data = self._load_config(args)
 
         # Define name for output file
         self.output = self._define_output_file(args)
 
         # Validate and prepare start and end date
         self._prepare_dates()
+
+        # Initiate variable for schedule source information
+        self._schedule_source = None
+
+    def get_schedule_source(self, refresh=False):
+        """Loads the schedule source information.
+
+        Loads a schedule source file from either a path or a url specified
+        in the config file
+
+        :return schedule_source: The schedule read from a file.
+
+        """
+
+        if 'schedule_source' not in self.data:
+            return None
+
+        else:
+            source_file = self.data['schedule_source']
+            cached_file = self.data['selector'] + '-schedule'
+
+            # Preferably return cached data about schedule
+            if refresh is False:
+                # Check if _schedule_source data is already present
+                if not self._schedule_source:
+                    # If not, try to get _schedule_source from file cache
+                    self._schedule_source = Cache.read_file(cached_file)
+                # Return cached data if found
+                if bool(self._schedule_source):
+                    return self._schedule_source
+
+            # No cached data was found or refresh was forced
+            print("Load schedule source information from " + source_file)
+
+            # Check if local file exists
+            if os.path.isfile(source_file):
+
+                # Open file and add to config object
+                with open(source_file, 'r') as f:
+                    schedule_source = f.read()
+
+            else:
+                # Check if it is a valid url
+                try:
+                    schedule_source_file = urlopen(source_file)
+                except ValueError:
+                    sys.stderr.write(
+                        "Error: Couldn't find schedule_source file.\n")
+                    sys.exit(0)
+                schedule_source = schedule_source_file
+
+        # Cache data
+        Cache.write_file(cached_file, schedule_source)
+        self._schedule_source = schedule_source
+        return self._schedule_source
 
     def _load_config(self, args):
         """Loads the configuration. Either the standard location
@@ -78,8 +135,8 @@ class Configuration(object):
         # Get and check filename for gtfs output
         if args.output is not None:
             output_file = args.output
-        elif 'output_file' in self.config:
-            output_file = self.config['output_file']
+        elif 'output_file' in self.data:
+            output_file = self.data['output_file']
         else:
             sys.stderr.write('Error: No filename for gtfs file specified.\n')
             sys.exit(0)
@@ -92,7 +149,7 @@ class Configuration(object):
         Either from config file or based on current date.
 
         """
-        config = self.config
+        config = self.data
 
         start_date = False
         if 'start_date' in config['feed_info']:
@@ -107,7 +164,7 @@ class Configuration(object):
             # Use first of current month if no start date was specified
             now = datetime.datetime.now()
             start_date = datetime.datetime.strptime(
-                            now.strftime('%Y%m') + "01", "%Y%m%d")
+                now.strftime('%Y%m') + "01", "%Y%m%d")
             config['feed_info']['start_date'] = now.strftime('%Y%m') + "01"
             print("Using the generated start date: " +
                   config['feed_info']['start_date'])

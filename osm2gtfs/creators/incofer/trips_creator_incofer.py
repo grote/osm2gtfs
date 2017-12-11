@@ -1,6 +1,5 @@
 # coding=utf-8
 
-import json
 from datetime import datetime
 
 import transitfeed
@@ -10,7 +9,7 @@ from osm2gtfs.creators.trips_creator import TripsCreator
 
 class TripsCreatorIncofer(TripsCreator):
 
-    def add_trips_to_schedule(self, schedule, data):
+    def add_trips_to_feed(self, feed, data):
 
         lines = data.routes
 
@@ -20,41 +19,38 @@ class TripsCreatorIncofer(TripsCreator):
             # print("DEBUG. procesando la línea:", line.name)
 
             # itinerary (osm route | non existent gtfs element)
-            for itinerary_id, itinerary in line.routes.iteritems():
+            itineraries = line.get_itineraries()
+            for itinerary_id, itinerary in itineraries:
                 # debug
                 # print("DEBUG. procesando el itinerario", itinerary.name)
 
                 # shape for itinerary
-                shape_id = TripsCreator.add_shape(schedule, itinerary_id, itinerary)
+                shape_id = TripsCreator.add_shape(feed, itinerary_id, itinerary)
 
                 # service periods | días de opearación (c/u con sus horarios)
-                operations = self._get_itinerary_operation(itinerary)
+                operations = self._get_itinerary_operation(itinerary, data)
 
                 # operation (gtfs service period)
                 for operation in operations:
                     service_period = self._create_service_period(
-                        schedule, operation)
+                        feed, operation)
 
-                    horarios = load_times(itinerary, operation)
-                    estaciones = load_stations(itinerary, operation)
+                    horarios = load_times(itinerary, data, operation)
+                    estaciones = load_stations(itinerary, data, operation)
 
-                    route = schedule.GetRoute(line_id)
+                    route = feed.GetRoute(line_id)
 
-                    add_trips_for_route(schedule, route, itinerary,
+                    add_trips_for_route(feed, route, itinerary,
                                         service_period, shape_id, estaciones,
                                         horarios)
         return
 
-    def _get_itinerary_operation(self, itinerary,
-                                 filename='data/input_incofer.json'):
+    def _get_itinerary_operation(self, itinerary, data):
         """
             Retorna un iterable (lista) de objetos str, cada uno un 'keyword'
             del día o días de servicio, cuyos viajes (estaciones y horarios) se
             incluyen en el archivo de entrada.
         """
-
-        input_file = open(filename)
-        data = json.load(input_file)
 
         fr = itinerary.fr.encode('utf-8')
         to = itinerary.to.encode('utf-8')
@@ -63,7 +59,7 @@ class TripsCreatorIncofer(TripsCreator):
 
         operations = []
 
-        for operation in data["itinerario"][itinerary.ref]:
+        for operation in data.schedule["itinerario"][itinerary.ref]:
             input_fr = operation["from"].encode('utf-8')
             input_to = operation["to"].encode('utf-8')
             if input_fr == fr and input_to == to:
@@ -78,9 +74,9 @@ class TripsCreatorIncofer(TripsCreator):
                     operations.append("sunday")
         return operations
 
-    def _create_service_period(self, schedule, operation):
+    def _create_service_period(self, feed, operation):
         try:
-            service = schedule.GetServicePeriod(operation)
+            service = feed.GetServicePeriod(operation)
             if service is not None:
                 return service
         except KeyError:
@@ -106,18 +102,18 @@ class TripsCreatorIncofer(TripsCreator):
 
         service.SetStartDate(self.config['feed_info']['start_date'])
         service.SetEndDate(self.config['feed_info']['end_date'])
-        schedule.AddServicePeriodObject(service)
-        return schedule.GetServicePeriod(operation)
+        feed.AddServicePeriodObject(service)
+        return feed.GetServicePeriod(operation)
 
 
-def add_trips_for_route(schedule, gtfs_route, itinerary, service_period,
+def add_trips_for_route(feed, gtfs_route, itinerary, service_period,
                         shape_id, estaciones, horarios):
     # debug
     # print("DEBUG Adding trips for itinerary", itinerary.name)
 
     for viaje in horarios:
         indice = 0
-        trip = gtfs_route.AddTrip(schedule, headsign=itinerary.name,
+        trip = gtfs_route.AddTrip(feed, headsign=itinerary.name,
                                   service_period=service_period)
         while indice < len(estaciones):
             tiempo = viaje[indice]
@@ -128,7 +124,7 @@ def add_trips_for_route(schedule, gtfs_route, itinerary, service_period,
 
                 for stop in itinerary.stops:
                     if stop.name == estacion:
-                        parada = schedule.GetStop(str(stop.id))
+                        parada = feed.GetStop(str(stop.id))
                         trip.AddStopTime(parada, stop_time=str(tiempo_parada))
                         continue
 
@@ -143,12 +139,10 @@ def add_trips_for_route(schedule, gtfs_route, itinerary, service_period,
     return
 
 
-def load_stations(route, operation, filename='data/input_incofer.json'):
-    input_file = open(filename)
-    input_data = json.load(input_file)
+def load_stations(route, data, operation):
 
     stations = []
-    for direction in input_data["itinerario"][route.ref]:
+    for direction in data.schedule["itinerario"][route.ref]:
         fr = direction["from"].encode('utf-8')
         to = direction["to"].encode('utf-8')
         data_operation = direction["operacion"].encode('utf-8')
@@ -165,14 +159,12 @@ def load_stations(route, operation, filename='data/input_incofer.json'):
     return stations
 
 
-def load_times(route, operation, filename='data/input_incofer.json'):
-    input_file = open(filename)
-    input_data = json.load(input_file)
+def load_times(route, data, operation):
 
-    # route_directions = input_data["itinerario"][route.ref]["horarios"]
+    # route_directions = data.schedule["itinerario"][route.ref]["horarios"]
     times = None
-    for direction in input_data["itinerario"][route.ref]:
 
+    for direction in data.schedule["itinerario"][route.route_id]:
         fr = direction["from"].encode('utf-8')
         to = direction["to"].encode('utf-8')
         data_operation = direction["operacion"].encode('utf-8')

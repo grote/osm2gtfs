@@ -6,7 +6,7 @@ import transitfeed
 class FeedInfoCreator(object):
 
     def __init__(self, config):
-        self.config = config
+        self.config = config.data
 
     def __repr__(self):
         rep = ""
@@ -14,14 +14,13 @@ class FeedInfoCreator(object):
             rep += str(self.config) + " | "
         return rep
 
-    def add_feed_info_to_schedule(self, schedule):
+    def add_feed_info_to_feed(self, feed):
         feed_info = self.prepare_feed_info()
-        schedule.AddFeedInfoObject(feed_info)
+        feed.AddFeedInfoObject(feed_info)
 
-        # Missing feed_info workaround (https://github.com/google/transitfeed/issues/395)
-        # noinspection PyProtectedMember
-        # pylint: disable=protected-access
-        schedule.AddTableColumns('feed_info', feed_info._ColumnNames())
+        # Missing feed_info workaround
+        # https://github.com/google/transitfeed/issues/395
+        feed.AddTableColumns('feed_info', feed_info._ColumnNames())
 
     def prepare_feed_info(self):
         """

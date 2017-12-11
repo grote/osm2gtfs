@@ -18,12 +18,22 @@ caches on disk for efficient re-use. Then the data is combined with another
 source of schedule (time) information in order to create a GTFS file using the
 transitfeed library.
 
-**Attention:** The source code is currently very specific to Florianópolis Buses
-and Costa Rica Urban Train, but it can be extended to make it work for your use
-case. In the config file any transit network can be specified for download from
-OpenStreetMap. And by extending the creator classes in code, different
-approaches for time information handling can be easily implemented. You can help
-with pull requests to improve this script.
+For every new city a new [configuration file](https://github.com/grote/osm2gtfs/wiki/Configuration)
+needs to be created and the input of schedule information is preferred
+in a certain [format](https://github.com/grote/osm2gtfs/wiki/Schedule).
+For any city the script can be easily extended, see the
+[developer documentation](https://github.com/grote/osm2gtfs/wiki/Development)
+for more information.
+
+Included cities
+-----------------
+
+* [Florianópolis, Brazil](https://github.com/grote/osm2gtfs/blob/master/osm2gtfs/creators/fenix/fenix.json)
+* [Suburban trains in Costa Rica](https://github.com/grote/osm2gtfs/blob/master/osm2gtfs/creators/incofer/incofer.json)
+* [Accra, Ghana](https://github.com/grote/osm2gtfs/blob/master/osm2gtfs/creators/accra/accra.json)
+* [Managua, Ciudad Sandino](https://github.com/grote/osm2gtfs/blob/master/osm2gtfs/creators/managua/managua.json) and [Estelí](https://github.com/grote/osm2gtfs/blob/master/osm2gtfs/creators/esteli/esteli.json) in Nicaragua
+
+*Soon, also in your city*
 
 Install
 ------------

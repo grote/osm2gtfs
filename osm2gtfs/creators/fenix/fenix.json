@@ -28,6 +28,7 @@
         "publisher_url": "https://transportr.grobox.de",
         "version":  "0.1"
     },
+    "schedule_source": "http://www.consorciofenix.com.br/api2/linhas.json",
     "output_file": "data/br-floripa.zip",
     "selector": "fenix"
 }

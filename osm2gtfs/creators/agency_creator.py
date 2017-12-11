@@ -7,7 +7,7 @@ import transitfeed
 class AgencyCreator(object):
 
     def __init__(self, config):
-        self.config = config
+        self.config = config.data
 
     def __repr__(self):
         rep = ""
@@ -15,8 +15,8 @@ class AgencyCreator(object):
             rep += str(self.config) + " | "
         return rep
 
-    def add_agency_to_schedule(self, schedule):
-        schedule.AddAgencyObject(self.prepare_agency())
+    def add_agency_to_feed(self, feed):
+        feed.AddAgencyObject(self.prepare_agency())
 
     def prepare_agency(self):
         """

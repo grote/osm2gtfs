@@ -1,12 +1,11 @@
 # coding=utf-8
 
 import sys
-import json
 import re
 import transitfeed
 from datetime import timedelta, datetime
 from osm2gtfs.creators.trips_creator import TripsCreator
-from osm2gtfs.core.osm_routes import Route, RouteMaster
+from osm2gtfs.core.routes import Line, Itinerary
 
 DEBUG_ROUTE = ""
 BLACKLIST = [
@@ -54,18 +53,14 @@ class TripsCreatorFenix(TripsCreator):
 
         self.exceptions = None
 
-    def add_trips_to_schedule(self, schedule, data):
+    def add_trips_to_feed(self, feed, data):
         routes = data.routes
-        schedule.AddServicePeriodObject(self.service_weekday)
-        schedule.AddServicePeriodObject(self.service_saturday)
-        schedule.AddServicePeriodObject(self.service_sunday)
+        feed.AddServicePeriodObject(self.service_weekday)
+        feed.AddServicePeriodObject(self.service_saturday)
+        feed.AddServicePeriodObject(self.service_sunday)
 
-        # Get Fenix data from JSON file
-        json_data = []
-        with open('data/linhas.json') as f:
-            for line in f:
-                json_data.append(json.loads(line))
-        linhas = json_data[0]['data']
+        # Get Fenix schedule data from source file
+        linhas = data.schedule['data']
 
         # Try to find OSM routes in Fenix data
         for route_ref, route in sorted(routes.iteritems()):
@@ -81,16 +76,16 @@ class TripsCreatorFenix(TripsCreator):
                 duration_str = linha['tempo_de_percurso'].replace('aproximado', '')
                 (hours, tmp, minutes) = duration_str.partition(':')
                 route.set_duration(timedelta(hours=int(hours), minutes=int(minutes)))
-                self.add_route(schedule, route, linha['horarios'], linha['operacoes'])
+                self.add_route(feed, route, linha['horarios'], linha['operacoes'])
             elif route_ref not in BLACKLIST:
                 sys.stderr.write("Route not found in Fenix data: " + str(route) + "\n")
 
-    def add_route(self, schedule, route, horarios, operacoes):
-        line = schedule.AddRoute(
-            short_name=route.ref,
+    def add_route(self, feed, route, horarios, operacoes):
+        line = feed.AddRoute(
+            short_name=route.route_id,
             long_name=route.name.decode('utf8'),
             route_type="Bus")
-        line.agency_id = schedule.GetDefaultAgency().agency_id
+        line.agency_id = feed.GetDefaultAgency().agency_id
         line.route_desc = "TEST DESCRIPTION"
         line.route_url = "http://www.consorciofenix.com.br/horarios?q=" + str(route.ref)
         line.route_color = "1779c2"
@@ -126,28 +121,28 @@ class TripsCreatorFenix(TripsCreator):
             if date < self.start_date:
                 continue
 
-            service = self.get_exception_service_period(schedule, date, day)
+            service = self.get_exception_service_period(feed, date, day)
             if day == SATURDAY:
-                self.add_trips_by_day(schedule, line, service, route, saturday, SATURDAY)
+                self.add_trips_by_day(feed, line, service, route, saturday, SATURDAY)
             elif day == SUNDAY:
-                self.add_trips_by_day(schedule, line, service, route, sunday, SUNDAY)
+                self.add_trips_by_day(feed, line, service, route, sunday, SUNDAY)
             else:
                 sys.stderr.write("ERROR: Unknown day %s\n" % day)
 
         # regular schedule
-        self.add_trips_by_day(schedule, line, self.service_weekday, route, weekday, WEEKDAY)
-        self.add_trips_by_day(schedule, line, self.service_saturday, route, saturday, SATURDAY)
-        self.add_trips_by_day(schedule, line, self.service_sunday, route, sunday, SUNDAY)
+        self.add_trips_by_day(feed, line, self.service_weekday, route, weekday, WEEKDAY)
+        self.add_trips_by_day(feed, line, self.service_saturday, route, saturday, SATURDAY)
+        self.add_trips_by_day(feed, line, self.service_sunday, route, sunday, SUNDAY)
 
-    def add_trips_by_day(self, schedule, line, service, route, horarios, day):
+    def add_trips_by_day(self, feed, line, service, route, horarios, day):
         # check if we even have service
         if horarios is None or len(horarios) == 0:
             return
 
-        if isinstance(route, RouteMaster):
+        if isinstance(route, Line):
             # recurse into "Ida" and "Volta" routes
             for sub_route in route.routes.values():
-                self.add_trips_by_day(schedule, line, service, sub_route, horarios, day)
+                self.add_trips_by_day(feed, line, service, sub_route, horarios, day)
             return
 
         # have at least two stops
@@ -169,12 +164,12 @@ class TripsCreatorFenix(TripsCreator):
         # get shape id
         shape_id = str(route.id)
         try:
-            schedule.GetShape(shape_id)
+            feed.GetShape(shape_id)
         except KeyError:
             shape = transitfeed.Shape(shape_id)
             for point in route.shape:
                 shape.AddPoint(lat=float(point["lat"]), lon=float(point["lon"]))
-            schedule.AddShapeObject(shape)
+            feed.AddShapeObject(shape)
 
         if len(horarios) > 1 and not route.has_proper_master():
             sys.stderr.write("Route should have a master: " + str(route) + "\n")
@@ -197,7 +192,7 @@ class TripsCreatorFenix(TripsCreator):
                 # TODO handle options
                 # opts = time_point[1]
 
-                trip = line.AddTrip(schedule, headsign=route.name, service_period=service)
+                trip = line.AddTrip(feed, headsign=route.name, service_period=service)
                 # add empty attributes to make navitia happy
                 trip.block_id = ""
                 trip.wheelchair_accessible = ""
@@ -206,12 +201,12 @@ class TripsCreatorFenix(TripsCreator):
                 trip.direction_id = ""
                 if route.ref == DEBUG_ROUTE:
                     print "ADD TRIP " + str(trip.trip_id) + ":"
-                self.add_trip_stops(schedule, trip, route, start_time, end_time)
+                self.add_trip_stops(feed, trip, route, start_time, end_time)
 
                 # interpolate times, because Navitia can not handle this itself
                 TripsCreator.interpolate_stop_times(trip)
 
-    def get_exception_service_period(self, schedule, date, day):
+    def get_exception_service_period(self, feed, date, day):
         date_string = date.strftime("%Y%m%d")
         if date.weekday() <= 4:
             self.service_weekday.SetDateHasService(date_string, False)
@@ -221,15 +216,15 @@ class TripsCreatorFenix(TripsCreator):
             self.service_sunday.SetDateHasService(date_string, False)
 
         service_id = date_string + "_" + day
-        if service_id in schedule.service_periods:
-            service = schedule.GetServicePeriod(service_id)
+        if service_id in feed.service_periods:
+            service = feed.GetServicePeriod(service_id)
         else:
             print("Created new schedule exception for %s with ID %s" % (str(date), service_id))
             service = transitfeed.ServicePeriod(service_id)
             service.SetStartDate(date_string)
             service.SetEndDate(date_string)
             service.SetDayOfWeekHasService(date.weekday())
-            schedule.AddServicePeriodObject(service)
+            feed.AddServicePeriodObject(service)
         return service
 
     @staticmethod
@@ -274,22 +269,22 @@ class TripsCreatorFenix(TripsCreator):
         return name
 
     @staticmethod
-    def add_trip_stops(schedule, trip, route, start_time, end_time):
-        if isinstance(route, Route):
+    def add_trip_stops(feed, trip, route, start_time, end_time):
+        if isinstance(route, Itinerary):
             i = 1
             for stop in route.stops:
                 if i == 1:
                     # timepoint="1" (Times are considered exact)
-                    trip.AddStopTime(schedule.GetStop(str(stop.id)), stop_time=start_time)
+                    trip.AddStopTime(feed.GetStop(str(stop.id)), stop_time=start_time)
                     if route.ref == DEBUG_ROUTE:
                         print "START: " + start_time + " at " + str(stop)
                 elif i == len(route.stops):
                     # timepoint="0" (Times are considered approximate)
-                    trip.AddStopTime(schedule.GetStop(str(stop.id)), stop_time=end_time)
+                    trip.AddStopTime(feed.GetStop(str(stop.id)), stop_time=end_time)
                     if route.ref == DEBUG_ROUTE:
                         print "END: " + end_time + " at " + str(stop)
                 else:
                     # timepoint="0" (Times are considered approximate)
-                    trip.AddStopTime(schedule.GetStop(str(stop.id)))
+                    trip.AddStopTime(feed.GetStop(str(stop.id)))
     #                print "INTER: " + str(stop)
                 i += 1
