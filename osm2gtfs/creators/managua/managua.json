@@ -1,0 +1,38 @@
+{
+    "query": {
+        "bbox": {
+            "n": "12.21",
+            "s": "12.04",
+            "e": "-86.12",
+            "w": "-86.38"
+        },
+        "tags": {
+            "route":"bus",
+            "network": "IRTRAMMA",
+            "public_transport:version": "2"
+        }
+    },
+    "stops": {
+        "name_without": "Parada sin nombre - Agregaselo en rutas.mapanica.net",
+        "name_auto": "no"
+    },
+    "agency": {
+        "agency_id": "NI-IRTRAMMA",
+        "agency_name": "Instituto Regulador del Transporte del Municipio de Managua",
+        "agency_url": "http://www.managua.gob.ni/",
+        "agency_timezone": "America/Managua",
+        "agency_lang": "es",
+        "agency_phone": "+505 255-2189",
+        "agency_fare_url": ""
+    },
+    "feed_info": {
+        "publisher_name": "MapaNica.net",
+        "publisher_url": "https://mapanica.net",
+        "version":  "0.1",
+        "start_date": "20171101",
+        "end_date": "20181031"
+    },
+    "schedule_source": "https://raw.githubusercontent.com/mapanica/pt-data-managua/master/timetable.json",
+    "output_file": "data/ni-managua-gtfs.zip",
+    "selector": "managua"
+}
