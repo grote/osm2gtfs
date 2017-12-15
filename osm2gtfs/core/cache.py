@@ -50,7 +50,7 @@ class Cache(object):
         if not os.path.isdir('data'):
             os.mkdir('data')
         with open(os.path.join('data', name), 'wb') as f:
-            f.write(content.read())
+            f.write(content)
 
     @staticmethod
     def read_file(name):
