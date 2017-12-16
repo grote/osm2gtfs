@@ -10,4 +10,4 @@ class StopsCreatorIncofer(StopsCreator):
         if stop.osm_type == "relation":
             return "SA" + str(stop.osm_id)
         else:
-            return stop.osm_id
+            return str(stop.osm_id)

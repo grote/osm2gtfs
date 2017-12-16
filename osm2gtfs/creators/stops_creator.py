@@ -57,7 +57,7 @@ class StopsCreator(object):
         # Send stop_id creation through overridable function
         gtfs_stop_id = self._define_stop_id(stop)
 
-        # Save defined stop_id to the object for furhter use in other creators
+        # Save defined stop_id to the object for further use in other creators
         stop.set_stop_id(gtfs_stop_id)
 
         # Set stop name

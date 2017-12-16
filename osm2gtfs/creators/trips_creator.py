@@ -47,7 +47,8 @@ class TripsCreator(object):
 
                     # Add itinerary shape to feed.
                     shape_id = self._add_shape_to_feed(
-                        feed, "relation/" + str(itinerary.osm_id), itinerary)
+                        feed, itinerary.osm_type + "/" + str(
+                            itinerary.osm_id), itinerary)
 
                     # Add trips of each itinerary to the GTFS feed
                     for trip_builder in prepared_trips:
@@ -172,7 +173,7 @@ class TripsCreator(object):
                 except ValueError:
                     print("Itinerary (" + itinerary.route_url +
                           ") misses a stop:")
-                    print(" Please review:" + itinerary_stop.osm_url)
+                    print(" Please review stop:" + itinerary_stop_id)
                     continue
 
                 try:
@@ -199,9 +200,10 @@ class TripsCreator(object):
                         time_at_stop = str(
                             datetime.strptime(time, "%H:%M").time())
                     except ValueError:
-                        print("Warning: Time for a stop was not valid.")
+                        print('Warning: Time "' +
+                              time + '" for the stop was not valid:')
                         print(" " + itinerary_stop.name +
-                              " - " + itinerary_stop.osm_id)
+                              " - " + itinerary_stop.osm_url)
                         break
                     gtfs_trip.AddStopTime(gtfs_stop, stop_time=time_at_stop)
 
@@ -292,11 +294,10 @@ class TripsCreator(object):
         times = None
         for trip in schedule['lines'][itinerary.route_id]:
             trip_services = trip["services"]
-            if (trip[
-                    "from"] == itinerary.fr and trip[
-                        "to"] == itinerary.to and service in trip_services):
+            if (trip["from"] == itinerary.fr and
+                    trip["to"] == itinerary.to and
+                    service in trip_services):
                 times = trip["times"]
-
         if times is None:
             print("Warning: Couldn't load times from schedule for route")
         return times
