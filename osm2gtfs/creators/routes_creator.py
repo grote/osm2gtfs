@@ -26,8 +26,8 @@ class RoutesCreator(object):
             gtfs_route = feed.AddRoute(
                 route_id=self._define_route_id(route),
                 route_type=self._define_route_type(route),
-                short_name=route.route_id.encode('utf-8'),
-                long_name=route.name
+                short_name=self._define_short_name(route),
+                long_name=self._define_long_name(route)
             )
             gtfs_route.agency_id = feed.GetDefaultAgency().agency_id
             gtfs_route.route_desc = self._define_route_description(route)
@@ -42,6 +42,20 @@ class RoutesCreator(object):
         Can be easily overridden in any creator.
         """
         return route.route_id
+
+    def _define_short_name(self, route):
+        """
+        Returns the short name for the use in the GTFS feed.
+        Can be easily overridden in any creator.
+        """
+        return route.route_id.encode('utf-8')
+
+    def _define_long_name(self, route):
+        """
+        Returns the long name for the use in the GTFS feed.
+        Can be easily overridden in any creator.
+        """
+        return route.name
 
     def _define_route_type(self, route):
         """
