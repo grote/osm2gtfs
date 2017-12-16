@@ -6,8 +6,7 @@ import overpy
 from transitfeed import util
 from osm2gtfs.core.cache import Cache
 from osm2gtfs.core.helper import Helper
-from osm2gtfs.core.routes import Itinerary, Line
-from osm2gtfs.core.stops import Stop, Station
+from osm2gtfs.core.elements import Line, Itinerary, Station, Stop
 
 
 class OsmConnector(object):
@@ -285,6 +284,7 @@ class OsmConnector(object):
         Returns a initiated Line object from raw data
 
         """
+        osm_type = "relation"
         if 'ref' in route_master.tags:
             ref = route_master.tags['ref']
         else:
@@ -308,9 +308,20 @@ class OsmConnector(object):
                     "No 'ref' could be obtained. Skipping whole route.\n")
                 return
 
+        # Move to Elements class, once attributes with defaults play well
+        # with inheritance https://github.com/python-attrs/attrs/issues/38
+        osm_url = "https://osm.org/" + str(
+            osm_type) + "/" + str(route_master.id)
+        if 'name' in route_master.tags:
+            name = route_master.tags['name']
+        elif 'ref' in route_master.tags:
+            name = route_master.tags['ref']
+        else:
+            name = None
+
         # Create Line (route master) object
-        line = Line(osm_id=route_master.id, route_id=ref,
-                    tags=route_master.tags)
+        line = Line(osm_id=route_master.id, osm_type=osm_type, osm_url=osm_url,
+                    tags=route_master.tags, name=name, route_id=ref)
 
         # Add Itinerary objects (route variants) to Line (route master)
         for itinerary in list(itineraries.values()):
@@ -331,6 +342,7 @@ class OsmConnector(object):
         Returns a initiated Itinerary object from raw data
 
         """
+        osm_type = "relation"
         if 'ref' in route_variant.tags:
             ref = route_variant.tags['ref']
         else:
@@ -361,14 +373,27 @@ class OsmConnector(object):
                 stops.append(otype + "/" + str(stop_candidate.ref))
 
         if route_master:
-            route_master_id = "relation/" + str(route_master.id)
+            parent_identifier = osm_type + "/" + str(route_master.id)
         else:
-            route_master_id = None
+            parent_identifier = None
+
+        # Move to Elements class, once attributes with defaults play well with
+        # inheritance https://github.com/python-attrs/attrs/issues/38
+        osm_url = "https://osm.org/" + str(
+            osm_type) + "/" + str(route_variant.id)
+        if 'name' in route_variant.tags:
+            name = route_variant.tags['name']
+        elif 'ref' in route_variant.tags:
+            name = route_variant.tags['ref']
+        else:
+            name = None
 
         shape = self._generate_shape(route_variant, query_result_set)
-        rv = Itinerary(osm_id=route_variant.id, route_id=ref, stops=stops,
-                       shape=shape, tags=route_variant.tags,
-                       line=route_master_id)
+
+        rv = Itinerary(osm_id=route_variant.id, osm_type=osm_type,
+                       osm_url=osm_url, name=name, tags=route_variant.tags,
+                       route_id=ref, shape=shape, line=parent_identifier,
+                       stops=stops)
         return rv
 
     def _build_stop(self, stop, osm_type):
@@ -389,9 +414,15 @@ class OsmConnector(object):
                 (stop.lat, stop.lon) = Helper.get_center_of_nodes(
                     stop.get_nodes())
 
+            # Move to Elements class, once attributes with defaults play well
+            # with inheritance https://github.com/python-attrs/attrs/issues/38
+            osm_url = "https://osm.org/" + str(
+                osm_type) + "/" + str(stop.id)
+
             # Create and return Stop object
-            stop = Stop(osm_id=stop.id, osm_type=osm_type, tags=stop.tags,
-                        lat=stop.lat, lon=stop.lon, name=stop.tags['name'])
+            stop = Stop(osm_id=stop.id, osm_type=osm_type, osm_url=osm_url,
+                        tags=stop.tags, name=stop.tags['name'], lat=stop.lat,
+                        lon=stop.lon)
             return stop
 
         else:
@@ -415,6 +446,12 @@ class OsmConnector(object):
 
         """
 
+        # Check tagging whether this is a stop area.
+        if 'public_transport' not in stop_area.tags:
+            return False
+        elif not stop_area.tags['public_transport'] == 'stop_area':
+            return False
+
         # Check whether a valid stop_area candidade
         if 'public_transport' in stop_area.tags and stop_area.tags[
                         'public_transport'] == 'stop_area':
@@ -422,15 +459,21 @@ class OsmConnector(object):
             # Analzyse member objects (stops) of this stop area
             members = {}
             for member in stop_area.members:
-                if (isinstance(member, overpy.RelationNode) and
-                   member.role == "platform"):
 
-                    if "node/" + str(member.ref) in self.stops['regular']:
+                if member.role == "platform":
+
+                    if isinstance(member, overpy.RelationNode):
+                        member_osm_type = "node"
+                    elif isinstance(member, overpy.RelationWay):
+                        member_osm_type = "way"
+
+                    identifier = member_osm_type + "/" + str(member.ref)
+
+                    if identifier in self.stops['regular']:
 
                         # Collect the Stop objects that are members
                         # of this Station
-                        members["node/" + str(member.ref)] = self.stops[
-                            'regular']["node/" + str(member.ref)]
+                        members[identifier] = self.stops['regular'][identifier]
                     else:
                         sys.stderr.write(
                             "Error: Station member was not found in data")
@@ -469,10 +512,16 @@ class OsmConnector(object):
             stop_area.lat, stop_area.lon = Helper.get_center_of_nodes(
                 members.values())
 
+            # Move to Elements class, once attributes with defaults play well
+            # with inheritance https://github.com/python-attrs/attrs/issues/38
+            osm_url = "https://osm.org/" + str(
+                osm_type) + "/" + str(stop_area.id)
+
             # Create and return Station object
-            station = Station(osm_id=stop_area.id, tags=stop_area.tags,
-                              lat=stop_area.lat, lon=stop_area.lon,
-                              name=stop_area.name)
+            station = Station(osm_id=stop_area.id, osm_type=osm_type,
+                              osm_url=osm_url, tags=stop_area.tags,
+                              name=stop_area.name, lat=stop_area.lat,
+                              lon=stop_area.lon)
             station.set_members(members)
             return station
 

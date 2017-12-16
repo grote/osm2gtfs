@@ -66,7 +66,7 @@ class RoutesCreator(object):
 
     def _define_route_color(self, route):
         """
-        Returns the route_route_color for the use in the GTFS feed.
+        Returns the route_color for the use in the GTFS feed.
         Can be easily overridden in any creator.
         """
         return route.route_color[1:]
@@ -76,4 +76,6 @@ class RoutesCreator(object):
         Returns the route_text_color for the use in the GTFS feed.
         Can be easily overridden in any creator.
         """
+        if 'ref:colour_tx' in route.tags:
+            route.route_text_color = route.tags['ref:colour_tx']
         return route.route_text_color[1:]

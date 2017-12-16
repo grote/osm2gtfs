@@ -6,7 +6,7 @@ from datetime import timedelta, datetime
 import transitfeed
 from osm2gtfs.creators.trips_creator import TripsCreator
 from osm2gtfs.core.helper import Helper
-from osm2gtfs.core.routes import Line, Itinerary
+from osm2gtfs.core.elements import Line, Itinerary
 
 DEBUG_ROUTE = ""
 BLACKLIST = [

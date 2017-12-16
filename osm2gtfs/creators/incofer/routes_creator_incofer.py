@@ -1,8 +1,7 @@
 # coding=utf-8
 
 import sys
-from osm2gtfs.core.routes import Itinerary, Line
-from osm2gtfs.core.stops import Stop, Station
+from osm2gtfs.core.elements import Line, Itinerary, Station, Stop
 from osm2gtfs.creators.routes_creator import RoutesCreator
 
 
