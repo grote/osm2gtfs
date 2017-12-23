@@ -3,6 +3,7 @@
 import sys
 from collections import OrderedDict
 import overpy
+import webcolors
 from transitfeed import util
 from osm2gtfs.core.cache import Cache
 from osm2gtfs.core.helper import Helper
@@ -318,6 +319,21 @@ class OsmConnector(object):
             name = route_master.tags['ref']
         else:
             name = None
+
+        # Normalize route color information
+        if 'colour' in route_master.tags:
+            try:
+                # Check if colour is a valid hex format
+                route_master.tags['colour'] = webcolors.normalize_hex(
+                    route_master.tags['colour'])
+            except ValueError:
+                try:
+                    # Convert web color names into rgb hex values
+                    route_master.tags['colour'] = webcolors.name_to_hex(
+                        route_master.tags['colour'])
+                except ValueError:
+                    print(" Warning: Invalid colour: " + route_master.tags[
+                        'colour'] + " found in OSM data.")
 
         # Create Line (route master) object
         line = Line(osm_id=route_master.id, osm_type=osm_type, osm_url=osm_url,

@@ -34,7 +34,7 @@ class Line(Element):
     route_type = attr.ib(default=None)
     route_desc = attr.ib(default=None)
     route_color = attr.ib(default="#FFFFFF")
-    route_text_color = attr.ib(default="#000000")
+    route_text_color = attr.ib(default=None)
 
     # Related route variants
     _itineraries = attr.ib(default=attr.Factory(list))
@@ -46,6 +46,10 @@ class Line(Element):
         # pylint: disable=unsupported-membership-test,unsubscriptable-object
         if 'colour' in self.tags:
             self.route_color = self.tags['colour']
+
+        # pylint: disable=unsupported-membership-test,unsubscriptable-object
+        if 'ref:colour_tx' in self.tags:
+            self.route_text_color = self.tags['ref:colour_tx']
 
         # pylint: disable=unsupported-membership-test,unsubscriptable-object
         if 'route_master' in self.tags:
