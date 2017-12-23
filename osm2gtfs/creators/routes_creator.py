@@ -1,5 +1,7 @@
 # coding=utf-8
 
+from osm2gtfs.core.helper import Helper
+
 
 class RoutesCreator(object):
 
@@ -90,6 +92,9 @@ class RoutesCreator(object):
         Returns the route_text_color for the use in the GTFS feed.
         Can be easily overridden in any creator.
         """
-        if 'ref:colour_tx' in route.tags:
-            route.route_text_color = route.tags['ref:colour_tx']
+        if route.route_text_color is None:
+            # Auto calculate text color with high contrast
+            route.route_text_color = Helper.calculate_color_of_contrast(
+                route.route_color)
+
         return route.route_text_color[1:]

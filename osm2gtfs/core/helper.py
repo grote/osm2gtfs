@@ -91,3 +91,24 @@ class Helper(object):
         d = radius * c
 
         return d * 1000  # meters
+
+    @staticmethod
+    def calculate_color_of_contrast(color):
+        """
+        Calculating by a given color (RGB hex value) a color with sufficient
+        contrast when viewed on a black and white screen. Depending on the
+        perceived brightness of a color either black of white is returned.
+
+        Inspired by:
+        http://www.nbdtech.com/Blog/archive/2008/04/27/Calculating-the-Perceived-Brightness-of-a-Color.aspx
+        """
+        # Slice RGB and convert to decimal numbers
+        red, green, blue = (int(color[1:3], 16), int(color[3:5], 16),
+                            int(color[5:7], 16))
+
+        # Calculate the route_text_color
+        brightness = sqrt(
+            red * red * .241 + green * green * .691 + blue * blue * .068)
+        color_of_contrast = "#ffffff" if brightness <= 130 else "#000000"
+
+        return color_of_contrast
