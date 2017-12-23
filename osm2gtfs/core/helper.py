@@ -66,3 +66,28 @@ class Helper(object):
                     trip.ReplaceStopTimeObject(stop_time)
         except ValueError as e:
             print(e)
+
+    @staticmethod
+    def get_crow_fly_distance(from_tuple, to_tuple):
+        """
+        Uses the Haversine formmula to compute distance
+        (https://en.wikipedia.org/wiki/Haversine_formula#The_haversine_formula)
+        """
+        lat1, lon1 = from_tuple
+        lat2, lon2 = to_tuple
+
+        lat1 = float(lat1)
+        lat2 = float(lat2)
+        lon1 = float(lon1)
+        lon2 = float(lon2)
+
+        radius = 6371  # km
+
+        dlat = radians(lat2 - lat1)
+        dlon = radians(lon2 - lon1)
+        a = sin(dlat / 2) * sin(dlat / 2) + cos(radians(lat1)) * \
+            cos(radians(lat2)) * sin(dlon / 2) * sin(dlon / 2)
+        c = 2 * atan2(sqrt(a), sqrt(1 - a))
+        d = radius * c
+
+        return d * 1000  # meters

@@ -1,32 +1,7 @@
 # coding=utf-8
 
-import math
+from osm2gtfs.core.helper import Helper
 from osm2gtfs.creators.stops_creator import StopsCreator
-
-
-def get_crow_fly_distance(from_tuple, to_tuple):
-    """
-    Uses the Haversine formmula to compute distance
-    (https://en.wikipedia.org/wiki/Haversine_formula#The_haversine_formula)
-    """
-    lat1, lon1 = from_tuple
-    lat2, lon2 = to_tuple
-
-    lat1 = float(lat1)
-    lat2 = float(lat2)
-    lon1 = float(lon1)
-    lon2 = float(lon2)
-
-    radius = 6371  # km
-
-    dlat = math.radians(lat2 - lat1)
-    dlon = math.radians(lon2 - lon1)
-    a = math.sin(dlat / 2) * math.sin(dlat / 2) + math.cos(math.radians(lat1)) * \
-        math.cos(math.radians(lat2)) * math.sin(dlon / 2) * math.sin(dlon / 2)
-    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
-    d = radius * c
-
-    return d * 1000  # meters
 
 
 def create_stop_area(stop_data, feed):
@@ -74,7 +49,7 @@ class StopsCreatorAccra(StopsCreator):
                 gtfs_stop_point = create_stop_point(a_stop_point, feed)
                 stop_point_has_parent_location = False
                 for a_stop_area in stop_areas:
-                    distance_to_parent_station = get_crow_fly_distance(
+                    distance_to_parent_station = Helper.get_crow_fly_distance(
                         (a_stop_area.stop_lat, a_stop_area.stop_lon),
                         (a_stop_point.lat, a_stop_point.lon)
                     )
