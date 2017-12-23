@@ -1,5 +1,6 @@
 # coding=utf-8
 
+import math
 import webcolors
 from osm2gtfs.creators.routes_creator import RoutesCreator
 
@@ -18,15 +19,20 @@ class RoutesCreatorEsteli(RoutesCreator):
         """
         Overriden to support automatic guessing
         """
-        return self._get_complementary_color(route.route_color)
 
-    def _get_complementary_color(self, color):
-        """
-        Returns complementary RGB color
-        Source: https://stackoverflow.com/a/38478744
-        """
+        # Prepare the color information
+        color = route.route_color
         if color[0] == '#':
             color = color[1:]
-        rgb = (color[0:2], color[2:4], color[4:6])
-        comp = ['%02X' % (255 - int(a, 16)) for a in rgb]
-        return ''.join(comp)
+
+        # Slice RGB and convert to decimal numbers
+        red, green, blue = (int(color[0:2], 16), int(color[2:4], 16),
+                            int(color[4:6], 16))
+
+        # Calculate the route_text_color; based on
+        # http://www.nbdtech.com/Blog/archive/2008/04/27/Calculating-the-Perceived-Brightness-of-a-Color.aspx
+        brightness = math.sqrt(
+            red * red * .241 + green * green * .691 + blue * blue * .068)
+        route_text_color = "ffffff" if brightness <= 130 else "000000"
+
+        return route_text_color
