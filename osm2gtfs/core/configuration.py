@@ -185,7 +185,7 @@ class Configuration(object):
             # Define end date automatically one year from start date
             if start_date.month == 1:
                 # Special case in January of each year
-                end_date_month = 12
+                end_date_month = "12"
                 end_date_year = start_date.year
             else:
                 # Regular case for all other months
