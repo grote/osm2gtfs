@@ -25,8 +25,7 @@ class TripsCreatorIncofer(TripsCreator):
                 # print("DEBUG. procesando el itinerario", itinerary.name)
 
                 # shape for itinerary
-                shape_id = self._add_shape_to_feed(
-                    feed, itinerary.route_id, itinerary)
+                shape_id = self._add_shape_to_feed(feed, itinerary.osm_id, itinerary)
 
                 # service periods | días de opearación (c/u con sus horarios)
                 operations = self._get_itinerary_operation(itinerary, data)
