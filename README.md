@@ -19,9 +19,7 @@ source of schedule (time) information in order to create a GTFS file using the
 transitfeed library.
 
 For every new city a new [configuration file](https://github.com/grote/osm2gtfs/wiki/Configuration)
-needs to be created and the input of schedule information is preferred
-in a certain [format](https://github.com/grote/osm2gtfs/wiki/Schedule).
-For any city the script can be easily extended, see the
+needs to be created. Additionally, schedule information should be provided. By-default the schedule information is expected to be provided in a  [certain format](https://github.com/grote/osm2gtfs/wiki/Schedule). However other formats are supported through extending the code. For any city and schedule format the script can be easily extended, see the
 [developer documentation](https://github.com/grote/osm2gtfs/wiki/Development)
 for more information.
 

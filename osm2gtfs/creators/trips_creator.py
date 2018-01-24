@@ -1,6 +1,7 @@
 # coding=utf-8
 
 import re
+import sys
 from datetime import datetime
 import transitfeed
 from transitfeed import ServicePeriod
@@ -24,6 +25,9 @@ class TripsCreator(object):
 
         It is the place where geographic information and schedule is
         getting joined to produce a routable GTFS.
+
+        The default format of the schedule information:
+        https://github.com/grote/osm2gtfs/wiki/Schedule
         """
         all_trips_count = 0
 
@@ -171,9 +175,11 @@ class TripsCreator(object):
                     itinerary_stop = trip_builder[
                         'all_stops']['regular'][itinerary_stop_id]
                 except ValueError:
-                    print("Itinerary (" + itinerary.route_url +
-                          ") misses a stop:")
-                    print(" Please review stop:" + itinerary_stop_id)
+
+                    sys.stderr.write(
+                        "Itinerary (" + itinerary.route_url + ") misses a stop: \n")
+                    sys.stderr.write(
+                        "Please review: " + itinerary_stop_id + "\n")
                     continue
 
                 try:

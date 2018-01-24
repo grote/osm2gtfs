@@ -237,24 +237,23 @@ class TripsCreatorFenix(TripsCreator):
             feed.AddServicePeriodObject(service)
         return service
 
-    @staticmethod
-    def match_first_stops(route, sim_stops):
+    def match_first_stops(self, route, sim_stops, ):
         # get the first stop of the route
         stop = route.stops[0]
 
         # normalize its name
-        stop.name = TripsCreatorFenix.normalize_stop_name(stop.name)
+        stop.name = self.normalize_stop_name(stop.name)
 
         # get first stop from relation 'from' tag
         if 'from' in route.tags:
             alt_stop_name = route.tags['from']
         else:
             alt_stop_name = ""
-        alt_stop_name = TripsCreatorFenix.normalize_stop_name(alt_stop_name)
+        alt_stop_name = self.normalize_stop_name(alt_stop_name)
 
         # trying to match first stop from OSM with SIM
         for o_sim_stop in sim_stops:
-            sim_stop = TripsCreatorFenix.normalize_stop_name(o_sim_stop)
+            sim_stop = self.normalize_stop_name(o_sim_stop)
             if sim_stop == stop.name:
                 return o_sim_stop
             elif sim_stop == alt_stop_name:
@@ -267,7 +266,7 @@ class TripsCreatorFenix(TripsCreator):
         sys.stderr.write("OSM Stop: '" + stop.name + "'\n")
         sys.stderr.write("OSM ALT Stop: '" + alt_stop_name + "'\n")
         for sim_stop in sim_stops:
-            sim_stop = TripsCreatorFenix.normalize_stop_name(sim_stop)
+            sim_stop = self.normalize_stop_name(sim_stop)
             sys.stderr.write("SIM Stop: '" + sim_stop + "'\n")
         print
         return None
