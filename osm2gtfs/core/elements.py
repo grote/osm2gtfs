@@ -53,7 +53,7 @@ class Line(Element):
         else:
             sys.stderr.write(
                 "Warning: Route master relation without a route_master tag:\n")
-            sys.stderr.write(" " + self.osm_url)
+            sys.stderr.write(" " + self.osm_url + "\n")
 
             # Try to guess the type differently
             if 'route' in self.tags:

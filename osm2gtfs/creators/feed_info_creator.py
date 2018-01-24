@@ -20,6 +20,7 @@ class FeedInfoCreator(object):
 
         # Missing feed_info workaround
         # https://github.com/google/transitfeed/issues/395
+        # noinspection PyProtectedMember
         # pylint: disable=protected-access
         feed.AddTableColumns('feed_info', feed_info._ColumnNames())
 

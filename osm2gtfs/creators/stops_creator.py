@@ -52,7 +52,7 @@ class StopsCreator(object):
         try:
             parent_station = stop.get_parent_station()
         except AttributeError:
-            parent_station = ""
+            parent_station = None
 
         # Send stop_id creation through overridable function
         gtfs_stop_id = self._define_stop_id(stop)

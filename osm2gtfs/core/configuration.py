@@ -83,7 +83,7 @@ class Configuration(object):
                     sys.exit(0)
                 schedule_source = schedule_source_file.read()
 
-        self._schedule_source = schedule_source.read()
+        self._schedule_source = schedule_source
 
         # Cache data
         Cache.write_file(cached_file, self._schedule_source)
