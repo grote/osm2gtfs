@@ -53,6 +53,110 @@ def is_identical_gtfs(gtfs1, gtfs2):
     return True
 
 
+def check_osm_route_stop_times(gtfs1, gtfs2, osm_relation_id):
+    osm_relation_id = str(osm_relation_id)
+    zf1 = zipfile.ZipFile(gtfs1)
+    zf2 = zipfile.ZipFile(gtfs2)
+    # Grabbing the trip_ids from both gtfs
+    trips_id1 = []
+    with zf1.open("trips.txt") as trip_file:
+        reader = csv.DictReader(trip_file)
+        for row in reader:
+            if row["route_id"] == osm_relation_id:
+                trips_id1.append(row['trip_id'])
+    trips_id2 = []
+    with zf2.open("trips.txt") as trip_file:
+        reader = csv.DictReader(trip_file)
+        for row in reader:
+            if row["route_id"] == osm_relation_id:
+                trips_id2.append(row['trip_id'])
+    if trips_id1 != trips_id2:
+        print("Error on count of trips found ({:d} <> {:d})".format(
+            len(trips_id1),
+            len(trips_id2)
+        ))
+        return False
+    # Grabbing simplified stop_times for found trips
+    stop_times1 = []
+    stop_times2 = []
+    with zf1.open("stop_times.txt") as st_file:
+        reader = csv.DictReader(st_file)
+        for row in reader:
+            if row["trip_id"] in trips_id1:
+                st = {
+                    "trip_id": row['trip_id'],
+                    "stop_id": row['stop_id'],
+                    "stop_sequence": row['stop_sequence'],
+                    "arrival_time": row['arrival_time'],
+                    "departure_time": row['departure_time'],
+                }
+                stop_times1.append(st)
+    with zf2.open("stop_times.txt") as st_file:
+        reader = csv.DictReader(st_file)
+        for row in reader:
+            if row["trip_id"] in trips_id2:
+                st = {
+                    "trip_id": row['trip_id'],
+                    "stop_id": row['stop_id'],
+                    "stop_sequence": row['stop_sequence'],
+                    "arrival_time": row['arrival_time'],
+                    "departure_time": row['departure_time'],
+                }
+                stop_times2.append(st)
+    if len(stop_times1) != len(stop_times2):
+        print("Error on count of stop_times found ({:d} <> {:d})".format(
+            len(stop_times1),
+            len(stop_times2)
+        ))
+        return False
+    # Checking for the first error in stop_times with an explicit message
+    for st1 in stop_times1:
+        trip_point_found = False
+        for st2 in stop_times2:
+            if st1["trip_id"] == st2["trip_id"] \
+                    and st1["stop_sequence"] == st2["stop_sequence"]:
+                trip_point_found = True
+                if st1["stop_id"] != st2["stop_id"]:
+                    print(
+                        "stop_id different for trip_id={} and stop_sequence={} ({} <> {})".format(
+                                st1["trip_id"],
+                                st1["stop_sequence"],
+                                st1["stop_id"],
+                                st2["stop_id"]
+                            )
+                    )
+                    return False
+                elif st1["arrival_time"] != st2["arrival_time"] \
+                        or st1["departure_time"] != st2["departure_time"]:
+                    print(
+                        "Stop times are different for trip_id={} and stop_sequence={}".format(
+                            st1["trip_id"],
+                            st1["stop_sequence"]
+                        )
+                    )
+                    for st in [st1, st2]:
+                        print(
+                            "\t arrival_time={}   departure_time={}".format(
+                                st["arrival_time"],
+                                st["departure_time"],
+                            )
+                        )
+                    return False
+                else:
+                    # trip_point found with no difference, break for st2 loop
+                    # to continue for the next st1
+                    break
+        if not trip_point_found:
+            print(
+                "No corresponing stop_time for trip_id={} and stop_sequence={}".format(
+                    st1["trip_id"],
+                    st1["stop_sequence"]
+                )
+            )
+            return False
+    return True
+
+
 def get_gtfs_infos(gtfs):
     gtfs_infos = {}
     gtfs_infos["stop_points_count"] = 0
@@ -146,10 +250,10 @@ class TestAccra(unittest.TestCase):
         feed.WriteGoogleTransitFeed(self.config.output)
         gtfs_expected_result = os.path.join(self.fixture_folder, "accra_tests.zip.ref")
         gtfs_generated_result = os.path.join(self.data_dir, "accra_tests.zip")
-        self.assertTrue(is_valid_gtfs(gtfs_generated_result), 'The generated GTFS is not valid')
-        self.assertTrue(is_valid_gtfs(gtfs_expected_result), 'The expected GTFS is not valid')
+        self.assertTrue(is_valid_gtfs(gtfs_generated_result), "The generated GTFS is not valid")
+        self.assertTrue(is_valid_gtfs(gtfs_expected_result), "The expected GTFS is not valid")
         self.assertTrue(is_identical_gtfs(gtfs_expected_result, gtfs_generated_result),
-                        'The generated GTFS is different from the expected one')
+                        "The generated GTFS is different from the expected one")
         gtfs_infos = get_gtfs_infos(gtfs_generated_result)
         self.assertEqual(gtfs_infos["stop_points_count"], 2529,
                          "Wrong stop_points count in the generated GTFS")
@@ -157,6 +261,10 @@ class TestAccra(unittest.TestCase):
                          "Wrong stop_areas count in the generated GTFS")
         self.assertEqual(gtfs_infos["routes_count"], 277,
                          "Wrong routes count in the generated GTFS")
+        self.assertTrue(
+            check_osm_route_stop_times(gtfs_expected_result, gtfs_generated_result, 7551952),
+            "Error found on stop_times of osm relation 7551952"
+        )
 
 
 def load_tests(loader, tests, pattern):
