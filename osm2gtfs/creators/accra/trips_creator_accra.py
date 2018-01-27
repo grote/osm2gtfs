@@ -70,7 +70,6 @@ class TripsCreatorAccra(TripsCreator):
                     ROUTE_FREQUENCY = DEFAULT_ROUTE_FREQUENCY
                 trip_gtfs.AddFrequency(
                     "05:00:00", "22:00:00", ROUTE_FREQUENCY * 60)
-
                 if 'travel_time' in a_route.tags:
                     try:
                         TRAVEL_TIME = int(a_route.tags['travel_time'])
@@ -82,6 +81,8 @@ class TripsCreatorAccra(TripsCreator):
                         print("travel_time not a number for route " + str(
                                     a_route.osm_id))
                         TRAVEL_TIME = DEFAULT_TRAVEL_TIME
+                else:
+                    TRAVEL_TIME = DEFAULT_TRAVEL_TIME
 
                 for index_stop, a_stop in enumerate(a_route.stops):
                     stop_id = a_stop.split('/')[-1]
