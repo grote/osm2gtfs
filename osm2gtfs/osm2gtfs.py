@@ -76,29 +76,7 @@ def main():
     # Write GTFS
     feed.WriteGoogleTransitFeed(config.output)
 
-    # Add feed_info.txt to GTFS
-    add_feed_info(feed, config.output)
-
     sys.exit()
-
-
-# noinspection PyProtectedMember
-def add_feed_info(feed, output_file):
-    """
-    Add feed_info.txt file to GTFS
-    Workaround for https://github.com/google/transitfeed/issues/395
-    """
-    if 'feed_info' not in feed._table_columns:  # pylint: disable=protected-access
-        return
-
-    with transitfeed.zipfile.ZipFile(output_file, 'a') as archive:
-        feed_info_string = transitfeed.StringIO.StringIO()
-        writer = transitfeed.util.CsvUnicodeWriter(feed_info_string)
-        columns = feed.GetTableColumns('feed_info')
-        writer.writerow(columns)
-        writer.writerow([transitfeed.util.EncodeUnicode(feed.feed_info[c]) for c in columns])
-        # pylint: disable=protected-access
-        feed._WriteArchiveString(archive, 'feed_info.txt', feed_info_string)
 
 
 if __name__ == "__main__":
