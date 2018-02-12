@@ -42,7 +42,11 @@ class OsmConnector(object):
         # tags from config file for querying
         self.tags = ''
         for key, value in self.config["query"].get("tags", {}).iteritems():
-            self.tags += unicode('["' + key + '" = "' + value + '"]')
+            if isinstance(value, list):
+                value = '^' + '$|^'.join(value) + '$'
+                self.tags += unicode('["' + key + '" ~ "' + value + '"]')
+            else:
+                self.tags += unicode('["' + key + '" = "' + value + '"]')
         if not self.tags:
             # fallback
             self.tags = '["public_transport:version" = "2"]'
