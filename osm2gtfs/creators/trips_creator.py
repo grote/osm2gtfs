@@ -84,14 +84,17 @@ class TripsCreator(object):
         for trip in schedule['lines'][itinerary.route_id]:
             input_fr = trip["from"]
             input_to = trip["to"]
-            if input_fr == itinerary.fr and input_to == itinerary.to:
+            input_via = trip["via"] if "via" in trip else None
+            if (input_fr == itinerary.fr and
+                    input_to == itinerary.to and
+                    input_via == itinerary.via):
                 trip_services = trip["services"]
                 for service in trip_services:
                     if service not in services:
                         services.append(service)
 
         if not services:
-            print(" Warning: From and to values didn't match with schedule.")
+            print(" Warning: From, to and via values didn't match with schedule.")
 
         # Loop through all service days
         trips = []
@@ -338,8 +341,11 @@ class TripsCreator(object):
         times = []
         for trip in schedule['lines'][itinerary.route_id]:
             trip_services = trip["services"]
+            if "via" not in trip:
+                trip["via"] = None
             if (trip["from"] == itinerary.fr and
                     trip["to"] == itinerary.to and
+                    trip["via"] == itinerary.via and
                     service in trip_services):
                 for time in trip["times"]:
                     times.append(time)
@@ -357,9 +363,13 @@ class TripsCreator(object):
         stops = []
         for trip in schedule['lines'][itinerary.route_id]:
             trip_services = trip["services"]
-            if (trip[
-                    "from"] == itinerary.fr and trip[
-                        "to"] == itinerary.to and service in trip_services):
+            trip_fr = trip["from"]
+            trip_to = trip["to"]
+            trip_via = trip["via"] if "via" in trip else None
+            if (trip_fr == itinerary.fr and
+                    trip_to == itinerary.to and
+                    trip_via == itinerary.via and
+                    service in trip_services):
                 for stop in trip["stations"]:
                     stops.append(stop)
                 break
