@@ -95,6 +95,7 @@ class Itinerary(Element):
 
     line = attr.ib(default=None)
     fr = attr.ib(default=None)
+    via = attr.ib(default=None)
     to = attr.ib(default=None)
     duration = attr.ib(default=None)
 
@@ -108,6 +109,10 @@ class Itinerary(Element):
         # pylint: disable=unsupported-membership-test,unsubscriptable-object
         if 'from' in self.tags:
             self.fr = self.tags['from']
+
+        # pylint: disable=unsupported-membership-test,unsubscriptable-object
+        if 'via' in self.tags:
+            self.via = self.tags['via']
 
         # pylint: disable=unsupported-membership-test,unsubscriptable-object
         if 'to' in self.tags:
