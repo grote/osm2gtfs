@@ -1,0 +1,34 @@
+{
+    "query": {
+        "bbox": {
+            "n": "15.033118",
+            "s": "10.707657",
+            "e": "-82.622704",
+            "w": "-87.901535"
+        },
+        "tags": {
+            "network": "NI"
+        }
+    },
+    "stops": {
+        "name_without": "Parada sin nombre",
+        "name_auto": "no"
+    },
+    "agency": {
+        "agency_id": "NI",
+        "agency_name": "Nicaragua",
+        "agency_url": "https://wiki.openstreetmap.org/wiki/ES:Wikiproyecto_Nicaragua/Transporte_p%C3%BAblico",
+        "agency_timezone": "America/Managua",
+        "agency_lang": "es",
+        "agency_phone": "",
+        "agency_fare_url": ""
+    },
+    "feed_info": {
+        "publisher_name": "MapaNica.net",
+        "publisher_url": "https://mapanica.net",
+        "version":  "0.1"
+    },
+    "schedule_source": "https://github.com/mapanica/pt-data-nicaragua/raw/master/timetable.json",
+    "output_file": "data/ni-gtfs.zip",
+    "selector": "ni_national"
+}
