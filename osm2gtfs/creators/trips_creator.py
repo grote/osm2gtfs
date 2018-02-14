@@ -34,8 +34,7 @@ class TripsCreator(object):
         # Go though all lines
         for line_id, line in data.routes.iteritems():
 
-            print("\nGenerating schedule for line: [" + str(
-                line_id) + "] - " + line.name)
+            print("\nGenerating schedule for line: [" + line_id + "] - " + line.name)
 
             # Loop through it's itineraries
             itineraries = line.get_itineraries()
@@ -62,7 +61,7 @@ class TripsCreator(object):
                             feed, itinerary, line, trip_builder, shape_id)
 
                 # Print out status messge about added trips
-                print(" Itinerary: [" + str(itinerary.route_id) + "] " +
+                print(" Itinerary: [" + itinerary.route_id.encode("utf-8") + "] " +
                       itinerary.to.encode("utf-8") + " (added " + str(
                           trips_count) + " trips, serving " + str(
                               len(itinerary.get_stops())) + " stops) - " +
