@@ -134,8 +134,9 @@ class OsmConnector(object):
                 # Create Itinerary objects from member route variants
                 if member.ref in route_variants:
                     rv = route_variants.pop(member.ref)
-                    itineraries[rv.id] = self._build_itinerary(rv, result,
-                                                               route_master)
+                    itinerary = self._build_itinerary(rv, result, route_master)
+                    if itinerary is not None:
+                        itineraries[rv.id] = itinerary
 
                 # Route variant was already used or is not valid
                 else:
@@ -145,8 +146,9 @@ class OsmConnector(object):
                         sys.stderr.write("Itinerary was assigned again:\n")
                         sys.stderr.write(
                             "https://osm.org/relation/" + str(rv.id) + "\n")
-                        itineraries[rv.id] = self._build_itinerary(rv, result,
-                                                                   route_master)
+                        itinerary = self._build_itinerary(rv, result, route_master)
+                        if itinerary is not None:
+                            itineraries[rv.id] = itinerary
                     else:
                         sys.stderr.write(
                             "Warning: This relation route master:\n")
@@ -159,6 +161,9 @@ class OsmConnector(object):
 
             # Create Line object from route master
             line = self._build_line(route_master, itineraries)
+
+            if line is None:
+                continue
 
             # Make sure route_id (ref) number is not already taken
             if line.route_id in self.routes:
@@ -189,7 +194,8 @@ class OsmConnector(object):
                     itineraries = OrderedDict()
                     itineraries[itinerary.osm_id] = itinerary
                     line = self._build_line(route_variant, itineraries)
-                    self.routes[line.route_id] = line
+                    if line is not None:
+                        self.routes[line.route_id] = line
 
         # Cache data
         Cache.write_data(self.selector + '-routes', self.routes)
@@ -286,6 +292,16 @@ class OsmConnector(object):
 
         """
         osm_type = "relation"
+
+        if len(itineraries) == 0:
+            sys.stderr.write(
+                "Relation without valid members. Please fix in OpenStreetMap\n")
+            sys.stderr.write(
+                "https://osm.org/relation/" + str(route_master.id) + "\n")
+            sys.stderr.write(
+                    "Skipping whole route without valid members.\n")
+            return None
+
         if 'ref' in route_master.tags:
             ref = route_master.tags['ref']
         else:
