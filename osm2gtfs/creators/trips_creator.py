@@ -87,7 +87,8 @@ class TripsCreator(object):
             if input_fr == itinerary.fr and input_to == itinerary.to:
                 trip_services = trip["services"]
                 for service in trip_services:
-                    services.append(service)
+                    if service not in services:
+                        services.append(service)
 
         if not services:
             print(" Warning: From and to values didn't match with schedule.")
@@ -124,13 +125,31 @@ class TripsCreator(object):
                   str(line.route_id) + ")")
             print(" " + itinerary.osm_url)
             print(" " + line.osm_url)
-            return True
+            return False
 
         # Check if time information in schedule can be found for
         # the itinerary
         if itinerary.route_id not in schedule['lines']:
-            print(" Warning: Route not found in schedule.")
+            print("Warning: Route not found in schedule.")
             return False
+
+        # Check if from and to tags are valid and correspond to
+        # the actual name of the first and last stop of the itinerary.
+        for trip in schedule['lines'][itinerary.route_id]:
+            if (trip["from"] == itinerary.fr and trip["to"] == itinerary.to):
+                trip_stations = trip["stations"]
+                if trip_stations[0] != itinerary.fr:
+                    print("Warning: The first station in the stations list of trip (" +
+                          str(itinerary.route_id) + ") doesn't match first station of itinerary.")
+                    print(" " + itinerary.osm_url)
+                    print(" Please review the schedule file.")
+                    return False
+                elif trip_stations[-1] != itinerary.to:
+                    print("Warning: The last station in the stations list of trip (" +
+                          str(itinerary.route_id) + ") doesn't match last station of itinerary.")
+                    print(" " + itinerary.osm_url)
+                    print(" Please review the schedule file.")
+                    return False
 
         return True
 
@@ -165,16 +184,16 @@ class TripsCreator(object):
             gtfs_trip = route.AddTrip(feed, headsign=itinerary.to,
                                       service_period=trip_builder['service_period'])
             trips_count += 1
+            search_idx = 0
 
             # Go through all stops of an itinerary
-            for itinerary_stop_id in itinerary.get_stops():
+            for itinerary_stop_idx, itinerary_stop_id in enumerate(itinerary.get_stops()):
 
                 # Load full stop object
                 try:
                     itinerary_stop = trip_builder[
                         'all_stops']['regular'][itinerary_stop_id]
                 except ValueError:
-
                     sys.stderr.write(
                         "Itinerary (" + itinerary.route_url + ") misses a stop: \n")
                     sys.stderr.write(
@@ -187,20 +206,40 @@ class TripsCreator(object):
                 except ValueError:
                     print("Warning: Stop in itinerary was not found in GTFS.")
                     print(" " + itinerary_stop.osm_url)
+                    continue
 
                 # Make sure we compare same unicode encoding
                 if type(itinerary_stop.name) is str:
                     itinerary_stop.name = itinerary_stop.name.decode('utf-8')
 
-                time = "-"
+                schedule_stop_idx = -1
                 # Check if we have specific time information for this stop.
                 try:
-                    time = trip[trip_builder['stops'].index(itinerary_stop.name)]
+                    schedule_stop_idx = trip_builder['stops'].index(itinerary_stop.name, search_idx)
                 except ValueError:
-                    pass
+                    if itinerary_stop.get_parent_station() is not None:
+                        # If stop name not found, check for the parent_station name, too.
+                        itinerary_station = trip_builder[
+                            'all_stops']['stations'][str(itinerary_stop.get_parent_station())]
+                        if type(itinerary_station.name) is str:
+                            itinerary_station.name = itinerary_station.name.decode('utf-8')
+                        try:
+                            schedule_stop_idx = trip_builder[
+                                'stops'].index(itinerary_station.name, search_idx)
+                        except ValueError:
+                            pass
 
-                # Validate time information
-                if time != "-":
+                # Make sure the last stop of itinerary will keep being the last stop in GTFS
+                last_stop_schedule = schedule_stop_idx == len(trip_builder['stops']) - 1
+                last_stop_itinerary = itinerary_stop_idx == len(itinerary.get_stops()) - 1
+                if last_stop_schedule != last_stop_itinerary:
+                    schedule_stop_idx = -1
+
+                if schedule_stop_idx != -1:
+                    time = trip[schedule_stop_idx]
+                    search_idx = schedule_stop_idx + 1
+
+                    # Validate time information
                     try:
                         time_at_stop = str(
                             datetime.strptime(time, "%H:%M").time())
@@ -216,10 +255,10 @@ class TripsCreator(object):
                 else:
                     try:
                         gtfs_trip.AddStopTime(gtfs_stop)
-                    except ValueError:
-                        print("Warning: Could not add first a stop to trip.")
+                    except transitfeed.problems.OtherProblem:
+                        print("Warning: Could not add first stop to trip without time information.")
                         print(" " + itinerary_stop.name +
-                              " - " + itinerary_stop.osm_id)
+                              " - " + itinerary_stop.osm_url)
                         break
 
                 # Add reference to shape
@@ -296,13 +335,14 @@ class TripsCreator(object):
 
         :return times: List of strings
         """
-        times = None
+        times = []
         for trip in schedule['lines'][itinerary.route_id]:
             trip_services = trip["services"]
             if (trip["from"] == itinerary.fr and
                     trip["to"] == itinerary.to and
                     service in trip_services):
-                times = trip["times"]
+                for time in trip["times"]:
+                    times.append(time)
         if times is None:
             print("Warning: Couldn't load times from schedule for route")
         return times
@@ -322,4 +362,5 @@ class TripsCreator(object):
                         "to"] == itinerary.to and service in trip_services):
                 for stop in trip["stations"]:
                     stops.append(stop)
+                break
         return stops
