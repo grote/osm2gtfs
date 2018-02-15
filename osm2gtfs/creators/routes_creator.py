@@ -38,6 +38,24 @@ class RoutesCreator(object):
             gtfs_route.route_text_color = self._define_route_text_color(route)
         return
 
+    def remove_unused_routes_from_feed(self, feed):
+        """
+        This function removes every route which does not contain any trip
+        from the final GTFS.
+        It is called after the whole GTFS creation inside the main program.
+        """
+        removed = 0
+        for route_id, route in feed.routes.items():
+            if len(route.GetPatternIdTripDict()) == 0:
+                removed += 1
+                del feed.routes[route_id]
+        if removed == 0:
+            pass
+        elif removed == 1:
+            print("Removed 1 unused route")
+        else:
+            print("Removed %d unused routes" % removed)
+
     def _define_route_id(self, route):
         """
         Returns the route_id for the use in the GTFS feed.

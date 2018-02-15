@@ -76,6 +76,10 @@ def main():
     schedule_creator.add_schedule_to_data(data)
     trips_creator.add_trips_to_feed(feed, data)
 
+    # Remove unused data from feed
+    stops_creator.remove_unused_stops_from_feed(feed)
+    routes_creator.remove_unused_routes_from_feed(feed)
+
     # Validate GTFS
     feed.Validate(transitfeed.ProblemReporter())
 
