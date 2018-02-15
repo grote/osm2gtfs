@@ -24,10 +24,12 @@ group.add_argument('--refresh-routes', action="store_true",
                    help='Refresh OSM data for all routes')
 group.add_argument('--refresh-stops', action="store_true",
                    help='Refresh OSM data for all stops')
+group.add_argument('--refresh-osm', action="store_true",
+                   help='Refresh all OSM data')
 group.add_argument('--refresh-schedule-source', action="store_true",
                    help='Refresh data for time information')
 group.add_argument('--refresh-all', action="store_true",
-                   help='Refresh all OSM data')
+                   help='Refresh all OSM and time information data')
 args = parser.parse_args()
 
 
@@ -44,11 +46,15 @@ def main():
         data.get_routes(refresh=True)
     elif args.refresh_stops:
         data.get_stops(refresh=True)
+    elif args.refresh_osm:
+        data.get_routes(refresh=True)
+        data.get_stops(refresh=True)
     elif args.refresh_schedule_source:
         config.get_schedule_source(refresh=True)
     elif args.refresh_all:
         data.get_routes(refresh=True)
         data.get_stops(refresh=True)
+        config.get_schedule_source(refresh=True)
 
     # Define (transitfeed) object for GTFS creation
     feed = transitfeed.Schedule()
