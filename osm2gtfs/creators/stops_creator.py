@@ -41,6 +41,24 @@ class StopsCreator(object):
             # Add stop to feed
             gtfs_stop_id = self._add_stop_to_feed(stop, feed)
 
+    def remove_unused_stops_from_feed(self, feed):
+        """
+        This function removes every stop which is not used by any trip
+        from the final GTFS.
+        It is called after the whole GTFS creation inside the main program.
+        """
+        removed = 0
+        for stop_id, stop in feed.stops.items():
+            if stop.location_type == 0 and not stop.GetTrips(feed):
+                removed += 1
+                del feed.stops[stop_id]
+        if removed == 0:
+            pass
+        elif removed == 1:
+            print("Removed 1 unused stop")
+        else:
+            print("Removed %d unused stops" % removed)
+
     def _add_stop_to_feed(self, stop, feed):
         """
         This function adds a single Stop or Station object as a stop to GTFS.
