@@ -53,7 +53,7 @@ class Line(Element):
 
         # pylint: disable=unsupported-membership-test,unsubscriptable-object
         if 'route_master' in self.tags:
-            self.route_type = self.tags['route_master'].capitalize()
+            self.route_type = self.tags['route_master']
         else:
             sys.stderr.write(
                 "Warning: Route master relation without a route_master tag:\n")
@@ -61,9 +61,30 @@ class Line(Element):
 
             # Try to guess the type differently
             if 'route' in self.tags:
-                self.route_type = self.tags['route'].capitalize()
+                self.route_type = self.tags['route']
             else:
-                self.route_type = "Bus"
+                self.route_type = "bus"
+                sys.stderr.write(" Assuming it to be a bus line (standard).\n")
+
+        known_route_types = {
+            'tram': 'Tram',
+            'light_rail': 'Tram',
+            'subway': 'Subway',
+            'train': 'Rail',
+            'bus': 'Bus',
+            'trolleybus': 'Bus',
+            'ferry': 'Ferry'
+        }
+
+        if self.route_type not in known_route_types:
+            sys.stderr.write(
+                "Warning: Route master relation with an unknown route type (" +
+                self.route_type + "):\n")
+            sys.stderr.write(" " + self.osm_url + "\n")
+            sys.stderr.write(" Assuming it to be a bus line (standard).\n")
+            self.route_type = known_route_types['bus']
+        else:
+            self.route_type = known_route_types[self.route_type]
 
     def add_itinerary(self, itinerary):
 
