@@ -17,4 +17,4 @@ jobs:
       script: pylint --disable=C,R osm2gtfs
 
     - stage: non regression test
-      script: python -m unittest discover
+      script: python -m unittest discover -p 'tests_*.py'
