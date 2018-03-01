@@ -592,6 +592,7 @@ class OsmConnector(object):
 
             /* Return tags for elements and roles for relation members. */
             );out body;""" % (self.tags, self.bbox)
+        print(query_str)
         return api.query(query_str)
 
     def _query_stops(self):
@@ -622,6 +623,7 @@ class OsmConnector(object):
             rel(bn:"platform")["public_transport"="stop_area"];
             out body;
             );""" % (self.tags, self.bbox)
+        print(query_str)
         return api.query(query_str)
 
     def _generate_shape(self, route_variant, query_result_set):
