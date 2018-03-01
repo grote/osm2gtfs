@@ -3,7 +3,7 @@ osm2gtfs tests
 
 To run all the tests (from the root `osm2gtfs` folder) :
 
-    $ python -m unittest discover -v -t .
+    python -m unittest discover -v -p 'tests_*.py' .
 
 ## Core
 
