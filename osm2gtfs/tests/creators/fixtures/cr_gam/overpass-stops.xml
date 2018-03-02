@@ -1,0 +1,1576 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osm version="0.6" generator="Overpass API 0.7.55.9 ab41fea6">
+<note>The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.</note>
+<meta osm_base="2020-01-18T01:30:02Z"/>
+
+  <node id="506449299" lat="9.9722823" lon="-84.0984449">
+    <tag k="name" v="Santa Rosa"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport" v="platform"/>
+  </node>
+  <node id="578333757" lat="9.9313097" lon="-84.0725979">
+    <tag k="addr:city" v="San José"/>
+    <tag k="addr:street" v="Calle 13"/>
+    <tag k="name" v="La Corte"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="note" v="also knows as Procuraduría"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport" v="platform"/>
+  </node>
+  <node id="1004568682" lat="9.9334705" lon="-84.1099142">
+    <tag k="addr:city" v="Rohrmoser"/>
+    <tag k="name" v="La Salle"/>
+    <tag k="public_transport" v="platform"/>
+  </node>
+  <node id="1025688459" lat="9.9554894" lon="-84.0865558">
+    <tag k="addr:street" v="Calle de la Estación"/>
+    <tag k="alt_name" v="Cuatro Reinas"/>
+    <tag k="name" v="Colima"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport" v="platform"/>
+  </node>
+  <node id="1086909644" lat="9.9785230" lon="-84.1849379">
+    <tag k="addr:city" v="San Antonio"/>
+    <tag k="addr:street" v="Avenida 2"/>
+    <tag k="name" v="Estación Belén"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="official_name" v="Estación San Antonio"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport" v="platform"/>
+    <tag k="railway" v="platform"/>
+    <tag k="train" v="yes"/>
+  </node>
+  <node id="1827967480" lat="9.9874395" lon="-84.1089753">
+    <tag k="name" v="Miraflores"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport" v="platform"/>
+  </node>
+  <node id="3230693871" lat="9.8641226" lon="-83.9112628">
+    <tag k="addr:city" v="Cartago"/>
+    <tag k="addr:street" v="Avenida 1"/>
+    <tag k="name" v="Los Ángeles"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport" v="platform"/>
+  </node>
+  <node id="3317453261" lat="9.9191696" lon="-84.0239855">
+    <tag k="addr:city" v="Curridabat"/>
+    <tag k="addr:place" v="Cipreses"/>
+    <tag k="addr:street" v="Diagonal 32A"/>
+    <tag k="name" v="UACA"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport" v="platform"/>
+  </node>
+  <node id="3332765262" lat="9.9493781" lon="-84.1437468">
+    <tag k="addr:city" v="San José"/>
+    <tag k="addr:street" v="Transversal 142"/>
+    <tag k="name" v="Demasa"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="official_name" v="Estación de Ferrocarril La Libertad"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport" v="platform"/>
+  </node>
+  <node id="3332778643" lat="9.9400218" lon="-84.1335304">
+    <tag k="addr:city" v="San José"/>
+    <tag k="addr:street" v="Calle 118"/>
+    <tag k="name" v="Pavas Centro"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport" v="platform"/>
+  </node>
+  <node id="3332793717" lat="9.9556160" lon="-84.1498712">
+    <tag k="addr:city" v="San José"/>
+    <tag k="addr:street" v="Transversal 142"/>
+    <tag k="name" v="Metrópoli"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport" v="platform"/>
+  </node>
+  <node id="3332802682" lat="9.9403739" lon="-84.1237316">
+    <tag k="addr:city" v="San José"/>
+    <tag k="addr:street" v="Calle 98"/>
+    <tag k="name" v="Jacks"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="note" v="also known as &quot;Estación de Ferrocarril Zona Insdustrial&quot;"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport" v="platform"/>
+    <tag k="railway" v="station"/>
+  </node>
+  <node id="3332814242" lat="9.9379508" lon="-84.1193429">
+    <tag k="addr:city" v="San José"/>
+    <tag k="addr:street" v="Calle 86A"/>
+    <tag k="name" v="Tubo Tico (AyA)"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport" v="platform"/>
+  </node>
+  <node id="3332821832" lat="9.9269639" lon="-84.0917257">
+    <tag k="addr:city" v="San José"/>
+    <tag k="addr:street" v="Transversal 24"/>
+    <tag k="name" v="Cementerio"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport" v="platform"/>
+  </node>
+  <node id="3332993893" lat="9.9105739" lon="-83.9868888">
+    <tag k="addr:city" v="Tres Ríos"/>
+    <tag k="addr:street" v="Calle 6"/>
+    <tag k="name" v="Tres Ríos"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport" v="platform"/>
+    <tag k="railway" v="station"/>
+    <tag k="shelter" v="yes"/>
+    <tag k="tactile_paving" v="no"/>
+    <tag k="wheelchair" v="yes"/>
+  </node>
+  <node id="3333003843" lat="9.9269442" lon="-84.0389503">
+    <tag k="addr:city" v="Curridabat"/>
+    <tag k="addr:place" v="Freses"/>
+    <tag k="addr:street" v="Calle 87"/>
+    <tag k="name" v="CFIA"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport" v="platform"/>
+  </node>
+  <node id="3333008845" lat="9.9324188" lon="-84.0435571">
+    <tag k="addr:city" v="San Pedro"/>
+    <tag k="name" v="U. Latina"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport" v="platform"/>
+  </node>
+  <node id="3338240544" lat="9.9463984" lon="-84.1379971">
+    <tag k="addr:city" v="San José"/>
+    <tag k="addr:street" v="Calle 128"/>
+    <tag k="name" v="Pecosa"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="official_name" v="Estación de Ferrocarril Villa Esperanza"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport" v="platform"/>
+  </node>
+  <node id="3340615983" lat="9.9250577" lon="-84.0743516">
+    <tag k="addr:city" v="San José"/>
+    <tag k="addr:street" v="Calle 11"/>
+    <tag k="name" v="Plaza Víquez"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="note" v="also known as Plaza González Víquez"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport" v="platform"/>
+  </node>
+  <node id="3340791384" lat="9.9342002" lon="-84.0527066">
+    <tag k="addr:city" v="San Pedro"/>
+    <tag k="addr:street" v="Calle Central"/>
+    <tag k="name" v="UCR"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport" v="platform"/>
+  </node>
+  <node id="4044611833" lat="10.0085484" lon="-84.2089754">
+    <tag k="addr:city" v="Alajuela"/>
+    <tag k="addr:street" v="Avenida 20"/>
+    <tag k="departures_board" v="timetable"/>
+    <tag k="name" v="Alajuela"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport" v="platform"/>
+  </node>
+  <node id="4044771665" lat="10.0025188" lon="-84.1836869">
+    <tag k="addr:city" v="Río Segundo"/>
+    <tag k="name" v="Río Segundo"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport" v="platform"/>
+    <tag k="railway" v="station"/>
+    <tag k="train" v="yes"/>
+  </node>
+  <node id="4044771666" lat="10.0032280" lon="-84.1525689">
+    <tag k="addr:city" v="San Joaquín"/>
+    <tag k="addr:street" v="Avenida Central"/>
+    <tag k="name" v="San Joaquín de Flores"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport" v="platform"/>
+  </node>
+  <node id="4044774959" lat="9.9948407" lon="-84.1292564">
+    <tag k="addr:city" v="San Francisco"/>
+    <tag k="addr:street" v="Vía 3"/>
+    <tag k="name" v="San Francisco"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport" v="platform"/>
+  </node>
+  <node id="4310018677" lat="9.9348673" lon="-84.0689485">
+    <tag k="bench" v="yes"/>
+    <tag k="name" v="Estación Atlántico"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport" v="platform"/>
+  </node>
+  <node id="4310021381" lat="9.9947148" lon="-84.1170571">
+    <tag k="departures_board" v="timetable"/>
+    <tag k="name" v="Estación Heredia"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport" v="platform"/>
+  </node>
+  <node id="4383881661" lat="9.8666294" lon="-83.9220095">
+    <tag k="departures_board" v="timetable"/>
+    <tag k="name" v="Estación Cartago"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport" v="platform"/>
+  </node>
+  <node id="4385632035" lat="9.9255176" lon="-84.0809785">
+    <tag k="addr:city" v="San José"/>
+    <tag k="addr:street" v="Avenida 20"/>
+    <tag k="name" v="Estación Pacífico"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport" v="platform"/>
+  </node>
+  <node id="4628999925" lat="9.9347567" lon="-84.0687399">
+    <tag k="bench" v="yes"/>
+    <tag k="name" v="Estación Atlántico"/>
+    <tag k="public_transport" v="platform"/>
+  </node>
+  <node id="4636012382" lat="9.9326563" lon="-84.1014151">
+    <tag k="name" v="Contraloría"/>
+    <tag k="public_transport" v="platform"/>
+    <tag k="train" v="yes"/>
+  </node>
+  <node id="4638218345" lat="9.9743223" lon="-84.1782042">
+    <tag k="name" v="Pedregal"/>
+    <tag k="public_transport" v="platform"/>
+  </node>
+  <node id="5571341452" lat="10.0015666" lon="-84.1952571">
+    <tag k="bench" v="yes"/>
+    <tag k="name" v="Bulevar Aeropuerto"/>
+    <tag k="public_transport" v="platform"/>
+    <tag k="railway" v="station"/>
+    <tag k="shelter" v="yes"/>
+    <tag k="train" v="yes"/>
+    <tag k="wheelchair" v="yes"/>
+  </node>
+  <node id="5816196408" lat="9.9460112" lon="-84.0728059">
+    <tag k="name" v="Calle Blancos"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport" v="platform"/>
+    <tag k="railway" v="platform"/>
+    <tag k="train" v="yes"/>
+  </node>
+  <relation id="6553390">
+    <member type="node" ref="4628999924" role="stop"/>
+    <member type="node" ref="4310018677" role="platform"/>
+    <member type="node" ref="5824465670" role="stop"/>
+    <member type="node" ref="5816196408" role="platform"/>
+    <member type="node" ref="4629001928" role="stop"/>
+    <member type="node" ref="1025688459" role="platform"/>
+    <member type="node" ref="4628887533" role="stop"/>
+    <member type="node" ref="506449299" role="platform"/>
+    <member type="node" ref="4627531199" role="stop"/>
+    <member type="node" ref="1827967480" role="platform"/>
+    <member type="node" ref="4627549200" role="stop"/>
+    <member type="node" ref="4310021381" role="platform"/>
+    <member type="node" ref="4627544910" role="stop"/>
+    <member type="node" ref="4044774959" role="platform"/>
+    <member type="node" ref="4627535655" role="stop"/>
+    <member type="node" ref="4044771666" role="platform"/>
+    <member type="node" ref="4627521007" role="stop"/>
+    <member type="node" ref="4044771665" role="platform"/>
+    <member type="node" ref="5571341451" role="stop"/>
+    <member type="node" ref="5571341452" role="platform"/>
+    <member type="node" ref="4627131516" role="stop"/>
+    <member type="node" ref="4044611833" role="platform"/>
+    <member type="way" ref="468564875" role=""/>
+    <member type="way" ref="31422043" role=""/>
+    <member type="way" ref="627670973" role=""/>
+    <member type="way" ref="31422048" role=""/>
+    <member type="way" ref="31422046" role=""/>
+    <member type="way" ref="25544851" role=""/>
+    <member type="way" ref="25544852" role=""/>
+    <member type="way" ref="716772052" role=""/>
+    <member type="way" ref="716772051" role=""/>
+    <member type="way" ref="25544846" role=""/>
+    <member type="way" ref="227891840" role=""/>
+    <member type="way" ref="227891841" role=""/>
+    <member type="way" ref="25549799" role=""/>
+    <member type="way" ref="25549798" role=""/>
+    <member type="way" ref="117695599" role=""/>
+    <member type="way" ref="117695603" role=""/>
+    <member type="way" ref="716771721" role=""/>
+    <member type="way" ref="716771720" role=""/>
+    <member type="way" ref="227880156" role=""/>
+    <member type="way" ref="227880155" role=""/>
+    <member type="way" ref="260383309" role=""/>
+    <member type="way" ref="468564876" role=""/>
+    <member type="way" ref="38782808" role=""/>
+    <member type="way" ref="130351362" role=""/>
+    <member type="way" ref="219838734" role=""/>
+    <member type="way" ref="219838735" role=""/>
+    <member type="way" ref="130351363" role=""/>
+    <member type="way" ref="440814505" role=""/>
+    <member type="way" ref="200659039" role=""/>
+    <member type="way" ref="421854703" role=""/>
+    <member type="way" ref="468571231" role=""/>
+    <member type="way" ref="316308490" role=""/>
+    <member type="way" ref="716771718" role=""/>
+    <member type="way" ref="716771717" role=""/>
+    <member type="way" ref="716771715" role=""/>
+    <member type="way" ref="716771716" role=""/>
+    <member type="way" ref="467541994" role=""/>
+    <member type="way" ref="357578237" role=""/>
+    <member type="way" ref="357578238" role=""/>
+    <member type="way" ref="357578240" role=""/>
+    <tag k="from" v="Estación Atlántico"/>
+    <tag k="name" v="Atlántico - Alajuela"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport:version" v="2"/>
+    <tag k="ref" v="2"/>
+    <tag k="route" v="train"/>
+    <tag k="to" v="Alajuela"/>
+    <tag k="type" v="route"/>
+    <tag k="url" v="http://www.incofer.go.cr/tren-urbano-alajuela-rio-segundo/"/>
+  </relation>
+  <relation id="6559533">
+    <member type="node" ref="4638296442" role="stop"/>
+    <member type="node" ref="4383881661" role="platform"/>
+    <member type="node" ref="4638296441" role="stop"/>
+    <member type="node" ref="3332993893" role="platform"/>
+    <member type="node" ref="4638296440" role="stop"/>
+    <member type="node" ref="3317453261" role="platform"/>
+    <member type="node" ref="4386029998" role="stop"/>
+    <member type="node" ref="3333003843" role="platform"/>
+    <member type="node" ref="3333008585" role="stop"/>
+    <member type="node" ref="3333008845" role="platform"/>
+    <member type="node" ref="4629031206" role="stop"/>
+    <member type="node" ref="3340791384" role="platform"/>
+    <member type="node" ref="4628999926" role="stop"/>
+    <member type="node" ref="4628999925" role="platform"/>
+    <member type="way" ref="172579195" role=""/>
+    <member type="way" ref="479832893" role=""/>
+    <member type="way" ref="479832894" role=""/>
+    <member type="way" ref="107709724" role=""/>
+    <member type="way" ref="107709749" role=""/>
+    <member type="way" ref="107708941" role=""/>
+    <member type="way" ref="107708958" role=""/>
+    <member type="way" ref="97200952" role=""/>
+    <member type="way" ref="97200939" role=""/>
+    <member type="way" ref="25511825" role=""/>
+    <member type="way" ref="443582049" role=""/>
+    <member type="way" ref="443582046" role=""/>
+    <member type="way" ref="39011513" role=""/>
+    <member type="way" ref="39011514" role=""/>
+    <member type="way" ref="461996473" role=""/>
+    <member type="way" ref="39011510" role=""/>
+    <member type="way" ref="39011511" role=""/>
+    <member type="way" ref="268517182" role=""/>
+    <member type="way" ref="268517185" role=""/>
+    <member type="way" ref="530373948" role=""/>
+    <member type="way" ref="716760620" role=""/>
+    <member type="way" ref="716760621" role=""/>
+    <member type="way" ref="712182782" role=""/>
+    <member type="way" ref="303395136" role=""/>
+    <member type="way" ref="304573535" role=""/>
+    <member type="way" ref="304573532" role=""/>
+    <member type="way" ref="440835490" role=""/>
+    <member type="way" ref="25511791" role=""/>
+    <member type="way" ref="421857678" role=""/>
+    <member type="way" ref="25342833" role=""/>
+    <member type="way" ref="452573164" role=""/>
+    <member type="way" ref="25342835" role=""/>
+    <member type="way" ref="25342834" role=""/>
+    <member type="way" ref="491698188" role=""/>
+    <member type="way" ref="491698189" role=""/>
+    <member type="way" ref="26428318" role=""/>
+    <tag k="from" v="Estación Cartago"/>
+    <tag k="name" v="Estación Cartago - Estación Atlántico"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport:version" v="2"/>
+    <tag k="ref" v="4"/>
+    <tag k="route" v="train"/>
+    <tag k="to" v="Estación Atlántico"/>
+    <tag k="type" v="route"/>
+    <tag k="url" v="http://www.incofer.go.cr/tren-urbano-cartago-estacion-atlantico/"/>
+  </relation>
+  <relation id="6559776">
+    <member type="node" ref="4628999926" role="stop"/>
+    <member type="node" ref="4628999925" role="platform"/>
+    <member type="node" ref="3340791384" role="platform"/>
+    <member type="node" ref="4629031206" role="stop"/>
+    <member type="node" ref="3333008845" role="platform"/>
+    <member type="node" ref="3333008585" role="stop"/>
+    <member type="node" ref="3333003843" role="platform"/>
+    <member type="node" ref="4386029998" role="stop"/>
+    <member type="node" ref="3317453261" role="platform"/>
+    <member type="node" ref="4638296440" role="stop"/>
+    <member type="node" ref="3332993893" role="platform"/>
+    <member type="node" ref="4638296441" role="stop"/>
+    <member type="node" ref="4383881661" role="platform"/>
+    <member type="node" ref="4638296442" role="stop"/>
+    <member type="way" ref="26428318" role=""/>
+    <member type="way" ref="491698189" role=""/>
+    <member type="way" ref="491698188" role=""/>
+    <member type="way" ref="25342834" role=""/>
+    <member type="way" ref="25342835" role=""/>
+    <member type="way" ref="452573164" role=""/>
+    <member type="way" ref="25342833" role=""/>
+    <member type="way" ref="421857678" role=""/>
+    <member type="way" ref="25511791" role=""/>
+    <member type="way" ref="440835490" role=""/>
+    <member type="way" ref="304573532" role=""/>
+    <member type="way" ref="304573535" role=""/>
+    <member type="way" ref="303395136" role=""/>
+    <member type="way" ref="712182782" role=""/>
+    <member type="way" ref="716760621" role=""/>
+    <member type="way" ref="716760620" role=""/>
+    <member type="way" ref="530373948" role=""/>
+    <member type="way" ref="268517185" role=""/>
+    <member type="way" ref="268517182" role=""/>
+    <member type="way" ref="39011511" role=""/>
+    <member type="way" ref="39011510" role=""/>
+    <member type="way" ref="461996473" role=""/>
+    <member type="way" ref="39011514" role=""/>
+    <member type="way" ref="39011513" role=""/>
+    <member type="way" ref="443582046" role=""/>
+    <member type="way" ref="443582049" role=""/>
+    <member type="way" ref="25511825" role=""/>
+    <member type="way" ref="97200939" role=""/>
+    <member type="way" ref="97200952" role=""/>
+    <member type="way" ref="107708958" role=""/>
+    <member type="way" ref="107708941" role=""/>
+    <member type="way" ref="107709749" role=""/>
+    <member type="way" ref="107709724" role=""/>
+    <member type="way" ref="479832894" role=""/>
+    <member type="way" ref="479832893" role=""/>
+    <member type="way" ref="172579195" role=""/>
+    <tag k="from" v="Estación Atlántico"/>
+    <tag k="name" v="Estación Atlántico - Cartago"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport:version" v="2"/>
+    <tag k="ref" v="4"/>
+    <tag k="route" v="train"/>
+    <tag k="to" v="Estación Cartago"/>
+    <tag k="type" v="route"/>
+    <tag k="url" v="http://www.incofer.go.cr/tren-urbano-cartago-estacion-atlantico/"/>
+  </relation>
+  <relation id="6562389">
+    <member type="node" ref="4638218346" role="stop"/>
+    <member type="node" ref="1086909644" role="platform"/>
+    <member type="node" ref="4638172859" role="stop"/>
+    <member type="node" ref="4638218345" role="platform"/>
+    <member type="node" ref="276525196" role="stop"/>
+    <member type="node" ref="3332793717" role="platform"/>
+    <member type="node" ref="4636012388" role="stop"/>
+    <member type="node" ref="3332765262" role="platform"/>
+    <member type="node" ref="4636012387" role="stop"/>
+    <member type="node" ref="3338240544" role="platform"/>
+    <member type="node" ref="4636012386" role="stop"/>
+    <member type="node" ref="3332778643" role="platform"/>
+    <member type="node" ref="4636012385" role="stop"/>
+    <member type="node" ref="3332802682" role="platform"/>
+    <member type="node" ref="4636012384" role="stop"/>
+    <member type="node" ref="3332814242" role="platform"/>
+    <member type="node" ref="289555266" role="stop"/>
+    <member type="node" ref="1004568682" role="platform"/>
+    <member type="node" ref="278449879" role="stop"/>
+    <member type="node" ref="4636012382" role="platform"/>
+    <member type="node" ref="4636012381" role="stop"/>
+    <member type="node" ref="3332821832" role="platform"/>
+    <member type="node" ref="4636012380" role="stop"/>
+    <member type="node" ref="4385632035" role="platform"/>
+    <member type="way" ref="25369694" role=""/>
+    <member type="way" ref="25369867" role=""/>
+    <member type="way" ref="357582537" role=""/>
+    <member type="way" ref="357582536" role=""/>
+    <member type="way" ref="25553374" role=""/>
+    <member type="way" ref="25553375" role=""/>
+    <member type="way" ref="65968787" role=""/>
+    <member type="way" ref="65968789" role=""/>
+    <member type="way" ref="26428217" role=""/>
+    <member type="way" ref="440833925" role=""/>
+    <member type="way" ref="361196789" role=""/>
+    <member type="way" ref="361196790" role=""/>
+    <member type="way" ref="117831896" role=""/>
+    <member type="way" ref="117831899" role=""/>
+    <member type="way" ref="107828913" role=""/>
+    <member type="way" ref="25841648" role=""/>
+    <member type="way" ref="446753979" role=""/>
+    <member type="way" ref="681247376" role=""/>
+    <member type="way" ref="469522581" role=""/>
+    <tag k="from" v="Estación Belén"/>
+    <tag k="name" v="Estación Belén - Estación Pacífico"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport:version" v="2"/>
+    <tag k="ref" v="1"/>
+    <tag k="route" v="train"/>
+    <tag k="to" v="Estación Pacífico"/>
+    <tag k="type" v="route"/>
+    <tag k="url" v="http://www.incofer.go.cr/tren-interurbano-belen-estacion-pacifico/"/>
+  </relation>
+  <relation id="6562498">
+    <member type="node" ref="4385632035" role="platform"/>
+    <member type="node" ref="4636012380" role="stop"/>
+    <member type="node" ref="3332821832" role="platform"/>
+    <member type="node" ref="4636012381" role="stop"/>
+    <member type="node" ref="4636012382" role="platform"/>
+    <member type="node" ref="278449879" role="stop"/>
+    <member type="node" ref="1004568682" role="platform"/>
+    <member type="node" ref="289555266" role="stop"/>
+    <member type="node" ref="3332814242" role="platform"/>
+    <member type="node" ref="4636012384" role="stop"/>
+    <member type="node" ref="3332802682" role="platform"/>
+    <member type="node" ref="4636012385" role="stop"/>
+    <member type="node" ref="3332778643" role="platform"/>
+    <member type="node" ref="4636012386" role="stop"/>
+    <member type="node" ref="3338240544" role="platform"/>
+    <member type="node" ref="4636012387" role="stop"/>
+    <member type="node" ref="3332765262" role="platform"/>
+    <member type="node" ref="4636012388" role="stop"/>
+    <member type="node" ref="3332793717" role="platform"/>
+    <member type="node" ref="276525196" role="stop"/>
+    <member type="node" ref="4638218345" role="platform"/>
+    <member type="node" ref="4638172859" role="stop"/>
+    <member type="node" ref="1086909644" role="platform"/>
+    <member type="node" ref="4638218346" role="stop"/>
+    <member type="way" ref="469522581" role=""/>
+    <member type="way" ref="681247376" role=""/>
+    <member type="way" ref="446753979" role=""/>
+    <member type="way" ref="25841648" role=""/>
+    <member type="way" ref="107828913" role=""/>
+    <member type="way" ref="117831899" role=""/>
+    <member type="way" ref="117831896" role=""/>
+    <member type="way" ref="361196790" role=""/>
+    <member type="way" ref="361196789" role=""/>
+    <member type="way" ref="440833925" role=""/>
+    <member type="way" ref="26428217" role=""/>
+    <member type="way" ref="65968789" role=""/>
+    <member type="way" ref="65968787" role=""/>
+    <member type="way" ref="25553375" role=""/>
+    <member type="way" ref="25553374" role=""/>
+    <member type="way" ref="357582536" role=""/>
+    <member type="way" ref="357582537" role=""/>
+    <member type="way" ref="25369867" role=""/>
+    <member type="way" ref="25369694" role=""/>
+    <tag k="from" v="Estación Pacífico"/>
+    <tag k="name" v="Estación Pacífico - Estación Belén"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport:version" v="2"/>
+    <tag k="ref" v="1"/>
+    <tag k="route" v="train"/>
+    <tag k="to" v="Estación Belén"/>
+    <tag k="type" v="route"/>
+    <tag k="url" v="http://www.incofer.go.cr/tren-interurbano-belen-estacion-pacifico/"/>
+  </relation>
+  <relation id="6562632">
+    <member type="node" ref="4627549200" role="stop"/>
+    <member type="node" ref="4310021381" role="platform"/>
+    <member type="node" ref="4627531199" role="stop"/>
+    <member type="node" ref="1827967480" role="platform"/>
+    <member type="node" ref="4628887533" role="stop"/>
+    <member type="node" ref="506449299" role="platform"/>
+    <member type="node" ref="4629001928" role="stop"/>
+    <member type="node" ref="1025688459" role="platform"/>
+    <member type="node" ref="5824465670" role="stop"/>
+    <member type="node" ref="5816196408" role="platform"/>
+    <member type="node" ref="4628999924" role="stop"/>
+    <member type="node" ref="4310018677" role="platform"/>
+    <member type="node" ref="4629031206" role="stop"/>
+    <member type="node" ref="3340791384" role="platform"/>
+    <member type="node" ref="3333008585" role="stop"/>
+    <member type="node" ref="3333008845" role="platform"/>
+    <member type="way" ref="260383309" role=""/>
+    <member type="way" ref="227880155" role=""/>
+    <member type="way" ref="227880156" role=""/>
+    <member type="way" ref="716771720" role=""/>
+    <member type="way" ref="716771721" role=""/>
+    <member type="way" ref="117695603" role=""/>
+    <member type="way" ref="117695599" role=""/>
+    <member type="way" ref="25549798" role=""/>
+    <member type="way" ref="25549799" role=""/>
+    <member type="way" ref="227891841" role=""/>
+    <member type="way" ref="227891840" role=""/>
+    <member type="way" ref="25544846" role=""/>
+    <member type="way" ref="716772051" role=""/>
+    <member type="way" ref="716772052" role=""/>
+    <member type="way" ref="25544852" role=""/>
+    <member type="way" ref="25544851" role=""/>
+    <member type="way" ref="31422046" role=""/>
+    <member type="way" ref="31422048" role=""/>
+    <member type="way" ref="627670973" role=""/>
+    <member type="way" ref="31422043" role=""/>
+    <member type="way" ref="468564875" role=""/>
+    <member type="way" ref="692605113" role=""/>
+    <member type="way" ref="26428318" role=""/>
+    <member type="way" ref="491698189" role=""/>
+    <member type="way" ref="491698188" role=""/>
+    <member type="way" ref="25342834" role=""/>
+    <member type="way" ref="25342835" role=""/>
+    <member type="way" ref="452573164" role=""/>
+    <member type="way" ref="25342833" role=""/>
+    <member type="way" ref="421857678" role=""/>
+    <tag k="from" v="Estación Heredia"/>
+    <tag k="name" v="Heredia - U. Latina"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport:version" v="2"/>
+    <tag k="ref" v="2"/>
+    <tag k="route" v="train"/>
+    <tag k="to" v="U. Latina"/>
+    <tag k="type" v="route"/>
+    <tag k="url" v="http://www.incofer.go.cr/tren-interurbano-heredia-estacion-atlantico-u-latina/"/>
+  </relation>
+  <relation id="6562672">
+    <member type="node" ref="3333008585" role="stop"/>
+    <member type="node" ref="3333008845" role="platform"/>
+    <member type="node" ref="4629031206" role="stop"/>
+    <member type="node" ref="3340791384" role="platform"/>
+    <member type="node" ref="4628999924" role="stop"/>
+    <member type="node" ref="4310018677" role="platform"/>
+    <member type="node" ref="5824465670" role="stop"/>
+    <member type="node" ref="5816196408" role="platform"/>
+    <member type="node" ref="4629001928" role="stop"/>
+    <member type="node" ref="1025688459" role="platform"/>
+    <member type="node" ref="4628887533" role="stop"/>
+    <member type="node" ref="506449299" role="platform"/>
+    <member type="node" ref="4627531199" role="stop"/>
+    <member type="node" ref="1827967480" role="platform"/>
+    <member type="node" ref="4627549200" role="stop"/>
+    <member type="node" ref="4310021381" role="platform"/>
+    <member type="way" ref="421857678" role=""/>
+    <member type="way" ref="25342833" role=""/>
+    <member type="way" ref="452573164" role=""/>
+    <member type="way" ref="25342835" role=""/>
+    <member type="way" ref="25342834" role=""/>
+    <member type="way" ref="491698188" role=""/>
+    <member type="way" ref="491698189" role=""/>
+    <member type="way" ref="26428318" role=""/>
+    <member type="way" ref="692605113" role=""/>
+    <member type="way" ref="468564875" role=""/>
+    <member type="way" ref="31422043" role=""/>
+    <member type="way" ref="627670973" role=""/>
+    <member type="way" ref="31422048" role=""/>
+    <member type="way" ref="31422046" role=""/>
+    <member type="way" ref="25544851" role=""/>
+    <member type="way" ref="25544852" role=""/>
+    <member type="way" ref="716772052" role=""/>
+    <member type="way" ref="716772051" role=""/>
+    <member type="way" ref="25544846" role=""/>
+    <member type="way" ref="227891840" role=""/>
+    <member type="way" ref="227891841" role=""/>
+    <member type="way" ref="25549799" role=""/>
+    <member type="way" ref="25549798" role=""/>
+    <member type="way" ref="117695599" role=""/>
+    <member type="way" ref="117695603" role=""/>
+    <member type="way" ref="716771721" role=""/>
+    <member type="way" ref="716771720" role=""/>
+    <member type="way" ref="227880156" role=""/>
+    <member type="way" ref="227880155" role=""/>
+    <member type="way" ref="260383309" role=""/>
+    <tag k="from" v="U. Latina"/>
+    <tag k="name" v="U. Latina - Heredia"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport:version" v="2"/>
+    <tag k="ref" v="2"/>
+    <tag k="route" v="train"/>
+    <tag k="to" v="Estación Heredia"/>
+    <tag k="type" v="route"/>
+    <tag k="url" v="http://www.incofer.go.cr/tren-interurbano-heredia-estacion-atlantico-u-latina/"/>
+  </relation>
+  <relation id="6562922">
+    <member type="node" ref="276525196" role="stop"/>
+    <member type="node" ref="3332793717" role="platform"/>
+    <member type="node" ref="4636012388" role="stop"/>
+    <member type="node" ref="3332765262" role="platform"/>
+    <member type="node" ref="4636012387" role="stop"/>
+    <member type="node" ref="3338240544" role="platform"/>
+    <member type="node" ref="4636012386" role="stop"/>
+    <member type="node" ref="3332778643" role="platform"/>
+    <member type="node" ref="4636012385" role="stop"/>
+    <member type="node" ref="3332802682" role="platform"/>
+    <member type="node" ref="4636012384" role="stop"/>
+    <member type="node" ref="3332814242" role="platform"/>
+    <member type="node" ref="289555266" role="stop"/>
+    <member type="node" ref="1004568682" role="platform"/>
+    <member type="node" ref="278449879" role="stop"/>
+    <member type="node" ref="4636012382" role="platform"/>
+    <member type="node" ref="4636012381" role="stop"/>
+    <member type="node" ref="3332821832" role="platform"/>
+    <member type="node" ref="4636012380" role="stop"/>
+    <member type="node" ref="4385632035" role="platform"/>
+    <member type="node" ref="4636012379" role="stop"/>
+    <member type="node" ref="3340615983" role="platform"/>
+    <member type="node" ref="4636012378" role="stop"/>
+    <member type="node" ref="578333757" role="platform"/>
+    <member type="node" ref="4628999926" role="stop"/>
+    <member type="node" ref="4628999925" role="platform"/>
+    <member type="node" ref="4629031206" role="stop"/>
+    <member type="node" ref="3340791384" role="platform"/>
+    <member type="node" ref="3333008585" role="stop"/>
+    <member type="node" ref="3333008845" role="platform"/>
+    <member type="node" ref="4386029998" role="stop"/>
+    <member type="node" ref="3333003843" role="platform"/>
+    <member type="way" ref="440833925" role=""/>
+    <member type="way" ref="361196789" role=""/>
+    <member type="way" ref="361196790" role=""/>
+    <member type="way" ref="117831896" role=""/>
+    <member type="way" ref="117831899" role=""/>
+    <member type="way" ref="107828913" role=""/>
+    <member type="way" ref="25841648" role=""/>
+    <member type="way" ref="446753979" role=""/>
+    <member type="way" ref="681247376" role=""/>
+    <member type="way" ref="469522581" role=""/>
+    <member type="way" ref="681247377" role=""/>
+    <member type="way" ref="440793505" role=""/>
+    <member type="way" ref="298488302" role=""/>
+    <member type="way" ref="342606612" role=""/>
+    <member type="way" ref="457238514" role=""/>
+    <member type="way" ref="413413663" role=""/>
+    <member type="way" ref="440619830" role=""/>
+    <member type="way" ref="26428318" role=""/>
+    <member type="way" ref="26428318" role=""/>
+    <member type="way" ref="491698189" role=""/>
+    <member type="way" ref="491698188" role=""/>
+    <member type="way" ref="25342834" role=""/>
+    <member type="way" ref="25342835" role=""/>
+    <member type="way" ref="452573164" role=""/>
+    <member type="way" ref="25342833" role=""/>
+    <member type="way" ref="421857678" role=""/>
+    <member type="way" ref="25511791" role=""/>
+    <member type="way" ref="440835490" role=""/>
+    <tag k="from" v="Metrópoli"/>
+    <tag k="name" v="Metrópoli - CFIA"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport:version" v="2"/>
+    <tag k="ref" v="1"/>
+    <tag k="route" v="train"/>
+    <tag k="to" v="CFIA"/>
+    <tag k="type" v="route"/>
+    <tag k="url" v="http://www.incofer.go.cr/tren-interurbano-belen-estacion-pacifico/"/>
+  </relation>
+  <relation id="6908011">
+    <member type="node" ref="4044611833" role="platform"/>
+    <member type="node" ref="4627131516" role="stop"/>
+    <member type="node" ref="5571341452" role="platform"/>
+    <member type="node" ref="5571341451" role="stop"/>
+    <member type="node" ref="4044771665" role="platform"/>
+    <member type="node" ref="4627521007" role="stop"/>
+    <member type="node" ref="4044771666" role="platform"/>
+    <member type="node" ref="4627535655" role="stop"/>
+    <member type="node" ref="4044774959" role="platform"/>
+    <member type="node" ref="4627544910" role="stop"/>
+    <member type="node" ref="4310021381" role="platform"/>
+    <member type="node" ref="4627549200" role="stop"/>
+    <member type="node" ref="1827967480" role="platform"/>
+    <member type="node" ref="4627531199" role="stop"/>
+    <member type="node" ref="506449299" role="platform"/>
+    <member type="node" ref="4628887533" role="stop"/>
+    <member type="node" ref="1025688459" role="platform"/>
+    <member type="node" ref="4629001928" role="stop"/>
+    <member type="node" ref="5816196408" role="platform"/>
+    <member type="node" ref="5824465670" role="stop"/>
+    <member type="node" ref="4310018677" role="platform"/>
+    <member type="node" ref="4628999924" role="stop"/>
+    <member type="way" ref="357578240" role=""/>
+    <member type="way" ref="357578238" role=""/>
+    <member type="way" ref="357578237" role=""/>
+    <member type="way" ref="467541994" role=""/>
+    <member type="way" ref="716771716" role=""/>
+    <member type="way" ref="716771715" role=""/>
+    <member type="way" ref="716771717" role=""/>
+    <member type="way" ref="716771718" role=""/>
+    <member type="way" ref="316308490" role=""/>
+    <member type="way" ref="468571231" role=""/>
+    <member type="way" ref="421854703" role=""/>
+    <member type="way" ref="200659039" role=""/>
+    <member type="way" ref="440814505" role=""/>
+    <member type="way" ref="130351363" role=""/>
+    <member type="way" ref="219838735" role=""/>
+    <member type="way" ref="219838734" role=""/>
+    <member type="way" ref="130351362" role=""/>
+    <member type="way" ref="38782808" role=""/>
+    <member type="way" ref="468564876" role=""/>
+    <member type="way" ref="260383309" role=""/>
+    <member type="way" ref="227880155" role=""/>
+    <member type="way" ref="227880156" role=""/>
+    <member type="way" ref="716771720" role=""/>
+    <member type="way" ref="716771721" role=""/>
+    <member type="way" ref="117695603" role=""/>
+    <member type="way" ref="117695599" role=""/>
+    <member type="way" ref="25549798" role=""/>
+    <member type="way" ref="25549799" role=""/>
+    <member type="way" ref="227891841" role=""/>
+    <member type="way" ref="227891840" role=""/>
+    <member type="way" ref="25544846" role=""/>
+    <member type="way" ref="716772051" role=""/>
+    <member type="way" ref="716772052" role=""/>
+    <member type="way" ref="25544852" role=""/>
+    <member type="way" ref="25544851" role=""/>
+    <member type="way" ref="31422046" role=""/>
+    <member type="way" ref="31422048" role=""/>
+    <member type="way" ref="627670973" role=""/>
+    <member type="way" ref="31422043" role=""/>
+    <member type="way" ref="468564875" role=""/>
+    <tag k="from" v="Alajuela"/>
+    <tag k="name" v="Alajuela - Atlántico"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport:version" v="2"/>
+    <tag k="ref" v="2"/>
+    <tag k="route" v="train"/>
+    <tag k="to" v="Estación Atlántico"/>
+    <tag k="type" v="route"/>
+    <tag k="url" v="http://www.incofer.go.cr/tren-urbano-alajuela-rio-segundo/"/>
+  </relation>
+  <relation id="6908041">
+    <member type="node" ref="4628999924" role="stop"/>
+    <member type="node" ref="4310018677" role="platform"/>
+    <member type="node" ref="5824465670" role="stop"/>
+    <member type="node" ref="5816196408" role="platform"/>
+    <member type="node" ref="4629001928" role="stop"/>
+    <member type="node" ref="1025688459" role="platform"/>
+    <member type="node" ref="4628887533" role="stop"/>
+    <member type="node" ref="506449299" role="platform"/>
+    <member type="node" ref="4627531199" role="stop"/>
+    <member type="node" ref="1827967480" role="platform"/>
+    <member type="node" ref="4627549200" role="stop"/>
+    <member type="node" ref="4310021381" role="platform"/>
+    <member type="way" ref="468564875" role=""/>
+    <member type="way" ref="31422043" role=""/>
+    <member type="way" ref="627670973" role=""/>
+    <member type="way" ref="31422048" role=""/>
+    <member type="way" ref="31422046" role=""/>
+    <member type="way" ref="25544851" role=""/>
+    <member type="way" ref="25544852" role=""/>
+    <member type="way" ref="716772052" role=""/>
+    <member type="way" ref="716772051" role=""/>
+    <member type="way" ref="25544846" role=""/>
+    <member type="way" ref="227891840" role=""/>
+    <member type="way" ref="227891841" role=""/>
+    <member type="way" ref="25549799" role=""/>
+    <member type="way" ref="25549798" role=""/>
+    <member type="way" ref="117695599" role=""/>
+    <member type="way" ref="117695603" role=""/>
+    <member type="way" ref="716771721" role=""/>
+    <member type="way" ref="716771720" role=""/>
+    <member type="way" ref="227880156" role=""/>
+    <member type="way" ref="227880155" role=""/>
+    <member type="way" ref="260383309" role=""/>
+    <tag k="from" v="Estación Atlántico"/>
+    <tag k="name" v="Atlántico - Heredia"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport:version" v="2"/>
+    <tag k="ref" v="2"/>
+    <tag k="route" v="train"/>
+    <tag k="to" v="Estación Heredia"/>
+    <tag k="type" v="route"/>
+    <tag k="url" v="http://www.incofer.go.cr/tren-urbano-alajuela-rio-segundo/"/>
+  </relation>
+  <relation id="6908042">
+    <member type="node" ref="4310021381" role="platform"/>
+    <member type="node" ref="4627549200" role="stop"/>
+    <member type="node" ref="1827967480" role="platform"/>
+    <member type="node" ref="4627531199" role="stop"/>
+    <member type="node" ref="506449299" role="platform"/>
+    <member type="node" ref="4628887533" role="stop"/>
+    <member type="node" ref="1025688459" role="platform"/>
+    <member type="node" ref="4629001928" role="stop"/>
+    <member type="node" ref="5816196408" role="platform"/>
+    <member type="node" ref="5824465670" role="stop"/>
+    <member type="node" ref="4628999924" role="stop"/>
+    <member type="node" ref="4310018677" role="platform"/>
+    <member type="way" ref="260383309" role=""/>
+    <member type="way" ref="227880155" role=""/>
+    <member type="way" ref="227880156" role=""/>
+    <member type="way" ref="716771720" role=""/>
+    <member type="way" ref="716771721" role=""/>
+    <member type="way" ref="117695603" role=""/>
+    <member type="way" ref="117695599" role=""/>
+    <member type="way" ref="25549798" role=""/>
+    <member type="way" ref="25549799" role=""/>
+    <member type="way" ref="227891841" role=""/>
+    <member type="way" ref="227891840" role=""/>
+    <member type="way" ref="25544846" role=""/>
+    <member type="way" ref="716772051" role=""/>
+    <member type="way" ref="716772052" role=""/>
+    <member type="way" ref="25544852" role=""/>
+    <member type="way" ref="25544851" role=""/>
+    <member type="way" ref="31422046" role=""/>
+    <member type="way" ref="31422048" role=""/>
+    <member type="way" ref="627670973" role=""/>
+    <member type="way" ref="31422043" role=""/>
+    <member type="way" ref="468564875" role=""/>
+    <tag k="from" v="Estación Heredia"/>
+    <tag k="name" v="Heredia - Atlántico"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport:version" v="2"/>
+    <tag k="ref" v="2"/>
+    <tag k="route" v="train"/>
+    <tag k="to" v="Estación Atlántico"/>
+    <tag k="type" v="route"/>
+    <tag k="url" v="http://www.incofer.go.cr/tren-urbano-alajuela-rio-segundo/"/>
+  </relation>
+  <relation id="7357187">
+    <member type="node" ref="4386029998" role="stop"/>
+    <member type="node" ref="3333003843" role="platform"/>
+    <member type="node" ref="3333008585" role="stop"/>
+    <member type="node" ref="3333008845" role="platform"/>
+    <member type="node" ref="4629031206" role="stop"/>
+    <member type="node" ref="3340791384" role="platform"/>
+    <member type="node" ref="4628999926" role="stop"/>
+    <member type="node" ref="4628999925" role="platform"/>
+    <member type="node" ref="4636012378" role="stop"/>
+    <member type="node" ref="578333757" role="platform"/>
+    <member type="node" ref="4636012379" role="stop"/>
+    <member type="node" ref="3340615983" role="platform"/>
+    <member type="node" ref="4636012380" role="stop"/>
+    <member type="node" ref="4385632035" role="platform"/>
+    <member type="node" ref="4636012381" role="stop"/>
+    <member type="node" ref="3332821832" role="platform"/>
+    <member type="node" ref="278449879" role="stop"/>
+    <member type="node" ref="4636012382" role="platform"/>
+    <member type="node" ref="289555266" role="stop"/>
+    <member type="node" ref="1004568682" role="platform"/>
+    <member type="node" ref="4636012384" role="stop"/>
+    <member type="node" ref="3332814242" role="platform"/>
+    <member type="node" ref="4636012385" role="stop"/>
+    <member type="node" ref="3332802682" role="platform"/>
+    <member type="node" ref="4636012386" role="stop"/>
+    <member type="node" ref="3332778643" role="platform"/>
+    <member type="node" ref="4636012387" role="stop"/>
+    <member type="node" ref="3338240544" role="platform"/>
+    <member type="node" ref="4636012388" role="stop"/>
+    <member type="node" ref="3332765262" role="platform"/>
+    <member type="node" ref="276525196" role="stop"/>
+    <member type="node" ref="3332793717" role="platform"/>
+    <member type="node" ref="4638218345" role="platform"/>
+    <member type="node" ref="4638172859" role="stop"/>
+    <member type="node" ref="1086909644" role="platform"/>
+    <member type="node" ref="4638218346" role="stop"/>
+    <member type="way" ref="440835490" role=""/>
+    <member type="way" ref="25511791" role=""/>
+    <member type="way" ref="421857678" role=""/>
+    <member type="way" ref="25342833" role=""/>
+    <member type="way" ref="452573164" role=""/>
+    <member type="way" ref="25342835" role=""/>
+    <member type="way" ref="25342834" role=""/>
+    <member type="way" ref="491698188" role=""/>
+    <member type="way" ref="491698189" role=""/>
+    <member type="way" ref="26428318" role=""/>
+    <member type="way" ref="26428318" role=""/>
+    <member type="way" ref="440619830" role=""/>
+    <member type="way" ref="413413663" role=""/>
+    <member type="way" ref="457238514" role=""/>
+    <member type="way" ref="342606612" role=""/>
+    <member type="way" ref="298488302" role=""/>
+    <member type="way" ref="440793505" role=""/>
+    <member type="way" ref="681247377" role=""/>
+    <member type="way" ref="469522581" role=""/>
+    <member type="way" ref="681247376" role=""/>
+    <member type="way" ref="446753979" role=""/>
+    <member type="way" ref="25841648" role=""/>
+    <member type="way" ref="107828913" role=""/>
+    <member type="way" ref="117831899" role=""/>
+    <member type="way" ref="117831896" role=""/>
+    <member type="way" ref="361196790" role=""/>
+    <member type="way" ref="361196789" role=""/>
+    <member type="way" ref="440833925" role=""/>
+    <member type="way" ref="26428217" role=""/>
+    <member type="way" ref="65968789" role=""/>
+    <member type="way" ref="65968787" role=""/>
+    <member type="way" ref="25553375" role=""/>
+    <member type="way" ref="25553374" role=""/>
+    <member type="way" ref="357582536" role=""/>
+    <member type="way" ref="357582537" role=""/>
+    <member type="way" ref="25369867" role=""/>
+    <member type="way" ref="25369694" role=""/>
+    <tag k="from" v="CFIA"/>
+    <tag k="name" v="CFIA - Estación Belén"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport:version" v="2"/>
+    <tag k="ref" v="1"/>
+    <tag k="route" v="train"/>
+    <tag k="to" v="Estación Belén"/>
+    <tag k="type" v="route"/>
+  </relation>
+  <relation id="7357188">
+    <member type="node" ref="276525196" role="stop"/>
+    <member type="node" ref="3332793717" role="platform"/>
+    <member type="node" ref="4636012388" role="stop"/>
+    <member type="node" ref="3332765262" role="platform"/>
+    <member type="node" ref="4636012387" role="stop"/>
+    <member type="node" ref="3338240544" role="platform"/>
+    <member type="node" ref="4636012386" role="stop"/>
+    <member type="node" ref="3332778643" role="platform"/>
+    <member type="node" ref="4636012385" role="stop"/>
+    <member type="node" ref="3332802682" role="platform"/>
+    <member type="node" ref="4636012384" role="stop"/>
+    <member type="node" ref="3332814242" role="platform"/>
+    <member type="node" ref="289555266" role="stop"/>
+    <member type="node" ref="1004568682" role="platform"/>
+    <member type="node" ref="278449879" role="stop"/>
+    <member type="node" ref="4636012382" role="platform"/>
+    <member type="node" ref="4636012381" role="stop"/>
+    <member type="node" ref="3332821832" role="platform"/>
+    <member type="node" ref="4636012380" role="stop"/>
+    <member type="node" ref="4385632035" role="platform"/>
+    <member type="way" ref="440833925" role=""/>
+    <member type="way" ref="361196789" role=""/>
+    <member type="way" ref="361196790" role=""/>
+    <member type="way" ref="117831896" role=""/>
+    <member type="way" ref="117831899" role=""/>
+    <member type="way" ref="107828913" role=""/>
+    <member type="way" ref="25841648" role=""/>
+    <member type="way" ref="446753979" role=""/>
+    <member type="way" ref="681247376" role=""/>
+    <member type="way" ref="469522581" role=""/>
+    <tag k="from" v="Metrópoli"/>
+    <tag k="name" v="Metrópoli - Pacífico"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport:version" v="2"/>
+    <tag k="ref" v="1"/>
+    <tag k="route" v="train"/>
+    <tag k="to" v="Estación Pacífico"/>
+    <tag k="type" v="route"/>
+    <tag k="url" v="http://www.incofer.go.cr/tren-interurbano-belen-estacion-pacifico/"/>
+  </relation>
+  <relation id="7357207">
+    <member type="node" ref="4385632035" role="platform"/>
+    <member type="node" ref="4636012380" role="stop"/>
+    <member type="node" ref="3332821832" role="platform"/>
+    <member type="node" ref="4636012381" role="stop"/>
+    <member type="node" ref="4636012382" role="platform"/>
+    <member type="node" ref="278449879" role="stop"/>
+    <member type="node" ref="1004568682" role="platform"/>
+    <member type="node" ref="289555266" role="stop"/>
+    <member type="node" ref="3332814242" role="platform"/>
+    <member type="node" ref="4636012384" role="stop"/>
+    <member type="node" ref="3332802682" role="platform"/>
+    <member type="node" ref="4636012385" role="stop"/>
+    <member type="node" ref="3332778643" role="platform"/>
+    <member type="node" ref="4636012386" role="stop"/>
+    <member type="node" ref="3338240544" role="platform"/>
+    <member type="node" ref="4636012387" role="stop"/>
+    <member type="node" ref="3332765262" role="platform"/>
+    <member type="node" ref="4636012388" role="stop"/>
+    <member type="node" ref="3332793717" role="platform"/>
+    <member type="node" ref="276525196" role="stop"/>
+    <member type="way" ref="469522581" role=""/>
+    <member type="way" ref="681247376" role=""/>
+    <member type="way" ref="446753979" role=""/>
+    <member type="way" ref="25841648" role=""/>
+    <member type="way" ref="107828913" role=""/>
+    <member type="way" ref="117831899" role=""/>
+    <member type="way" ref="117831896" role=""/>
+    <member type="way" ref="361196790" role=""/>
+    <member type="way" ref="361196789" role=""/>
+    <member type="way" ref="440833925" role=""/>
+    <tag k="from" v="Estación Pacífico"/>
+    <tag k="name" v="Estación Pacífico - Metrópoli"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport:version" v="2"/>
+    <tag k="ref" v="1"/>
+    <tag k="route" v="train"/>
+    <tag k="to" v="Metrópoli"/>
+    <tag k="type" v="route"/>
+    <tag k="url" v="http://www.incofer.go.cr/tren-interurbano-belen-estacion-pacifico/"/>
+  </relation>
+  <relation id="7357210">
+    <member type="node" ref="4628999926" role="stop"/>
+    <member type="node" ref="4628999925" role="platform"/>
+    <member type="node" ref="4636012378" role="stop"/>
+    <member type="node" ref="578333757" role="platform"/>
+    <member type="node" ref="4636012379" role="stop"/>
+    <member type="node" ref="3340615983" role="platform"/>
+    <member type="node" ref="4636012380" role="stop"/>
+    <member type="node" ref="4385632035" role="platform"/>
+    <member type="node" ref="4636012381" role="stop"/>
+    <member type="node" ref="3332821832" role="platform"/>
+    <member type="node" ref="278449879" role="stop"/>
+    <member type="node" ref="4636012382" role="platform"/>
+    <member type="node" ref="289555266" role="stop"/>
+    <member type="node" ref="1004568682" role="platform"/>
+    <member type="node" ref="4636012384" role="stop"/>
+    <member type="node" ref="3332814242" role="platform"/>
+    <member type="node" ref="4636012385" role="stop"/>
+    <member type="node" ref="3332802682" role="platform"/>
+    <member type="node" ref="4636012386" role="stop"/>
+    <member type="node" ref="3332778643" role="platform"/>
+    <member type="node" ref="4636012387" role="stop"/>
+    <member type="node" ref="3338240544" role="platform"/>
+    <member type="node" ref="4636012388" role="stop"/>
+    <member type="node" ref="3332765262" role="platform"/>
+    <member type="node" ref="276525196" role="stop"/>
+    <member type="node" ref="3332793717" role="platform"/>
+    <member type="node" ref="4638218345" role="platform"/>
+    <member type="node" ref="4638172859" role="stop"/>
+    <member type="node" ref="1086909644" role="platform"/>
+    <member type="node" ref="4638218346" role="stop"/>
+    <member type="way" ref="26428318" role=""/>
+    <member type="way" ref="440619830" role=""/>
+    <member type="way" ref="413413663" role=""/>
+    <member type="way" ref="457238514" role=""/>
+    <member type="way" ref="342606612" role=""/>
+    <member type="way" ref="298488302" role=""/>
+    <member type="way" ref="440793505" role=""/>
+    <member type="way" ref="681247377" role=""/>
+    <member type="way" ref="469522581" role=""/>
+    <member type="way" ref="681247376" role=""/>
+    <member type="way" ref="446753979" role=""/>
+    <member type="way" ref="25841648" role=""/>
+    <member type="way" ref="107828913" role=""/>
+    <member type="way" ref="117831899" role=""/>
+    <member type="way" ref="117831896" role=""/>
+    <member type="way" ref="361196790" role=""/>
+    <member type="way" ref="361196789" role=""/>
+    <member type="way" ref="440833925" role=""/>
+    <member type="way" ref="26428217" role=""/>
+    <member type="way" ref="65968789" role=""/>
+    <member type="way" ref="65968787" role=""/>
+    <member type="way" ref="25553375" role=""/>
+    <member type="way" ref="25553374" role=""/>
+    <member type="way" ref="357582536" role=""/>
+    <member type="way" ref="357582537" role=""/>
+    <member type="way" ref="25369867" role=""/>
+    <member type="way" ref="25369694" role=""/>
+    <tag k="from" v="Estación Atlántico"/>
+    <tag k="name" v="Estación Atlántico - Estación Belén"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport:version" v="2"/>
+    <tag k="ref" v="1"/>
+    <tag k="route" v="train"/>
+    <tag k="to" v="Estación Belén"/>
+    <tag k="type" v="route"/>
+  </relation>
+  <relation id="7358193">
+    <member type="node" ref="1950179942" role="stop"/>
+    <member type="node" ref="3230693871" role="platform"/>
+    <member type="node" ref="4638296442" role="stop"/>
+    <member type="node" ref="4383881661" role="platform"/>
+    <member type="node" ref="4638296441" role="stop"/>
+    <member type="node" ref="3332993893" role="platform"/>
+    <member type="node" ref="4638296440" role="stop"/>
+    <member type="node" ref="3317453261" role="platform"/>
+    <member type="node" ref="4386029998" role="stop"/>
+    <member type="node" ref="3333003843" role="platform"/>
+    <member type="node" ref="3333008585" role="stop"/>
+    <member type="node" ref="3333008845" role="platform"/>
+    <member type="node" ref="4629031206" role="stop"/>
+    <member type="node" ref="3340791384" role="platform"/>
+    <member type="node" ref="4628999926" role="stop"/>
+    <member type="node" ref="4628999925" role="platform"/>
+    <member type="way" ref="503382579" role=""/>
+    <member type="way" ref="172579195" role=""/>
+    <member type="way" ref="479832893" role=""/>
+    <member type="way" ref="479832894" role=""/>
+    <member type="way" ref="107709724" role=""/>
+    <member type="way" ref="107709749" role=""/>
+    <member type="way" ref="107708941" role=""/>
+    <member type="way" ref="107708958" role=""/>
+    <member type="way" ref="97200952" role=""/>
+    <member type="way" ref="97200939" role=""/>
+    <member type="way" ref="25511825" role=""/>
+    <member type="way" ref="443582049" role=""/>
+    <member type="way" ref="443582046" role=""/>
+    <member type="way" ref="39011513" role=""/>
+    <member type="way" ref="39011514" role=""/>
+    <member type="way" ref="461996473" role=""/>
+    <member type="way" ref="39011510" role=""/>
+    <member type="way" ref="39011511" role=""/>
+    <member type="way" ref="268517182" role=""/>
+    <member type="way" ref="268517185" role=""/>
+    <member type="way" ref="530373948" role=""/>
+    <member type="way" ref="716760620" role=""/>
+    <member type="way" ref="716760621" role=""/>
+    <member type="way" ref="712182782" role=""/>
+    <member type="way" ref="303395136" role=""/>
+    <member type="way" ref="304573535" role=""/>
+    <member type="way" ref="304573532" role=""/>
+    <member type="way" ref="440835490" role=""/>
+    <member type="way" ref="25511791" role=""/>
+    <member type="way" ref="421857678" role=""/>
+    <member type="way" ref="25342833" role=""/>
+    <member type="way" ref="452573164" role=""/>
+    <member type="way" ref="25342835" role=""/>
+    <member type="way" ref="25342834" role=""/>
+    <member type="way" ref="491698188" role=""/>
+    <member type="way" ref="491698189" role=""/>
+    <member type="way" ref="26428318" role=""/>
+    <tag k="from" v="Los Ángeles"/>
+    <tag k="name" v="Los Ángeles - Estación Atlántico"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport:version" v="2"/>
+    <tag k="ref" v="4"/>
+    <tag k="route" v="train"/>
+    <tag k="to" v="Estación Atlántico"/>
+    <tag k="type" v="route"/>
+    <tag k="url" v="http://www.incofer.go.cr/tren-urbano-cartago-estacion-atlantico/"/>
+  </relation>
+  <relation id="7799195">
+    <member type="node" ref="4386029998" role="stop"/>
+    <member type="node" ref="3333003843" role="platform"/>
+    <member type="node" ref="3333008585" role="stop"/>
+    <member type="node" ref="3333008845" role="platform"/>
+    <member type="node" ref="4629031206" role="stop"/>
+    <member type="node" ref="3340791384" role="platform"/>
+    <member type="node" ref="4628999926" role="stop"/>
+    <member type="node" ref="4628999925" role="platform"/>
+    <member type="way" ref="440835490" role=""/>
+    <member type="way" ref="25511791" role=""/>
+    <member type="way" ref="421857678" role=""/>
+    <member type="way" ref="25342833" role=""/>
+    <member type="way" ref="452573164" role=""/>
+    <member type="way" ref="25342835" role=""/>
+    <member type="way" ref="25342834" role=""/>
+    <member type="way" ref="491698188" role=""/>
+    <member type="way" ref="491698189" role=""/>
+    <member type="way" ref="26428318" role=""/>
+    <tag k="from" v="CFIA"/>
+    <tag k="name" v="CFIA - Estación Atlántico"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport:version" v="2"/>
+    <tag k="ref" v="1"/>
+    <tag k="route" v="train"/>
+    <tag k="to" v="Estación Atlántico"/>
+    <tag k="type" v="route"/>
+  </relation>
+  <relation id="7799200">
+    <member type="node" ref="4628999926" role="stop"/>
+    <member type="node" ref="4628999925" role="platform"/>
+    <member type="node" ref="3340791384" role="platform"/>
+    <member type="node" ref="4629031206" role="stop"/>
+    <member type="node" ref="3333008845" role="platform"/>
+    <member type="node" ref="3333008585" role="stop"/>
+    <member type="node" ref="3333003843" role="platform"/>
+    <member type="node" ref="4386029998" role="stop"/>
+    <member type="node" ref="3317453261" role="platform"/>
+    <member type="node" ref="4638296440" role="stop"/>
+    <member type="node" ref="3332993893" role="platform"/>
+    <member type="node" ref="4638296441" role="stop"/>
+    <member type="node" ref="4383881661" role="platform"/>
+    <member type="node" ref="4638296442" role="stop"/>
+    <member type="node" ref="3230693871" role="platform"/>
+    <member type="node" ref="1950179942" role="stop"/>
+    <member type="way" ref="26428318" role=""/>
+    <member type="way" ref="491698189" role=""/>
+    <member type="way" ref="491698188" role=""/>
+    <member type="way" ref="25342834" role=""/>
+    <member type="way" ref="25342835" role=""/>
+    <member type="way" ref="452573164" role=""/>
+    <member type="way" ref="25342833" role=""/>
+    <member type="way" ref="421857678" role=""/>
+    <member type="way" ref="25511791" role=""/>
+    <member type="way" ref="440835490" role=""/>
+    <member type="way" ref="304573532" role=""/>
+    <member type="way" ref="304573535" role=""/>
+    <member type="way" ref="303395136" role=""/>
+    <member type="way" ref="712182782" role=""/>
+    <member type="way" ref="716760621" role=""/>
+    <member type="way" ref="716760620" role=""/>
+    <member type="way" ref="530373948" role=""/>
+    <member type="way" ref="268517185" role=""/>
+    <member type="way" ref="268517182" role=""/>
+    <member type="way" ref="39011511" role=""/>
+    <member type="way" ref="39011510" role=""/>
+    <member type="way" ref="461996473" role=""/>
+    <member type="way" ref="39011514" role=""/>
+    <member type="way" ref="39011513" role=""/>
+    <member type="way" ref="443582046" role=""/>
+    <member type="way" ref="443582049" role=""/>
+    <member type="way" ref="25511825" role=""/>
+    <member type="way" ref="97200939" role=""/>
+    <member type="way" ref="97200952" role=""/>
+    <member type="way" ref="107708958" role=""/>
+    <member type="way" ref="107708941" role=""/>
+    <member type="way" ref="107709749" role=""/>
+    <member type="way" ref="107709724" role=""/>
+    <member type="way" ref="479832894" role=""/>
+    <member type="way" ref="479832893" role=""/>
+    <member type="way" ref="172579195" role=""/>
+    <member type="way" ref="503382579" role=""/>
+    <tag k="from" v="Estación Atlántico"/>
+    <tag k="name" v="Estación Atlántico - Los Ángeles"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport:version" v="2"/>
+    <tag k="ref" v="4"/>
+    <tag k="route" v="train"/>
+    <tag k="to" v="Los Ángeles"/>
+    <tag k="type" v="route"/>
+    <tag k="url" v="http://www.incofer.go.cr/tren-urbano-cartago-estacion-atlantico/"/>
+  </relation>
+  <relation id="6921170">
+    <member type="node" ref="4638296442" role="stop"/>
+    <member type="node" ref="4383881661" role="platform"/>
+    <member type="way" ref="326639090" role="station"/>
+    <tag k="name" v="Estación Cartago"/>
+    <tag k="public_transport" v="stop_area"/>
+    <tag k="type" v="public_transport"/>
+  </relation>
+  <relation id="6921171">
+    <member type="node" ref="1950179942" role="stop"/>
+    <member type="node" ref="3230693871" role="platform"/>
+    <tag k="name" v="Basílica de los Ángeles"/>
+    <tag k="public_transport" v="stop_area"/>
+    <tag k="type" v="public_transport"/>
+  </relation>
+  <relation id="6921119">
+    <member type="node" ref="4638218345" role="platform"/>
+    <member type="node" ref="4638172859" role="stop"/>
+    <tag k="name" v="Pedregal"/>
+    <tag k="public_transport" v="stop_area"/>
+    <tag k="type" v="public_transport"/>
+  </relation>
+  <relation id="6915161">
+    <member type="node" ref="3332793717" role="platform"/>
+    <member type="node" ref="276525196" role="stop"/>
+    <tag k="name" v="Metrópoli"/>
+    <tag k="public_transport" v="stop_area"/>
+    <tag k="type" v="public_transport"/>
+  </relation>
+  <relation id="6915173">
+    <member type="node" ref="3332765262" role="platform"/>
+    <member type="node" ref="4636012388" role="stop"/>
+    <tag k="name" v="Demasa"/>
+    <tag k="public_transport" v="stop_area"/>
+    <tag k="public_transport:version" v="2"/>
+    <tag k="type" v="public_transport"/>
+  </relation>
+  <relation id="6915172">
+    <member type="node" ref="3338240544" role="platform"/>
+    <member type="node" ref="4636012387" role="stop"/>
+    <tag k="name" v="Pecosa"/>
+    <tag k="public_transport" v="stop_area"/>
+    <tag k="public_transport:version" v="2"/>
+    <tag k="type" v="public_transport"/>
+  </relation>
+  <relation id="6915171">
+    <member type="node" ref="3332778643" role="platform"/>
+    <member type="node" ref="4636012386" role="stop"/>
+    <tag k="name" v="Pavas"/>
+    <tag k="public_transport" v="stop_area"/>
+    <tag k="public_transport:version" v="2"/>
+    <tag k="type" v="public_transport"/>
+  </relation>
+  <relation id="6915170">
+    <member type="node" ref="4636012385" role="stop"/>
+    <member type="node" ref="3332802682" role="platform"/>
+    <tag k="name" v="Jack's"/>
+    <tag k="public_transport" v="stop_area"/>
+    <tag k="public_transport:version" v="2"/>
+    <tag k="type" v="public_transport"/>
+  </relation>
+  <relation id="6915169">
+    <member type="node" ref="3332814242" role="platform"/>
+    <member type="node" ref="4636012384" role="stop"/>
+    <tag k="name" v="AyA"/>
+    <tag k="public_transport" v="stop_area"/>
+    <tag k="type" v="public_transport"/>
+  </relation>
+  <relation id="6915168">
+    <member type="node" ref="289555266" role="stop"/>
+    <member type="node" ref="1004568682" role="platform"/>
+    <tag k="name" v="Sabana"/>
+    <tag k="public_transport" v="stop_area"/>
+    <tag k="type" v="public_transport"/>
+  </relation>
+  <relation id="6915167">
+    <member type="node" ref="4098372725" role=""/>
+    <member type="node" ref="278449879" role="stop"/>
+    <member type="node" ref="4636012382" role="platform"/>
+    <tag k="name" v="Contraloría"/>
+    <tag k="public_transport" v="stop_area"/>
+    <tag k="type" v="public_transport"/>
+  </relation>
+  <relation id="6906228">
+    <member type="node" ref="4628887533" role="stop"/>
+    <member type="node" ref="506449299" role="platform"/>
+    <tag k="name" v="Santa Rosa"/>
+    <tag k="public_transport" v="stop_area"/>
+    <tag k="type" v="public_transport"/>
+  </relation>
+  <relation id="6904870">
+    <member type="node" ref="4627131514" role=""/>
+    <member type="node" ref="4627131516" role="stop"/>
+    <member type="node" ref="4044611833" role="platform"/>
+    <tag k="name" v="Alajuela"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport" v="stop_area"/>
+    <tag k="public_transport:version" v="2"/>
+    <tag k="type" v="public_transport"/>
+  </relation>
+  <relation id="6921120">
+    <member type="node" ref="4638218346" role="stop"/>
+    <member type="node" ref="1086909644" role="platform"/>
+    <member type="way" ref="469515716" role="station"/>
+    <member type="node" ref="3712779402" role=""/>
+    <tag k="name" v="Estación San Antonio de Belén"/>
+    <tag k="public_transport" v="stop_area"/>
+    <tag k="type" v="public_transport"/>
+  </relation>
+  <relation id="8236244">
+    <member type="node" ref="5571341452" role="platform"/>
+    <member type="node" ref="5571341451" role="stop"/>
+    <tag k="name" v="Bulevar Aeropuerto"/>
+    <tag k="network" v="Tren Interurbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport" v="stop_area"/>
+    <tag k="type" v="public_transport"/>
+  </relation>
+  <relation id="6904928">
+    <member type="node" ref="4627521007" role="stop"/>
+    <member type="node" ref="4044771665" role="platform"/>
+    <tag k="name" v="Río Segundo"/>
+    <tag k="network" v="Tren Urbano"/>
+    <tag k="operator" v="Incofer"/>
+    <tag k="public_transport" v="stop_area"/>
+    <tag k="public_transport:version" v="2"/>
+    <tag k="train" v="yes"/>
+    <tag k="type" v="public_transport"/>
+  </relation>
+  <relation id="6904930">
+    <member type="node" ref="4044771666" role="platform"/>
+    <member type="node" ref="4627535655" role="stop"/>
+    <tag k="name" v="San Joaquín de Flores"/>
+    <tag k="public_transport" v="stop_area"/>
+    <tag k="type" v="public_transport"/>
+  </relation>
+  <relation id="6904936">
+    <member type="node" ref="4627544910" role="stop"/>
+    <member type="node" ref="4044774959" role="platform"/>
+    <tag k="name" v="San Francisco"/>
+    <tag k="public_transport" v="stop_area"/>
+    <tag k="type" v="public_transport"/>
+  </relation>
+  <relation id="6904939">
+    <member type="node" ref="4627531199" role="stop"/>
+    <member type="node" ref="1827967480" role="platform"/>
+    <tag k="name" v="Miraflores"/>
+    <tag k="public_transport" v="stop_area"/>
+    <tag k="type" v="public_transport"/>
+  </relation>
+  <relation id="6904937">
+    <member type="way" ref="199578438" role=""/>
+    <member type="node" ref="4310021381" role="platform"/>
+    <member type="node" ref="4627549200" role="stop"/>
+    <tag k="name" v="Heredia"/>
+    <tag k="public_transport" v="stop_area"/>
+    <tag k="type" v="public_transport"/>
+  </relation>
+  <relation id="6915164">
+    <member type="node" ref="3340615983" role="platform"/>
+    <member type="node" ref="4636012379" role="stop"/>
+    <tag k="name" v="Plaza Víquez"/>
+    <tag k="public_transport" v="stop_area"/>
+    <tag k="type" v="public_transport"/>
+  </relation>
+  <relation id="6921168">
+    <member type="node" ref="4638296440" role="stop"/>
+    <member type="node" ref="3317453261" role="platform"/>
+    <tag k="name" v="UACA"/>
+    <tag k="public_transport" v="stop_area"/>
+    <tag k="type" v="public_transport"/>
+  </relation>
+  <relation id="6915166">
+    <member type="node" ref="3332821832" role="platform"/>
+    <member type="node" ref="4636012381" role="stop"/>
+    <tag k="name" v="Cementerio"/>
+    <tag k="public_transport" v="stop_area"/>
+    <tag k="type" v="public_transport"/>
+  </relation>
+  <relation id="6915165">
+    <member type="node" ref="4636012380" role="stop"/>
+    <member type="node" ref="4385632035" role="platform"/>
+    <member type="way" ref="31744340" role=""/>
+    <tag k="name" v="Estación Pacífico"/>
+    <tag k="public_transport" v="stop_area"/>
+    <tag k="type" v="public_transport"/>
+  </relation>
+  <relation id="6915163">
+    <member type="node" ref="4636012378" role="stop"/>
+    <member type="node" ref="578333757" role="platform"/>
+    <tag k="name" v="La Corte"/>
+    <tag k="public_transport" v="stop_area"/>
+    <tag k="type" v="public_transport"/>
+  </relation>
+  <relation id="6906279">
+    <member type="way" ref="31420765" role=""/>
+    <member type="node" ref="4628999923" role=""/>
+    <member type="node" ref="4628999925" role="platform"/>
+    <member type="node" ref="4310018677" role="platform"/>
+    <member type="node" ref="4628999926" role="stop"/>
+    <member type="node" ref="4628999924" role="stop"/>
+    <tag k="name" v="Estación Atlántico"/>
+    <tag k="public_transport" v="stop_area"/>
+    <tag k="type" v="public_transport"/>
+  </relation>
+  <relation id="6906279">
+    <member type="way" ref="31420765" role=""/>
+    <member type="node" ref="4628999923" role=""/>
+    <member type="node" ref="4628999925" role="platform"/>
+    <member type="node" ref="4310018677" role="platform"/>
+    <member type="node" ref="4628999926" role="stop"/>
+    <member type="node" ref="4628999924" role="stop"/>
+    <tag k="name" v="Estación Atlántico"/>
+    <tag k="public_transport" v="stop_area"/>
+    <tag k="type" v="public_transport"/>
+  </relation>
+  <relation id="6906288">
+    <member type="node" ref="3340791384" role="platform"/>
+    <member type="node" ref="4629031206" role="stop"/>
+    <member type="way" ref="296151381" role=""/>
+    <tag k="name" v="UCR"/>
+    <tag k="public_transport" v="stop_area"/>
+    <tag k="type" v="public_transport"/>
+  </relation>
+  <relation id="6906575">
+    <member type="node" ref="3333008585" role="stop"/>
+    <member type="node" ref="3333008845" role="platform"/>
+    <tag k="name" v="U. Latina"/>
+    <tag k="public_transport" v="stop_area"/>
+    <tag k="type" v="public_transport"/>
+  </relation>
+  <relation id="6906281">
+    <member type="node" ref="4629001928" role="stop"/>
+    <member type="node" ref="1025688459" role="platform"/>
+    <tag k="name" v="Cuatro Reinas"/>
+    <tag k="public_transport" v="stop_area"/>
+    <tag k="type" v="public_transport"/>
+  </relation>
+  <relation id="6915162">
+    <member type="node" ref="4386029998" role="stop"/>
+    <member type="node" ref="3333003843" role="platform"/>
+    <tag k="name" v="CFIA"/>
+    <tag k="public_transport" v="stop_area"/>
+    <tag k="type" v="public_transport"/>
+  </relation>
+  <relation id="6921169">
+    <member type="node" ref="4638296441" role="stop"/>
+    <member type="node" ref="3332993893" role="platform"/>
+    <tag k="name" v="Tres Ríos"/>
+    <tag k="public_transport" v="stop_area"/>
+    <tag k="type" v="public_transport"/>
+  </relation>
+
+</osm>
