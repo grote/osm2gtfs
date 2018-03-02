@@ -287,18 +287,19 @@ class TripsCreatorBrFlorianopolis(TripsCreator):
         if isinstance(route, Itinerary):
             i = 1
             for stop in route.stops:
-                if i == 1:
-                    # timepoint="1" (Times are considered exact)
-                    trip.AddStopTime(feed.GetStop(str(stop.stop_id)), stop_time=start_time)
-                    if route.route_id == DEBUG_ROUTE:
-                        print "START: " + start_time + " at " + str(stop)
-                elif i == len(route.stops):
-                    # timepoint="0" (Times are considered approximate)
-                    trip.AddStopTime(feed.GetStop(str(stop.stop_id)), stop_time=end_time)
-                    if route.route_id == DEBUG_ROUTE:
-                        print "END: " + end_time + " at " + str(stop)
-                else:
-                    # timepoint="0" (Times are considered approximate)
-                    trip.AddStopTime(feed.GetStop(str(stop.stop_id)))
-    #                print "INTER: " + str(stop)
+                if stop is not None:
+                    if i == 1:
+                        # timepoint="1" (Times are considered exact)
+                        trip.AddStopTime(feed.GetStop(str(stop.stop_id)), stop_time=start_time)
+                        if route.route_id == DEBUG_ROUTE:
+                            print "START: " + start_time + " at " + str(stop)
+                    elif i == len(route.stops):
+                        # timepoint="0" (Times are considered approximate)
+                        trip.AddStopTime(feed.GetStop(str(stop.stop_id)), stop_time=end_time)
+                        if route.route_id == DEBUG_ROUTE:
+                            print "END: " + end_time + " at " + str(stop)
+                    else:
+                        # timepoint="0" (Times are considered approximate)
+                        trip.AddStopTime(feed.GetStop(str(stop.stop_id)))
+                        # print "INTER: " + str(stop)
                 i += 1
