@@ -139,6 +139,7 @@ class CreatorsTestsAbstract(unittest.TestCase):
         cache = Cache()
         stops = cache.read_data(self.selector + "-stops")
         amount_of_stops = len(stops['regular']) + len(stops['stations'])
+        print("> Amount of osm stops: " + str(amount_of_stops))
         self.assertEqual(
             amount_of_stops, self.required_values['stops_osm_count'],
             'Wrong count of stops in the cache file')
@@ -197,7 +198,7 @@ class CreatorsTestsAbstract(unittest.TestCase):
 
         # Obtain and print basic count infos about the GTFS
         gtfs_infos = CreatorsTestsHelper.get_gtfs_infos(gtfs_generated_result)
-        print("Information about the GTFS feed: " + str(gtfs_infos))
+        print("> Information about the GTFS feed: " + str(gtfs_infos))
 
         # Verify stop and route counts against expected values
         self.assertEqual(gtfs_infos["stop_points_count"], self.required_values['stops_count'],
