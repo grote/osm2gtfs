@@ -1,0 +1,42 @@
+## Routes
+
+(
+            /* Obtain route variants based on tags and bounding box */
+            relation["operator" = "Incofer"]["route" = "train"]["network" = "Tren Urbano"](9.8346,-84.2418,10.0365,-83.8507)->.routes;
+
+            /*  Query for related route masters */
+            relation[type=route_master](br.routes)->.masters;
+
+            /* Query for routes' geometry (ways and it's nodes) */
+            way(r.routes);
+            node(w);
+
+            /* Select all result sets  */
+            ( .routes;.masters;._; );
+
+            /* Return tags for elements and roles for relation members. */
+            );out body;
+
+
+## Stops
+
+(
+            /* Obtain route variants based on tags and bounding box */
+            relation["operator" = "Incofer"]["route" = "train"]["network" = "Tren Urbano"](9.8346,-84.2418,10.0365,-83.8507);
+
+            /*  Query for relation elements with role platform */
+            node(r:"platform")->.nodes;
+            way(r:"platform");
+            node(w);
+
+            /* Select all result sets  */
+            ( .nodes;._; );
+
+            /* Return tags for elements */
+            );out body;
+
+            /* Select stop area relations */
+            foreach.nodes(
+            rel(bn:"platform")["public_transport"="stop_area"];
+            out body;
+            );
