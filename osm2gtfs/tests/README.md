@@ -52,4 +52,5 @@ each GTFS file is compared to the reference.
 
     python osm2gtfs/tests/creators/tests_br_florianopolis.py
     python osm2gtfs/tests/creators/tests_gh_accra.py
+    python osm2gtfs/tests/creators/tests_ni_esteli.py
     python osm2gtfs/tests/creators/tests_ni_managua.py
