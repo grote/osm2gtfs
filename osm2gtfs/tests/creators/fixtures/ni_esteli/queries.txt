@@ -1,0 +1,42 @@
+## Routes
+
+(
+            /* Obtain route variants based on tags and bounding box */
+            relation["route" = "bus"]["network" = "NI-Estelí"](13.0534171,-86.3999775,13.1308234,-86.3197351)->.routes;
+
+            /*  Query for related route masters */
+            relation[type=route_master](br.routes)->.masters;
+
+            /* Query for routes' geometry (ways and it's nodes) */
+            way(r.routes);
+            node(w);
+
+            /* Select all result sets  */
+            ( .routes;.masters;._; );
+
+            /* Return tags for elements and roles for relation members. */
+            );out body;
+
+
+## Stops
+
+(
+            /* Obtain route variants based on tags and bounding box */
+            relation["route" = "bus"]["network" = "NI-Estelí"](13.0534171,-86.3999775,13.1308234,-86.3197351);
+
+            /*  Query for relation elements with role platform */
+            node(r:"platform")->.nodes;
+            way(r:"platform");
+            node(w);
+
+            /* Select all result sets  */
+            ( .nodes;._; );
+
+            /* Return tags for elements */
+            );out body;
+
+            /* Select stop area relations */
+            foreach.nodes(
+            rel(bn:"platform")["public_transport"="stop_area"];
+            out body;
+            );
