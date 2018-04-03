@@ -1,12 +1,18 @@
 #!/usr/bin/env python
 # coding=utf-8
 
+import os
 import sys
+import logging
 import argparse
 import transitfeed
 from core.configuration import Configuration
 from core.osm_connector import OsmConnector
 from core.creator_factory import CreatorFactory
+
+
+# Define logging level
+logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
 
 # Handle arguments
 parser = argparse.ArgumentParser(

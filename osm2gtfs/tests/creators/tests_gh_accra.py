@@ -1,5 +1,10 @@
+import os
 import unittest
+import logging
 from osm2gtfs.tests.creators.creators_tests import CreatorsTestsAbstract
+
+# Define logging level
+logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
 
 
 class TestCreatorsGhAccra(CreatorsTestsAbstract):

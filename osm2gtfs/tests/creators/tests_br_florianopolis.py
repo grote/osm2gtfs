@@ -1,11 +1,15 @@
 import unittest
 import os
+import logging
 import overpy
 
 from mock import patch
 from osm2gtfs.tests.creators.creators_tests import CreatorsTestsAbstract
 from osm2gtfs.core.osm_connector import OsmConnector
 from osm2gtfs.core.cache import Cache
+
+# Define logging level
+logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
 
 
 class TestCreatorsBrFlorianopolis(CreatorsTestsAbstract):

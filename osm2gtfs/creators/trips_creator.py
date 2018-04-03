@@ -1,7 +1,7 @@
 # coding=utf-8
 
 import re
-import sys
+import logging
 from datetime import datetime
 import transitfeed
 from transitfeed import ServicePeriod
@@ -34,7 +34,7 @@ class TripsCreator(object):
         # Go though all lines
         for line_id, line in data.routes.iteritems():
 
-            print("\nGenerating schedule for line: [" + line_id + "] - " + line.name)
+            logging.info("\nGenerating schedule for line: [" + line_id + "] - " + line.name)
 
             # Loop through it's itineraries
             itineraries = line.get_itineraries()
@@ -61,15 +61,14 @@ class TripsCreator(object):
                             feed, itinerary, line, trip_builder, shape_id)
 
                 # Print out status messge about added trips
-                print(" Itinerary: [" + itinerary.route_id.encode("utf-8") + "] " +
-                      itinerary.to.encode("utf-8") + " (added " + str(
-                          trips_count) + " trips, serving " + str(
-                              len(itinerary.get_stops())) + " stops) - " +
-                      itinerary.osm_url)
+                logging.info(" Itinerary: [" + itinerary.route_id.encode("utf-8") + "] " +
+                             itinerary.to.encode("utf-8") + " (added " + str(
+                                 trips_count) + " trips, serving " + str(
+                                     len(itinerary.get_stops())) + " stops) - " +
+                             itinerary.osm_url)
                 all_trips_count += trips_count
 
-        print("\nTotal of added trips to this GTFS: " +
-              str(all_trips_count) + "\n\n")
+        logging.info("\nTotal of added trips to this GTFS: %s\n\n", str(all_trips_count))
         return
 
     def _prepare_trips(self, feed, schedule, itinerary):
@@ -94,7 +93,7 @@ class TripsCreator(object):
                         services.append(service)
 
         if not services:
-            print(" Warning: From, to and via values didn't match with schedule.")
+            logging.warning(" From and to values didn't match with schedule.")
 
         # Loop through all service days
         trips = []
@@ -123,17 +122,17 @@ class TripsCreator(object):
 
         # Check if itinerary and line are having the same reference
         if itinerary.route_id != line.route_id:
-            print("Warning: The route id of the itinerary (" +
-                  str(itinerary.route_id) + ") doesn't match route id of line (" +
-                  str(line.route_id) + ")")
-            print(" " + itinerary.osm_url)
-            print(" " + line.osm_url)
+            logging.warning(
+                "The route id of the itinerary (%s) doesn't match route id of line (%s)",
+                itinerary.route_id, line.route_id)
+            logging.warning(" %s", itinerary.osm_url)
+            logging.warning(" %s", line.osm_url)
             return False
 
         # Check if time information in schedule can be found for
         # the itinerary
         if itinerary.route_id not in schedule['lines']:
-            print("Warning: Route not found in schedule.")
+            logging.warning("Route not found in schedule.")
             return False
 
         # Check if from and to tags are valid and correspond to
@@ -142,16 +141,18 @@ class TripsCreator(object):
             if (trip["from"] == itinerary.fr and trip["to"] == itinerary.to):
                 trip_stations = trip["stations"]
                 if trip_stations[0] != itinerary.fr:
-                    print("Warning: The first station in the stations list of trip (" +
-                          str(itinerary.route_id) + ") doesn't match first station of itinerary.")
-                    print(" " + itinerary.osm_url)
-                    print(" Please review the schedule file.")
+                    logging.warning(
+                        "First station of the route (%s) doesn't match first station of itinerary",
+                        itinerary.route_id)
+                    logging.warning(" %s", itinerary.osm_url)
+                    logging.warning(" Please compare with the schedule file.")
                     return False
                 elif trip_stations[-1] != itinerary.to:
-                    print("Warning: The last station in the stations list of trip (" +
-                          str(itinerary.route_id) + ") doesn't match last station of itinerary.")
-                    print(" " + itinerary.osm_url)
-                    print(" Please review the schedule file.")
+                    logging.warning(
+                        "Last station of route (%s) doesn't match last station of itinerary.",
+                        itinerary.route_id)
+                    logging.warning(" %s", itinerary.osm_url)
+                    logging.warning(" Please compare with the schedule file.")
                     return False
 
         return True
@@ -197,18 +198,18 @@ class TripsCreator(object):
                     itinerary_stop = trip_builder[
                         'all_stops']['regular'][itinerary_stop_id]
                 except ValueError:
-                    sys.stderr.write(
-                        "Itinerary (" + itinerary.route_url + ") misses a stop: \n")
-                    sys.stderr.write(
-                        "Please review: " + itinerary_stop_id + "\n")
+                    logging.warning(
+                        "Itinerary (%s) misses a stop:", itinerary.route_url)
+                    logging.warning(
+                        " Please review: %s", itinerary_stop_id)
                     continue
 
                 try:
                     # Load respective GTFS stop object
                     gtfs_stop = feed.GetStop(str(itinerary_stop.stop_id))
                 except ValueError:
-                    print("Warning: Stop in itinerary was not found in GTFS.")
-                    print(" " + itinerary_stop.osm_url)
+                    logging.warning("Stop in itinerary was not found in GTFS.")
+                    logging.warning(" %s", itinerary_stop.osm_url)
                     continue
 
                 # Make sure we compare same unicode encoding
@@ -247,10 +248,8 @@ class TripsCreator(object):
                         time_at_stop = str(
                             datetime.strptime(time, "%H:%M").time())
                     except ValueError:
-                        print('Warning: Time "' +
-                              time + '" for the stop was not valid:')
-                        print(" " + itinerary_stop.name +
-                              " - " + itinerary_stop.osm_url)
+                        logging.warning('Time "%s" for the stop was not valid:', time)
+                        logging.warning(" %s - %s", itinerary_stop.name, itinerary_stop.osm_url)
                         break
                     gtfs_trip.AddStopTime(gtfs_stop, stop_time=time_at_stop)
 
@@ -259,9 +258,9 @@ class TripsCreator(object):
                     try:
                         gtfs_trip.AddStopTime(gtfs_stop)
                     except transitfeed.problems.OtherProblem:
-                        print("Warning: Could not add first stop to trip without time information.")
-                        print(" " + itinerary_stop.name +
-                              " - " + itinerary_stop.osm_url)
+                        logging.warning(
+                            "Could not add first stop to trip without time information.")
+                        logging.warning(" %s - %s", itinerary_stop.name, itinerary_stop.osm_url)
                         break
 
                 # Add reference to shape
@@ -350,7 +349,7 @@ class TripsCreator(object):
                 for time in trip["times"]:
                     times.append(time)
         if times is None:
-            print("Warning: Couldn't load times from schedule for route")
+            logging.warning("Couldn't load times from schedule for route")
         return times
 
     def _load_scheduled_stops(self, schedule, itinerary, service):

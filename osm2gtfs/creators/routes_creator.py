@@ -1,5 +1,6 @@
 # coding=utf-8
 
+import logging
 from osm2gtfs.core.helper import Helper
 
 
@@ -52,9 +53,9 @@ class RoutesCreator(object):
         if removed == 0:
             pass
         elif removed == 1:
-            print("Removed 1 unused route")
+            logging.info("Removed 1 unused route")
         else:
-            print("Removed %d unused routes" % removed)
+            logging.info("Removed %d unused routes", removed)
 
     def _define_route_id(self, route):
         """

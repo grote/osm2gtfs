@@ -1,6 +1,7 @@
 # coding=utf-8
 
 import importlib
+import logging
 from osm2gtfs.creators.agency_creator import AgencyCreator
 from osm2gtfs.creators.feed_info_creator import FeedInfoCreator
 from osm2gtfs.creators.routes_creator import RoutesCreator
@@ -35,10 +36,10 @@ class CreatorFactory(object):
                 package="osm2gtfs")
             agency_creator_override = getattr(
                 module, "AgencyCreator" + self._generate_class_name(selector))
-            print("Agency creator: " + selector)
+            logging.info("Agency creator: %s", selector)
             return agency_creator_override(self.config)
         except ImportError:
-            print("Agency creator: Default")
+            logging.info("Agency creator: Default")
             return AgencyCreator(self.config)
 
     def get_feed_info_creator(self):
@@ -50,10 +51,10 @@ class CreatorFactory(object):
                 package="osm2gtfs")
             feed_info_creator_override = getattr(
                 module, "FeedInfoCreator" + self._generate_class_name(selector))
-            print("Feed info creator: " + selector)
+            logging.info("Feed info creator: %s", selector)
             return feed_info_creator_override(self.config)
         except ImportError:
-            print("Feed info creator: Default")
+            logging.info("Feed info creator: Default")
             return FeedInfoCreator(self.config)
 
     def get_routes_creator(self):
@@ -65,10 +66,10 @@ class CreatorFactory(object):
                 package="osm2gtfs")
             routes_creator_override = getattr(
                 module, "RoutesCreator" + self._generate_class_name(selector))
-            print("Routes creator: " + selector)
+            logging.info("Routes creator: %s", selector)
             return routes_creator_override(self.config)
         except ImportError:
-            print("Routes creator: Default")
+            logging.info("Routes creator: Default")
             return RoutesCreator(self.config)
 
     def get_stops_creator(self):
@@ -80,10 +81,10 @@ class CreatorFactory(object):
                 package="osm2gtfs")
             stops_creator_override = getattr(
                 module, "StopsCreator" + self._generate_class_name(selector))
-            print("Stops creator: " + selector)
+            logging.info("Stops creator: %s", selector)
             return stops_creator_override(self.config)
         except ImportError:
-            print("Stops creator: Default")
+            logging.info("Stops creator: Default")
             return StopsCreator(self.config)
 
     def get_schedule_creator(self):
@@ -95,10 +96,10 @@ class CreatorFactory(object):
                 package="osm2gtfs")
             schedule_creator_override = getattr(
                 module, "ScheduleCreator" + self._generate_class_name(selector))
-            print("Schedule creator: " + selector)
+            logging.info("Schedule creator: %s", selector)
             return schedule_creator_override(self.config)
         except ImportError:
-            print("Schedule creator: Default")
+            logging.info("Schedule creator: Default")
             return ScheduleCreator(self.config)
 
     def get_trips_creator(self):
@@ -110,10 +111,10 @@ class CreatorFactory(object):
                 package="osm2gtfs")
             trips_creator_override = getattr(
                 module, "TripsCreator" + self._generate_class_name(selector))
-            print("Trips creator: " + selector)
+            logging.info("Trips creator: %s", selector)
             return trips_creator_override(self.config)
         except ImportError:
-            print("Trips creator: Default")
+            logging.info("Trips creator: Default")
             return TripsCreator(self.config)
 
     @staticmethod

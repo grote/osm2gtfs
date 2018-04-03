@@ -1,6 +1,6 @@
 # coding=utf-8
 
-import sys
+import logging
 from math import cos, sin, atan2, sqrt, radians, degrees
 
 
@@ -35,7 +35,7 @@ class Helper(object):
         z = 0
 
         if len(nodes) < 1:
-            sys.stderr.write("Cannot find the center of zero nodes\n")
+            logging.error("Cannot find the center of zero nodes\n")
         for node in nodes:
             lat = radians(float(node.lat))
             lon = radians(float(node.lon))
@@ -65,7 +65,7 @@ class Helper(object):
                     stop_time.departure_secs = secs
                     trip.ReplaceStopTimeObject(stop_time)
         except ValueError as e:
-            print(e)
+            logging.error(e)
 
     @staticmethod
     def get_crow_fly_distance(from_tuple, to_tuple):

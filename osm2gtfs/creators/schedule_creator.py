@@ -1,6 +1,7 @@
 # coding=utf-8
 
 import sys
+import logging
 import json
 
 
@@ -39,15 +40,15 @@ class ScheduleCreator(object):
         schedule_source = self.config.get_schedule_source()
 
         if schedule_source is None:
-            sys.stderr.write("Error: No schedule source found.\n")
+            logging.error("No schedule source found.")
             sys.exit(0)
 
         else:
             try:
                 schedule = json.loads(schedule_source)
             except ValueError, e:
-                sys.stderr.write('Error: Schedule file is invalid.\n')
-                print(e)
+                logging.error('Schedule file is invalid.')
+                logging.error(e)
                 sys.exit(0)
 
         return schedule
