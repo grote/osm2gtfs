@@ -519,10 +519,10 @@ class OsmConnector(object):
                     members[identifier] = self.stops['regular'][identifier]
                 else:
                     sys.stderr.write(
-                        "Error: Station member was not found in data")
-                    sys.stderr.write("https://osm.org/relation/" +
+                        "Note: Unused station member in stop area:\n")
+                    sys.stderr.write("  https://osm.org/relation/" +
                                      str(stop_area.id) + "\n")
-                    sys.stderr.write("https://osm.org/node/" +
+                    sys.stderr.write("  https://osm.org/node/" +
                                      str(member.ref) + "\n")
         if len(members) < 1:
             # Stop areas with only one stop, are not stations they just
