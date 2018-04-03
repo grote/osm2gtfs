@@ -529,14 +529,14 @@ class OsmConnector(object):
             # group different elements of one stop together.
             sys.stderr.write(
                 "Error: Station with no members has been discarted:\n")
-            sys.stderr.write("https://osm.org/relation/" +
+            sys.stderr.write(" https://osm.org/relation/" +
                              str(stop_area.id) + "\n")
             return None
 
         elif len(members) == 1:
             sys.stderr.write(
-                "Warning: Station has only one platform and is discarted\n")
-            sys.stderr.write("https://osm.org/relation/" +
+                "Note: OSM stop area has only one platform and can't be used as a GTFS station\n")
+            sys.stderr.write(" https://osm.org/relation/" +
                              str(stop_area.id) + "\n")
             return None
 
@@ -544,7 +544,7 @@ class OsmConnector(object):
         if 'name' not in stop_area.tags:
             sys.stderr.write("Warning: Stop area without name." +
                              " Please fix in OpenStreetMap\n")
-            sys.stderr.write("https://osm.org/relation/" +
+            sys.stderr.write(" https://osm.org/relation/" +
                              str(stop_area.id) + "\n")
             stop_area.name = self.stop_no_name
         else:
@@ -566,6 +566,12 @@ class OsmConnector(object):
                           name=stop_area.name, lat=stop_area.lat,
                           lon=stop_area.lon)
         station.set_members(members)
+
+        sys.stderr.write(
+            "Note: Stop area (OSM) has been used to create a station (GTFS):\n")
+        sys.stderr.write(" https://osm.org/relation/" +
+                         str(stop_area.id) + "\n")
+
         return station
 
     def _query_routes(self):
