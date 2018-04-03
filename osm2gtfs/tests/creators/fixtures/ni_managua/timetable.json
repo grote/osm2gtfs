@@ -28845,12 +28845,12 @@
         ],
         "114": [
             {
-                "from": "Terminal José Benito Escobar",
+                "from": "Villa José Benito Escobar",
                 "services": [
                     "Mo-Fr"
                 ],
                 "stations": [
-                    "Terminal José Benito Escobar",
+                    "Villa José Benito Escobar",
                     "Cuesta El Plomo Sur"
                 ],
                 "times": [
@@ -29438,12 +29438,12 @@
                 "to": "Cuesta El Plomo Sur"
             },
             {
-                "from": "Terminal José Benito Escobar",
+                "from": "Villa José Benito Escobar",
                 "services": [
                     "Sa"
                 ],
                 "stations": [
-                    "Terminal José Benito Escobar",
+                    "Villa José Benito Escobar",
                     "Cuesta El Plomo Sur"
                 ],
                 "times": [
@@ -29995,12 +29995,12 @@
                 "to": "Cuesta El Plomo Sur"
             },
             {
-                "from": "Terminal José Benito Escobar",
+                "from": "Villa José Benito Escobar",
                 "services": [
                     "Su"
                 ],
                 "stations": [
-                    "Terminal José Benito Escobar",
+                    "Villa José Benito Escobar",
                     "Cuesta El Plomo Sur"
                 ],
                 "times": [
@@ -30430,7 +30430,7 @@
                 ],
                 "stations": [
                     "Cuesta El Plomo Sur",
-                    "Terminal José Benito Escobar"
+                    "Villa José Benito Escobar"
                 ],
                 "times": [
                     [
@@ -31014,7 +31014,7 @@
                         "21:40"
                     ]
                 ],
-                "to": "Terminal José Benito Escobar"
+                "to": "Villa José Benito Escobar"
             },
             {
                 "from": "Cuesta El Plomo Sur",
@@ -31023,7 +31023,7 @@
                 ],
                 "stations": [
                     "Cuesta El Plomo Sur",
-                    "Terminal José Benito Escobar"
+                    "Villa José Benito Escobar"
                 ],
                 "times": [
                     [
@@ -31571,7 +31571,7 @@
                         "21:45"
                     ]
                 ],
-                "to": "Terminal José Benito Escobar"
+                "to": "Villa José Benito Escobar"
             },
             {
                 "from": "Cuesta El Plomo Sur",
@@ -31580,7 +31580,7 @@
                 ],
                 "stations": [
                     "Cuesta El Plomo Sur",
-                    "Terminal José Benito Escobar"
+                    "Villa José Benito Escobar"
                 ],
                 "times": [
                     [
@@ -32000,7 +32000,7 @@
                         "21:45"
                     ]
                 ],
-                "to": "Terminal José Benito Escobar"
+                "to": "Villa José Benito Escobar"
             }
         ],
         "115": [
@@ -35101,12 +35101,12 @@
         ],
         "117": [
             {
-                "from": "Terminal José Benito Escobar",
+                "from": "Villa José Benito Escobar",
                 "services": [
                     "Mo-Fr"
                 ],
                 "stations": [
-                    "Terminal José Benito Escobar",
+                    "Villa José Benito Escobar",
                     "UCA"
                 ],
                 "times": [
@@ -35414,12 +35414,12 @@
                 "to": "UCA"
             },
             {
-                "from": "Terminal José Benito Escobar",
+                "from": "Villa José Benito Escobar",
                 "services": [
                     "Sa"
                 ],
                 "stations": [
-                    "Terminal José Benito Escobar",
+                    "Villa José Benito Escobar",
                     "UCA"
                 ],
                 "times": [
@@ -35731,12 +35731,12 @@
                 "to": "UCA"
             },
             {
-                "from": "Terminal José Benito Escobar",
+                "from": "Villa José Benito Escobar",
                 "services": [
                     "Su"
                 ],
                 "stations": [
-                    "Terminal José Benito Escobar",
+                    "Villa José Benito Escobar",
                     "UCA"
                 ],
                 "times": [
@@ -36006,7 +36006,7 @@
                 ],
                 "stations": [
                     "UCA",
-                    "Terminal José Benito Escobar"
+                    "Villa José Benito Escobar"
                 ],
                 "times": [
                     [
@@ -36310,7 +36310,7 @@
                         "22:15"
                     ]
                 ],
-                "to": "Terminal José Benito Escobar"
+                "to": "Villa José Benito Escobar"
             },
             {
                 "from": "UCA",
@@ -36319,7 +36319,7 @@
                 ],
                 "stations": [
                     "UCA",
-                    "Terminal José Benito Escobar"
+                    "Villa José Benito Escobar"
                 ],
                 "times": [
                     [
@@ -36627,7 +36627,7 @@
                         "22:10"
                     ]
                 ],
-                "to": "Terminal José Benito Escobar"
+                "to": "Villa José Benito Escobar"
             },
             {
                 "from": "UCA",
@@ -36636,7 +36636,7 @@
                 ],
                 "stations": [
                     "UCA",
-                    "Terminal José Benito Escobar"
+                    "Villa José Benito Escobar"
                 ],
                 "times": [
                     [
@@ -36896,7 +36896,7 @@
                         "21:10"
                     ]
                 ],
-                "to": "Terminal José Benito Escobar"
+                "to": "Villa José Benito Escobar"
             }
         ],
         "118": [
@@ -46565,12 +46565,12 @@
         ],
         "125CS": [
             {
-                "from": "Mercadito de Ciudad Sandino",
+                "from": "Mercadito (Ciudad Sandino)",
                 "services": [
                     "Mo-Fr"
                 ],
                 "stations": [
-                    "Mercadito de Ciudad Sandino",
+                    "Mercadito (Ciudad Sandino)",
                     "KM 9 Motastepe"
                 ],
                 "times": [
@@ -46802,12 +46802,12 @@
                 "to": "KM 9 Motastepe"
             },
             {
-                "from": "Mercadito de Ciudad Sandino",
+                "from": "Mercadito (Ciudad Sandino)",
                 "services": [
                     "Sa"
                 ],
                 "stations": [
-                    "Mercadito de Ciudad Sandino",
+                    "Mercadito (Ciudad Sandino)",
                     "KM 9 Motastepe"
                 ],
                 "times": [
@@ -47031,12 +47031,12 @@
                 "to": "KM 9 Motastepe"
             },
             {
-                "from": "Mercadito de Ciudad Sandino",
+                "from": "Mercadito (Ciudad Sandino)",
                 "services": [
                     "Su"
                 ],
                 "stations": [
-                    "Mercadito de Ciudad Sandino",
+                    "Mercadito (Ciudad Sandino)",
                     "KM 9 Motastepe"
                 ],
                 "times": [
@@ -47266,7 +47266,7 @@
                 ],
                 "stations": [
                     "KM 9 Motastepe",
-                    "Mercadito de Ciudad Sandino"
+                    "Mercadito (Ciudad Sandino)"
                 ],
                 "times": [
                     [
@@ -47494,7 +47494,7 @@
                         "21:00"
                     ]
                 ],
-                "to": "Mercadito de Ciudad Sandino"
+                "to": "Mercadito (Ciudad Sandino)"
             },
             {
                 "from": "KM 9 Motastepe",
@@ -47503,7 +47503,7 @@
                 ],
                 "stations": [
                     "KM 9 Motastepe",
-                    "Mercadito de Ciudad Sandino"
+                    "Mercadito (Ciudad Sandino)"
                 ],
                 "times": [
                     [
@@ -47723,7 +47723,7 @@
                         "21:00"
                     ]
                 ],
-                "to": "Mercadito de Ciudad Sandino"
+                "to": "Mercadito (Ciudad Sandino)"
             },
             {
                 "from": "KM 9 Motastepe",
@@ -47732,7 +47732,7 @@
                 ],
                 "stations": [
                     "KM 9 Motastepe",
-                    "Mercadito de Ciudad Sandino"
+                    "Mercadito (Ciudad Sandino)"
                 ],
                 "times": [
                     [
@@ -47952,7 +47952,7 @@
                         "21:00"
                     ]
                 ],
-                "to": "Mercadito de Ciudad Sandino"
+                "to": "Mercadito (Ciudad Sandino)"
             }
         ],
         "133": [
@@ -66189,12 +66189,12 @@
         ],
         "170": [
             {
-                "from": "Terminal José Benito Escobar",
+                "from": "Villa José Benito Escobar",
                 "services": [
                     "Mo-Fr"
                 ],
                 "stations": [
-                    "Terminal José Benito Escobar",
+                    "Villa José Benito Escobar",
                     "Terminal 170"
                 ],
                 "times": [
@@ -66726,12 +66726,12 @@
                 "to": "Terminal 170"
             },
             {
-                "from": "Terminal José Benito Escobar",
+                "from": "Villa José Benito Escobar",
                 "services": [
                     "Sa"
                 ],
                 "stations": [
-                    "Terminal José Benito Escobar",
+                    "Villa José Benito Escobar",
                     "Terminal 170"
                 ],
                 "times": [
@@ -67259,12 +67259,12 @@
                 "to": "Terminal 170"
             },
             {
-                "from": "Terminal José Benito Escobar",
+                "from": "Villa José Benito Escobar",
                 "services": [
                     "Su"
                 ],
                 "stations": [
-                    "Terminal José Benito Escobar",
+                    "Villa José Benito Escobar",
                     "Terminal 170"
                 ],
                 "times": [
@@ -67798,7 +67798,7 @@
                 ],
                 "stations": [
                     "Terminal 170",
-                    "Terminal José Benito Escobar"
+                    "Villa José Benito Escobar"
                 ],
                 "times": [
                     [
@@ -68326,7 +68326,7 @@
                         "20:15"
                     ]
                 ],
-                "to": "Terminal José Benito Escobar"
+                "to": "Villa José Benito Escobar"
             },
             {
                 "from": "Terminal 170",
@@ -68335,7 +68335,7 @@
                 ],
                 "stations": [
                     "Terminal 170",
-                    "Terminal José Benito Escobar"
+                    "Villa José Benito Escobar"
                 ],
                 "times": [
                     [
@@ -68859,7 +68859,7 @@
                         "19:45"
                     ]
                 ],
-                "to": "Terminal José Benito Escobar"
+                "to": "Villa José Benito Escobar"
             },
             {
                 "from": "Terminal 170",
@@ -68868,7 +68868,7 @@
                 ],
                 "stations": [
                     "Terminal 170",
-                    "Terminal José Benito Escobar"
+                    "Villa José Benito Escobar"
                 ],
                 "times": [
                     [
@@ -69392,7 +69392,7 @@
                         "19:45"
                     ]
                 ],
-                "to": "Terminal José Benito Escobar"
+                "to": "Villa José Benito Escobar"
             }
         ],
         "172": [

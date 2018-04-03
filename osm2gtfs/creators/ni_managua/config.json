@@ -28,9 +28,7 @@
     "feed_info": {
         "publisher_name": "MapaNica.net",
         "publisher_url": "https://mapanica.net",
-        "version":  "0.1",
-        "start_date": "20171201",
-        "end_date": "20180331"
+        "version":  "0.1"
     },
     "schedule_source": "https://raw.githubusercontent.com/mapanica/pt-data-managua/master/timetable.json",
     "output_file": "data/ni-managua-gtfs.zip",
