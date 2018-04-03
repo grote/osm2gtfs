@@ -12,9 +12,9 @@ class TestCreatorsNiManagua(CreatorsTestsAbstract):
         # Define required values for the tests of this provider
         return {
             'routes_count': 45,
-            'stops_count': 1446,
+            'stops_count': 1450,
             'stations_count': 547,
-            'stops_osm_count': 1993,
+            'stops_osm_count': 1997,
             'route_id_to_check': 111,
             'gtfs_files': [
                 "agency.txt", "calendar.txt", "routes.txt", "shapes.txt",
