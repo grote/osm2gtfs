@@ -482,22 +482,24 @@ class OsmConnector(object):
         Returns a initiated Station object from raw data
 
         """
-
-        # Check tagging whether this is a stop area.
-        if 'public_transport' not in stop_area.tags:
-            sys.stderr.write(
-                "Warning: Potential station has no public_transport tag.\n")
-            sys.stderr.write(
-                " Please fix on OSM: https://osm.org/" + osm_type + "/" + str(
-                    stop_area.id) + "\n")
+        # Check relation to be a station or used differently
+        if 'route' in stop_area.tags:
             return None
-        elif stop_area.tags['public_transport'] != 'stop_area':
-            sys.stderr.write(
-                "Warning: Potential station is not tagged as stop_area.\n")
-            sys.stderr.write(
-                " Please fix on OSM: https://osm.org/" + osm_type + "/" + str(
-                    stop_area.id) + "\n")
-            return None
+        else:
+            if 'public_transport' not in stop_area.tags:
+                sys.stderr.write(
+                    "Warning: Potential station has no public_transport tag.\n")
+                sys.stderr.write(
+                    " Please fix on OSM: https://osm.org/" + osm_type + "/" + str(
+                        stop_area.id) + "\n")
+                return None
+            elif stop_area.tags['public_transport'] != 'stop_area':
+                sys.stderr.write(
+                    "Warning: Potential station is not tagged as stop_area.\n")
+                sys.stderr.write(
+                    " Please fix on OSM: https://osm.org/" + osm_type + "/" + str(
+                        stop_area.id) + "\n")
+                return None
 
         # Analzyse member objects (stops) of this stop area
         members = {}
