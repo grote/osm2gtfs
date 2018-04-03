@@ -1,5 +1,6 @@
 # coding=utf-8
 
+import logging
 import transitfeed
 
 
@@ -55,9 +56,9 @@ class StopsCreator(object):
         if removed == 0:
             pass
         elif removed == 1:
-            print("Removed 1 unused stop")
+            logging.info("Removed 1 unused stop")
         else:
-            print("Removed %d unused stops" % removed)
+            logging.info("Removed %d unused stops", removed)
 
     def _add_stop_to_feed(self, stop, feed):
         """
@@ -96,8 +97,7 @@ class StopsCreator(object):
         if type(stop_name).__name__ == "unicode":
             stop_name = stop_name.encode('utf-8')
 
-        print("Added stop: " + stop_name +
-              " - " + stop.osm_url)
+        logging.info("Added stop: %s - %s", stop_name, stop.osm_url)
 
         # Return the stop_id of the stop added
         return field_dict['stop_id']

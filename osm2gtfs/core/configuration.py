@@ -2,6 +2,7 @@
 
 import os
 import sys
+import logging
 import json
 import datetime
 from urllib2 import urlopen
@@ -64,7 +65,7 @@ class Configuration(object):
                     return self._schedule_source
 
             # No cached data was found or refresh was forced
-            print("Load schedule source information from " + source_file)
+            logging.info("Load schedule source information from %s", source_file)
 
             # Check if local file exists
             if os.path.isfile(source_file):
@@ -78,8 +79,7 @@ class Configuration(object):
                 try:
                     schedule_source_file = urlopen(source_file)
                 except ValueError:
-                    sys.stderr.write(
-                        "Error: Couldn't find schedule_source file.\n")
+                    logging.error("Couldn't find schedule_source file.")
                     sys.exit(0)
                 schedule_source = schedule_source_file.read()
 
@@ -103,7 +103,7 @@ class Configuration(object):
             with open("config.json") as json_file:
                 config = Configuration.load_config_file(json_file)
         else:
-            sys.stderr.write("Error: No config.json file found.\n")
+            logging.error("No config.json file found.")
             sys.exit(0)
 
         return config
@@ -119,8 +119,8 @@ class Configuration(object):
         try:
             config = json.load(configfile)
         except ValueError, e:
-            sys.stderr.write('Error: Config json file is invalid.\n')
-            print(e)
+            logging.error('Config json file is invalid.')
+            logging.error(e)
             sys.exit(0)
 
         return config
@@ -139,7 +139,7 @@ class Configuration(object):
         elif 'output_file' in self.data:
             output_file = self.data['output_file']
         else:
-            sys.stderr.write('Error: No filename for gtfs file specified.\n')
+            logging.error('No filename for gtfs file specified.')
             sys.exit(0)
 
         return output_file
@@ -158,8 +158,7 @@ class Configuration(object):
                 start_date = datetime.datetime.strptime(
                     config['feed_info']['start_date'], "%Y%m%d")
             except ValueError, e:
-                sys.stderr.write(
-                    'Warning: "start_date" from config file %s\n' % str(e))
+                logging.warning('"start_date" from config file %s', e)
 
         if not start_date:
             # Use first of current month if no start date was specified
@@ -167,19 +166,17 @@ class Configuration(object):
             start_date = datetime.datetime.strptime(
                 now.strftime('%Y%m') + "01", "%Y%m%d")
             config['feed_info']['start_date'] = now.strftime('%Y%m') + "01"
-            print("Using the generated start date: " +
-                  config['feed_info']['start_date'])
+            logging.info("Using the generated start date: %s", config['feed_info']['start_date'])
 
         end_date = False
         if 'end_date' in config['feed_info']:
             try:
                 end_date = datetime.datetime.strptime(
                     config['feed_info']['end_date'], "%Y%m%d")
-                print("Using the end date from config file: " +
-                      config['feed_info']['end_date'])
+                logging.info("Using the end date from config file: %s",
+                             config['feed_info']['end_date'])
             except ValueError, e:
-                sys.stderr.write(
-                    'Warning: "end_date" from config file %s\n' % str(e))
+                logging.warning('"end_date" from config file %s', e)
 
         if not end_date:
 
@@ -201,13 +198,11 @@ class Configuration(object):
                                          year=end_date_year)
             config['feed_info']['end_date'] = str(
                 end_date.year) + end_date_month + str(end_date.day)
-            print("Using the generated end date: " +
-                  config['feed_info']['end_date'])
+            logging.info("Using the generated end date: %s", config['feed_info']['end_date'])
 
         # Validate dates
         if start_date > end_date:
-            sys.stderr.write('Error: End dates finishes before start date.\n')
+            logging.error('End dates finishes before start date.')
             sys.exit(0)
         elif end_date - start_date > datetime.timedelta(days=364):
-            sys.stderr.write(
-                "Warning: Date range is more than one year.\n")
+            logging.warning("Date range is more than one year.")

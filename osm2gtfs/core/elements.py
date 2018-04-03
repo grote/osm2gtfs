@@ -1,6 +1,6 @@
 # coding=utf-8
 
-import sys
+import logging
 import attr
 
 
@@ -55,16 +55,14 @@ class Line(Element):
         if 'route_master' in self.tags:
             self.route_type = self.tags['route_master']
         else:
-            sys.stderr.write(
-                "Warning: Route master relation without a route_master tag:\n")
-            sys.stderr.write(" " + self.osm_url + "\n")
+            logging.warning("Route master relation without a route_master tag: %s", self.osm_url)
 
             # Try to guess the type differently
             if 'route' in self.tags:
                 self.route_type = self.tags['route']
             else:
                 self.route_type = "bus"
-                sys.stderr.write(" Assuming it to be a bus line (standard).\n")
+                logging.warning(" Assuming it to be a bus line (standard).")
 
         known_route_types = {
             'tram': 'Tram',
@@ -77,11 +75,9 @@ class Line(Element):
         }
 
         if self.route_type not in known_route_types:
-            sys.stderr.write(
-                "Warning: Route master relation with an unknown route type (" +
-                self.route_type + "):\n")
-            sys.stderr.write(" " + self.osm_url + "\n")
-            sys.stderr.write(" Assuming it to be a bus line (standard).\n")
+            logging.warning("Route master relation with an unknown route type (%s): %s",
+                            self.route_type, self.osm_url)
+            logging.warning(" Assuming it to be a bus line (standard).")
             self.route_type = known_route_types['bus']
         else:
             self.route_type = known_route_types[self.route_type]
@@ -201,10 +197,8 @@ class Stop(Element):
         if self._parent_station is None or override is True:
             self._parent_station = identifier
         else:
-            sys.stderr.write("Warning: Stop is part of two stop areas:\n")
-            sys.stderr.write(
-                "https://osm.org/" + self.osm_type + "/" + str(
-                    self.osm_id) + "\n")
+            logging.warning("Stop is part of two stop areas: https://osm.org/%s/%s",
+                            self.osm_type, self.osm_id)
 
     def get_parent_station(self):
         return self._parent_station

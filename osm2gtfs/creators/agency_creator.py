@@ -1,6 +1,6 @@
 # coding=utf-8
 
-import sys
+import logging
 import transitfeed
 
 
@@ -34,13 +34,12 @@ class AgencyCreator(object):
                 if field_value is not None and field_value != "":
                     data_dict[field_name] = field_value
             else:
-                sys.stderr.write("Warning: Key '" + field_name +
-                                 "' was not found in the config file.")
+                logging.warning("Key '%s' was not found in the config file.", field_name)
 
         agency = transitfeed.Agency(field_dict=data_dict)
 
         if not agency.Validate():
-            sys.stderr.write("Error: Agency data is invalid.")
+            logging.error("Agency data is invalid.")
             # TODO error handling based on a exception
             # raise AttributeError('Agency data in config file in not valid.')
 
