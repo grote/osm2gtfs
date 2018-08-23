@@ -1,0 +1,81 @@
+{
+    "data_format": 1,
+    "project": {
+        "name": "osm2gtfs",
+        "description": "Turn OSM public transport data and schedule information into GTFS",
+        "project_url": "https://github.com/grote/osm2gtfs",
+        "doc_url": "https://github.com/grote/osm2gtfs/wiki",
+        "contact_name": "Noémie Lehuby",
+        "contact_email": "noemie.lehuby@zaclys.net"
+    },
+    "tags": [{
+            "key": "name",
+            "description": "used as route_long_name ; used as stop_name"
+        },
+        {
+            "key": "ref:gtfs",
+            "description": "can be used as stop_id for stops and route_id for routes"
+        },
+        {
+            "key": "ref",
+            "description": "used as route_short_name ; can be used as stop_id for stops and route_id for routes"
+        },
+        {
+            "key": "route_master",
+            "object_types": [
+                "relation"
+            ],
+            "description": "used to define the public transport mode (route_type)"
+        },
+        {
+            "key": "to",
+            "object_types": [
+                "relation"
+            ],
+            "description": "used to define the destination (trip_headsign)"
+        },
+        {
+            "key": "colour",
+            "object_types": [
+                "relation"
+            ],
+            "description": "used as route_color"
+        },
+        {
+            "key": "type",
+            "value": "route_master",
+            "object_types": [
+                "relation"
+            ],
+            "description": "used to create GTFS routes"
+        },
+        {
+            "key": "public_transport",
+            "value": "stop_area",
+            "object_types": [
+                "relation"
+            ],
+            "description": "can be used to create GTFS stops"
+        },
+        {
+            "key": "public_transport",
+            "value": "platform",
+            "description": "can be used to create GTFS stops"
+        },
+        {
+            "key": "public_transport",
+            "value": "station",
+            "description": "can be used to create GTFS stops"
+        },
+        {
+            "key": "amenity",
+            "value": "bus_station",
+            "description": "can be used to create GTFS stops"
+        },
+        {
+            "key": "highway",
+            "value": "bus_stop",
+            "description": "can be used to create GTFS stops"
+        }
+    ]
+}
