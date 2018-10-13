@@ -464,7 +464,7 @@ class OsmConnector(object):
 
         else:
             logging.warning(
-                "Warning: Potential stop in invalid and has been ignored.")
+                "Warning: Potential stop is invalid and has been ignored.")
             logging.warning(
                 " Check tagging: https://osm.org/%s/%s", osm_type, stop.id)
             return None

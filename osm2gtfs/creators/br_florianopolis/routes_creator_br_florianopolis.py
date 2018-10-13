@@ -1,6 +1,7 @@
 # coding=utf-8
 
-import sys
+import logging
+
 from osm2gtfs.core.elements import Line, Itinerary, Station, Stop
 from osm2gtfs.creators.routes_creator import RoutesCreator
 
@@ -29,7 +30,12 @@ class RoutesCreatorBrFlorianopolis(RoutesCreator):
             i = 0
             for stop in route.stops:
                 # Replace stop id with Stop objects
-                route.stops[i] = self._look_up_stop(stop, stops)
+                looked_up_stop = self._look_up_stop(stop, stops)
+                if looked_up_stop is None:
+                    logging.error("Missing stop for route %s: https://osm.org/%s",
+                                  route.tags['ref'], route.stops[i])
+                else:
+                    route.stops[i] = looked_up_stop
                 i += 1
 
         elif isinstance(route, Line):
@@ -37,7 +43,7 @@ class RoutesCreatorBrFlorianopolis(RoutesCreator):
             for itinerary in itineraries:
                 self._fill_stops(stops, itinerary)
         else:
-            sys.stderr.write("Unknown route: " + str(route) + "\n")
+            logging.error("Unknown route: %s", str(route))
 
     def _look_up_stop(self, stop_id, stops):
         for ref, elem in stops.iteritems():
@@ -48,4 +54,6 @@ class RoutesCreatorBrFlorianopolis(RoutesCreator):
                 if stop_id in elem.stop_members:
                     return elem.stop_members[stop_id]
             else:
-                sys.stderr.write("Unknown stop: " + str(stop_id) + "\n")
+                logging.error("Unknown stop: %s", str(stop_id))
+                return None
+        return None
