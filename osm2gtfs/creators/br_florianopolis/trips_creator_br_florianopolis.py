@@ -2,11 +2,12 @@
 
 import sys
 import re
+import logging
 from datetime import timedelta, datetime
 import transitfeed
 from osm2gtfs.creators.trips_creator import TripsCreator
 from osm2gtfs.core.helper import Helper
-from osm2gtfs.core.elements import Line, Itinerary
+from osm2gtfs.core.elements import Line, Itinerary, Stop
 
 DEBUG_ROUTE = ""
 BLACKLIST = [
@@ -116,7 +117,17 @@ class TripsCreatorBrFlorianopolis(TripsCreator):
         if self.exceptions is None:
             self.exceptions = operacoes
         elif self.exceptions != operacoes:
-            raise RuntimeError("Route has different service exceptions: " + str(route))
+            previous_exceptions = set()
+            for ex in self.exceptions:
+                previous_exceptions.add(ex['data'])
+            this_exceptions = set()
+            for ex in operacoes:
+                this_exceptions.add(ex['data'])
+            logging.error("Route has different service exceptions.")
+            logging.error(
+                "Missing service exceptions: %s", str(previous_exceptions - this_exceptions))
+            logging.error(
+                "Additional service exceptions: %s", str(this_exceptions - previous_exceptions))
 
         # schedule exceptions
         for o in operacoes:
@@ -260,7 +271,7 @@ class TripsCreatorBrFlorianopolis(TripsCreator):
                 return o_sim_stop
 
         # print some debug information when no stop match found
-        sys.stderr.write(str(route) + "\n")
+        sys.stderr.write(str(route.osm_url) + "\n")
         sys.stderr.write(str(sim_stops) + "\n")
         sys.stderr.write("-----\n")
         sys.stderr.write("OSM Stop: '" + stop.name + "'\n")
@@ -287,19 +298,21 @@ class TripsCreatorBrFlorianopolis(TripsCreator):
         if isinstance(route, Itinerary):
             i = 1
             for stop in route.stops:
-                if stop is not None:
+                # TODO this check shouldn't be necessary if only valid stops were included
+                if isinstance(stop, Stop):
                     if i == 1:
                         # timepoint="1" (Times are considered exact)
-                        trip.AddStopTime(feed.GetStop(str(stop.stop_id)), stop_time=start_time)
                         if route.route_id == DEBUG_ROUTE:
-                            print "START: " + start_time + " at " + str(stop)
+                            logging.info("START: %s at %s", start_time, str(stop))
+                        trip.AddStopTime(feed.GetStop(str(stop.stop_id)), stop_time=start_time)
                     elif i == len(route.stops):
                         # timepoint="0" (Times are considered approximate)
-                        trip.AddStopTime(feed.GetStop(str(stop.stop_id)), stop_time=end_time)
                         if route.route_id == DEBUG_ROUTE:
-                            print "END: " + end_time + " at " + str(stop)
+                            logging.info("END: %s at %s", end_time, str(stop))
+                        trip.AddStopTime(feed.GetStop(str(stop.stop_id)), stop_time=end_time)
                     else:
                         # timepoint="0" (Times are considered approximate)
+                        if route.route_id == DEBUG_ROUTE:
+                            logging.info("INTER: %s", str(stop))
                         trip.AddStopTime(feed.GetStop(str(stop.stop_id)))
-                        # print "INTER: " + str(stop)
                 i += 1

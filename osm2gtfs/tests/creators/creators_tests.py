@@ -244,6 +244,7 @@ class CreatorsTestsHelper():
                         info2.filename, info1.file_size, info2.file_size
                     ))
                 if info1.filename == info2.filename and info1.file_size != info2.file_size:
+                    print("Difference detected: " + info1.filename)
                     return False
         return True
 
