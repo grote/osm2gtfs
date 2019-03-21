@@ -3,7 +3,9 @@
 *.zip
 *.pkl
 ./config.json
+build
 data
+dist
 src
 
 # Android Studio files
