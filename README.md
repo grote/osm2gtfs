@@ -28,7 +28,7 @@ Included cities
 
 * [Florianópolis, Brazil](./osm2gtfs/creators/br_florianopolis/config.json)
 * [Suburban trains in Costa Rica](./osm2gtfs/creators/cr_gam/config.json)
-* [Accra, Ghana](./osm2gtfs/creators/gh_accra/config.json)
+* [Accra, Ghana](./osm2gtfs/creators/gh_accra/readme.md)
 * [Managua, Ciudad Sandino](./osm2gtfs/creators/ni_managua/config.json) and [Estelí](./osm2gtfs/creators/ni_esteli/config.json) in Nicaragua
 
 *Soon, also in your city*
