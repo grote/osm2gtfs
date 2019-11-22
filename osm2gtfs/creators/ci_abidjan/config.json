@@ -1,0 +1,35 @@
+{
+    "query": {
+        "bbox": {
+            "n": "5.6367",
+            "s": "5.2121", 
+            "e": "-3.7154", 
+            "w": "-4.2973" 
+        },
+        "tags": {
+            "route": "bus"
+        }
+    },
+    "stops": {
+        "name_without": "Add a name to the stop with JungleBus app",
+        "name_auto": "yes"
+    },
+    "agency": {
+        "agency_id": "Unknown",
+        "agency_name": "Unknown Operator",
+        "agency_url": "http://www.abidjan.district.ci/",
+        "agency_timezone": "Africa/Abidjan",
+        "agency_lang": "fr",
+        "agency_phone": "",
+        "agency_fare_url": ""
+    },
+    "feed_info": {
+        "publisher_name": "Jungle Bus",
+        "publisher_url": "http://junglebus.io",
+        "version": "0.1",
+        "start_date": "20190101",
+        "end_date": "20191231"
+    },
+    "output_file": "data/ci-abidjan.zip",
+    "selector": "ci_abidjan"
+}
