@@ -15,9 +15,9 @@
         "name_auto": "yes"
     },
     "agency": {
-        "agency_id": "Unknown",
-        "agency_name": "Unknown Operator",
-        "agency_url": "http://www.abidjan.district.ci/",
+        "agency_id": "SOTRA",
+        "agency_name": "Société des transports abidjanais (SOTRA) S.A.",
+        "agency_url": "http://sotra.ci/",
         "agency_timezone": "Africa/Abidjan",
         "agency_lang": "fr",
         "agency_phone": "",

@@ -87,6 +87,9 @@ class TripsCreatorCiAbidjan(TripsCreator):
         hour['headway'] = self._DEFAULT_HEADWAY * 60
         return hour
 
+    def _init_agency(self, feed, agency_name):
+        return feed.AddAgency(agency_name, None, self.config['agency']['agency_timezone'], agency_id=agency_name)
+
     def add_trips_to_feed(self, feed, data):
         lines = data.routes
         default_hour = self._init_default_hour()
@@ -97,12 +100,27 @@ class TripsCreatorCiAbidjan(TripsCreator):
 
         print('default_hour', default_hour)
         feed.SetDefaultServicePeriod(default_service_period)
+        # This sets the default agency to the agency in config.json
+        # Not ever used, but needed to avoid an error in feed.AddRoute() below
+        feed.GetDefaultAgency()
 
         for route_ref, line in sorted(lines.iteritems()):
             if not isinstance(line, Line):
                 continue
             print("Generating schedule for line: " + route_ref)
 
+            if 'operator' in line.tags and line.tags['operator']:
+                agency_id = line.tags['operator']
+                if agency_id == self.config['agency']['agency_name']:
+                    agency_id = self.config['agency']['agency_id']
+            else:
+                agency_id = 'Unknown Agency'
+
+            try: 
+                agency = feed.GetAgency(agency_id)
+            except KeyError:
+                agency = self._init_agency(feed, agency_id)
+            
             line_gtfs = feed.AddRoute(
                 short_name=str(line.route_id),
                 long_name=line.name,
@@ -111,7 +129,7 @@ class TripsCreatorCiAbidjan(TripsCreator):
                 # the line code (route_short_name)
                 route_type="Bus",
                 route_id=line.osm_id)
-            line_gtfs.agency_id = feed.GetDefaultAgency().agency_id
+            line_gtfs.agency_id = agency.agency_id
             line_gtfs.route_desc = ""
             line_gtfs.route_color = "1779c2"
             line_gtfs.route_text_color = "ffffff"
