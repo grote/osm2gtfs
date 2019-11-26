@@ -7,7 +7,7 @@
             "w": "-4.2973" 
         },
         "tags": {
-            "route": "bus"
+            "route": ["bus", "ferry"]
         }
     },
     "stops": {

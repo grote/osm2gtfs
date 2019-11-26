@@ -98,7 +98,6 @@ class TripsCreatorCiAbidjan(TripsCreator):
             default_service_period.service_id: [default_hour]
         }
 
-        print('default_hour', default_hour)
         feed.SetDefaultServicePeriod(default_service_period)
         # This sets the default agency to the agency in config.json
         # Not ever used, but needed to avoid an error in feed.AddRoute() below
@@ -108,7 +107,7 @@ class TripsCreatorCiAbidjan(TripsCreator):
             if not isinstance(line, Line):
                 continue
             print("Generating schedule for line: " + route_ref)
-
+          
             if 'operator' in line.tags and line.tags['operator']:
                 agency_id = line.tags['operator']
                 if agency_id == self.config['agency']['agency_name']:
@@ -120,14 +119,14 @@ class TripsCreatorCiAbidjan(TripsCreator):
                 agency = feed.GetAgency(agency_id)
             except KeyError:
                 agency = self._init_agency(feed, agency_id)
-            
+
             line_gtfs = feed.AddRoute(
                 short_name=str(line.route_id),
                 long_name=line.name,
                 # we change the route_long_name with the 'from' and 'to' tags
                 # of the route as the route_master name tag contains
                 # the line code (route_short_name)
-                route_type="Bus",
+                route_type=line.route_type,
                 route_id=line.osm_id)
             line_gtfs.agency_id = agency.agency_id
             line_gtfs.route_desc = ""
