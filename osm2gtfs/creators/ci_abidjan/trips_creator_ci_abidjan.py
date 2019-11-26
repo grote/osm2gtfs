@@ -106,7 +106,7 @@ class TripsCreatorCiAbidjan(TripsCreator):
         for route_ref, line in sorted(lines.iteritems()):
             if not isinstance(line, Line):
                 continue
-            print("Generating schedule for line: " + route_ref)
+            # print("Generating schedule for line: " + route_ref)
           
             if 'operator' in line.tags and line.tags['operator']:
                 agency_id = line.tags['operator']
