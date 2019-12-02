@@ -33,7 +33,7 @@ class Line(Element):
 
     route_type = attr.ib(default=None)
     route_desc = attr.ib(default=None)
-    route_color = attr.ib(default="#FFFFFF")
+    route_color = attr.ib(default="FFFFFF")
     route_text_color = attr.ib(default=None)
 
     # Related route variants
