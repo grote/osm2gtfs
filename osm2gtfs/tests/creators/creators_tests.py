@@ -193,10 +193,6 @@ class CreatorsTestsAbstract(unittest.TestCase):
                 gtfs_expected_result, self.required_variables['gtfs_files']),
             'The expected GTFS is not valid')
 
-        self.assertTrue(
-            CreatorsTestsHelper.is_identical_gtfs(gtfs_expected_result, gtfs_generated_result),
-            "The generated GTFS is different from the expected one")
-
         # Obtain and print basic count infos about the GTFS
         gtfs_infos = CreatorsTestsHelper.get_gtfs_infos(gtfs_generated_result)
         print("> Information about the GTFS feed: " + str(gtfs_infos))
@@ -217,8 +213,13 @@ class CreatorsTestsAbstract(unittest.TestCase):
             "Error found on stop_times for the route " + str(
                 self.required_variables['route_id_to_check']))
 
+        self.assertTrue(
+            CreatorsTestsHelper.is_identical_gtfs(gtfs_expected_result, gtfs_generated_result),
+            "The generated GTFS is different from the expected one")
 
 # pylint: disable=no-init
+
+
 class CreatorsTestsHelper():
     @staticmethod
     def is_valid_gtfs(gtfs, gtfs_files):
@@ -266,7 +267,7 @@ class CreatorsTestsHelper():
             for row in reader:
                 if row["route_id"] == route_id:
                     trips_id2.append(row['trip_id'])
-        if trips_id1 != trips_id2:
+        if len(trips_id1) != len(trips_id2):
             print("Error on count of trips found ({:d} <> {:d})".format(
                 len(trips_id1),
                 len(trips_id2)
