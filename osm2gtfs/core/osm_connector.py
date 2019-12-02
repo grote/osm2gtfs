@@ -170,14 +170,7 @@ class OsmConnector(object):
             if line is None:
                 continue
 
-            # Make sure route_id (ref) number is not already taken
-            if line.route_id in self.routes:
-                logging.warning("'Ref' of route_master already taken")
-                logging.warning(
-                    " https://osm.org/relation/%s", route_master.id)
-                logging.warning(" Skipped. Please fix in OpenStreetMap")
-            else:
-                self.routes[line.route_id] = line
+            self.routes[str(line.osm_id)] = line
 
         # Build routes from variants (missing master relation)
         for rvid, route_variant in route_variants.iteritems():
@@ -326,9 +319,7 @@ class OsmConnector(object):
 
             # Ignore whole Line if no reference number could be obtained
             if not ref:
-                logging.warning(
-                    "No 'ref' could be obtained. Skipping whole route.")
-                return None
+                ref = ""
 
         # Move to Elements class, once attributes with defaults play well
         # with inheritance https://github.com/python-attrs/attrs/issues/38
@@ -385,11 +376,7 @@ class OsmConnector(object):
         else:
             logging.warning(
                 "RouteVariant without 'ref': %s", route_variant.id)
-            logging.warning(
-                " https://osm.org/relation/%s", route_variant.id)
-            logging.warning(
-                " Whole Itinerary skipped. Please fix in OpenStreetMap")
-            return None
+            ref = ""
 
         stops = []
 
