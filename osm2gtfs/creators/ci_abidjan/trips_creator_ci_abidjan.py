@@ -107,7 +107,7 @@ class TripsCreatorCiAbidjan(TripsCreator):
             if not isinstance(line, Line):
                 continue
             # print("Generating schedule for line: " + route_ref)
-          
+
             if 'operator' in line.tags and line.tags['operator']:
                 agency_id = line.tags['operator']
                 if agency_id == self.config['agency']['agency_name']:
@@ -115,7 +115,7 @@ class TripsCreatorCiAbidjan(TripsCreator):
             else:
                 agency_id = 'Unknown Agency'
 
-            try: 
+            try:
                 agency = feed.GetAgency(agency_id)
             except KeyError:
                 agency = self._init_agency(feed, agency_id)
@@ -139,7 +139,7 @@ class TripsCreatorCiAbidjan(TripsCreator):
 
             line_hours_list = transport_hours.tagsToGtfs(line.tags)
             line_hours_dict = self._process_transport_hours(feed, line_hours_list)
-            
+
             for a_route in itineraries:
                 itinerary_hours_list = transport_hours.tagsToGtfs(a_route.tags)
 
@@ -183,8 +183,9 @@ class TripsCreatorCiAbidjan(TripsCreator):
                     else:
                         travel_time = DEFAULT_TRAVEL_TIME
 
+
                     for index_stop, a_stop in enumerate(a_route.stops):
-                        stop_id = a_stop.split('/')[-1]
+                        stop_id = a_stop
                         departure_time = datetime(2008, 11, 22, 6, 0, 0)
 
                         if index_stop == 0:
