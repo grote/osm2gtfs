@@ -1,0 +1,35 @@
+{
+    "query": {
+        "bbox": {
+            "n": "9.098851",
+            "s": "8.829752",
+            "e": "38.905763",
+            "w": "38.653249"
+        },
+        "tags": {
+            "route": "bus"
+        }
+    },
+    "stops": {
+        "name_without": "Add a name to the stop with JungleBus app",
+        "name_auto": "yes"
+    },
+    "agency": {
+        "agency_id": "AM3",
+        "agency_name": "Accra Tro tro",
+        "agency_url": "https://ama.gov.gh/welcome/transport/",
+        "agency_timezone": "Africa/Addis_Ababa",
+        "agency_lang": "en",
+        "agency_phone": "",
+        "agency_fare_url": ""
+    },
+    "feed_info": {
+        "publisher_name": "AddisMap",
+        "publisher_url": "http://junglebus.io",
+        "version": "0.1",
+        "start_date": "20190101",
+        "end_date": "20201231"
+    },
+    "output_file": "data/et-addisababa.zip",
+    "selector": "et_addisababa"
+}
