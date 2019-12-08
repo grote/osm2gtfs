@@ -9,4 +9,5 @@ class StopsCreatorEtAddisababa(StopsCreator):
     def _define_stop_id(self, stop):
         # Simply returns osm_id regardless of the osm_type as only map
         # objects of type nodes are assumed.
-        return str(stop.osm_id)
+        stop_id = stop.osm_type + "/" + str(stop.osm_id)
+        return stop_id
