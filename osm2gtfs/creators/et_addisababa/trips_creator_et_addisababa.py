@@ -88,7 +88,7 @@ class TripsCreatorEtAddisababa(TripsCreator):
 
                 for index_stop, a_stop in enumerate(a_route.stops):
                     stop_id = a_stop
-                    departure_time = datetime(2008, 11, 22, 6, 0, 0)
+                    departure_time = datetime(2019, 11, 22, 6, 0, 0)
 
                     if index_stop == 0:
                         trip_gtfs.AddStopTime(feed.GetStop(
