@@ -7,19 +7,18 @@ from osm2gtfs.creators.routes_creator import RoutesCreator
 
 
 class RoutesCreatorBrFlorianopolis(RoutesCreator):
-
     def add_routes_to_feed(self, feed, data):
-        '''
+        """
         Override routes to feed method, to prepare routes with stops
         for the handling in the custom trips creators.
-        '''
+        """
         routes = data.get_routes()
         stops = data.get_stops()
 
         # Loop through routes
         for ref, route in routes.iteritems():
             # Replace stop ids with Stop objects
-            self._fill_stops(stops['regular'], route)
+            self._fill_stops(stops["regular"], route)
         return
 
     def _fill_stops(self, stops, route):
@@ -32,8 +31,11 @@ class RoutesCreatorBrFlorianopolis(RoutesCreator):
                 # Replace stop id with Stop objects
                 looked_up_stop = self._look_up_stop(stop, stops)
                 if looked_up_stop is None:
-                    logging.error("Missing stop for route %s: https://osm.org/%s",
-                                  route.tags['ref'], route.stops[i])
+                    logging.error(
+                        "Missing stop for route %s: https://osm.org/%s",
+                        route.tags["ref"],
+                        route.stops[i],
+                    )
                 else:
                     route.stops[i] = looked_up_stop
                 i += 1

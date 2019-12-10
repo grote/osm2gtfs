@@ -18,9 +18,9 @@ class Cache(object):
         hard drive.
 
         """
-        if not os.path.isdir('data'):
-            os.mkdir('data')
-        with open(os.path.join('data', name + '.pkl'), 'wb') as f:
+        if not os.path.isdir("data"):
+            os.mkdir("data")
+        with open(os.path.join("data", name + ".pkl"), "wb") as f:
             pickle.dump(content, f, pickle.HIGHEST_PROTOCOL)
 
     @staticmethod
@@ -31,9 +31,9 @@ class Cache(object):
         file on the hard drive.
 
         """
-        filename = os.path.join('data', name + '.pkl')
+        filename = os.path.join("data", name + ".pkl")
         if os.path.isfile(filename):
-            with open(filename, 'rb') as f:
+            with open(filename, "rb") as f:
                 content = pickle.load(f)
             return content
         else:
@@ -47,9 +47,9 @@ class Cache(object):
         hard drive.
 
         """
-        if not os.path.isdir('data'):
-            os.mkdir('data')
-        with open(os.path.join('data', name), 'wb') as f:
+        if not os.path.isdir("data"):
+            os.mkdir("data")
+        with open(os.path.join("data", name), "wb") as f:
             f.write(content)
 
     @staticmethod
@@ -62,9 +62,9 @@ class Cache(object):
         :return file: The read file, or an empty dictionary in case no file
             was found
         """
-        filename = os.path.join('data', name)
+        filename = os.path.join("data", name)
         if os.path.isfile(filename):
-            with open(filename, 'rb') as f:
+            with open(filename, "rb") as f:
                 return f.read()
         else:
             return dict()

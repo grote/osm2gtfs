@@ -47,12 +47,12 @@ class Configuration(object):
 
         """
 
-        if 'schedule_source' not in self.data:
+        if "schedule_source" not in self.data:
             return None
 
         else:
-            source_file = self.data['schedule_source']
-            cached_file = self.data['selector'] + '-schedule'
+            source_file = self.data["schedule_source"]
+            cached_file = self.data["selector"] + "-schedule"
 
             # Preferably return cached data about schedule
             if refresh is False:
@@ -71,7 +71,7 @@ class Configuration(object):
             if os.path.isfile(source_file):
 
                 # Open file and add to config object
-                with open(source_file, 'r') as f:
+                with open(source_file, "r") as f:
                     schedule_source = f.read()
 
             else:
@@ -99,7 +99,7 @@ class Configuration(object):
         # Load config json file
         if args.config is not None:
             config = Configuration.load_config_file(args.config)
-        elif os.path.isfile('config.json'):
+        elif os.path.isfile("config.json"):
             with open("config.json") as json_file:
                 config = Configuration.load_config_file(json_file)
         else:
@@ -118,8 +118,8 @@ class Configuration(object):
         """
         try:
             config = json.load(configfile)
-        except ValueError, e:
-            logging.error('Config json file is invalid.')
+        except ValueError as e:
+            logging.error("Config json file is invalid.")
             logging.error(e)
             sys.exit(0)
 
@@ -136,10 +136,10 @@ class Configuration(object):
         # Get and check filename for gtfs output
         if args.output is not None:
             output_file = args.output
-        elif 'output_file' in self.data:
-            output_file = self.data['output_file']
+        elif "output_file" in self.data:
+            output_file = self.data["output_file"]
         else:
-            logging.error('No filename for gtfs file specified.')
+            logging.error("No filename for gtfs file specified.")
             sys.exit(0)
 
         return output_file
@@ -153,29 +153,36 @@ class Configuration(object):
         config = self.data
 
         start_date = False
-        if 'start_date' in config['feed_info']:
+        if "start_date" in config["feed_info"]:
             try:
                 start_date = datetime.datetime.strptime(
-                    config['feed_info']['start_date'], "%Y%m%d")
-            except ValueError, e:
+                    config["feed_info"]["start_date"], "%Y%m%d"
+                )
+            except ValueError as e:
                 logging.warning('"start_date" from config file %s', e)
 
         if not start_date:
             # Use first of current month if no start date was specified
             now = datetime.datetime.now()
             start_date = datetime.datetime.strptime(
-                now.strftime('%Y%m') + "01", "%Y%m%d")
-            config['feed_info']['start_date'] = now.strftime('%Y%m') + "01"
-            logging.info("Using the generated start date: %s", config['feed_info']['start_date'])
+                now.strftime("%Y%m") + "01", "%Y%m%d"
+            )
+            config["feed_info"]["start_date"] = now.strftime("%Y%m") + "01"
+            logging.info(
+                "Using the generated start date: %s", config["feed_info"]["start_date"]
+            )
 
         end_date = False
-        if 'end_date' in config['feed_info']:
+        if "end_date" in config["feed_info"]:
             try:
                 end_date = datetime.datetime.strptime(
-                    config['feed_info']['end_date'], "%Y%m%d")
-                logging.info("Using the end date from config file: %s",
-                             config['feed_info']['end_date'])
-            except ValueError, e:
+                    config["feed_info"]["end_date"], "%Y%m%d"
+                )
+                logging.info(
+                    "Using the end date from config file: %s",
+                    config["feed_info"]["end_date"],
+                )
+            except ValueError as e:
                 logging.warning('"end_date" from config file %s', e)
 
         if not end_date:
@@ -193,16 +200,19 @@ class Configuration(object):
                     end_date_month = "0" + end_date_month
 
             end_date_day = monthrange(end_date_year, int(end_date_month))[1]
-            end_date = datetime.datetime(day=end_date_day,
-                                         month=int(end_date_month),
-                                         year=end_date_year)
-            config['feed_info']['end_date'] = str(
-                end_date.year) + end_date_month + str(end_date.day)
-            logging.info("Using the generated end date: %s", config['feed_info']['end_date'])
+            end_date = datetime.datetime(
+                day=end_date_day, month=int(end_date_month), year=end_date_year
+            )
+            config["feed_info"]["end_date"] = (
+                str(end_date.year) + end_date_month + str(end_date.day)
+            )
+            logging.info(
+                "Using the generated end date: %s", config["feed_info"]["end_date"]
+            )
 
         # Validate dates
         if start_date > end_date:
-            logging.error('End dates finishes before start date.')
+            logging.error("End dates finishes before start date.")
             sys.exit(0)
         elif end_date - start_date > datetime.timedelta(days=364):
             logging.warning("Date range is more than one year.")

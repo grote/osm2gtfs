@@ -5,7 +5,6 @@ from osm2gtfs.core.helper import Helper
 
 
 class RoutesCreator(object):
-
     def __init__(self, config):
         self.config = config.data
 
@@ -23,14 +22,16 @@ class RoutesCreator(object):
         routes = data.get_routes()
 
         # Loop through all routes
-        for route_osm_id, route in sorted(routes.iteritems(), key=lambda k: k[1].route_id):
+        for route_osm_id, route in sorted(
+            routes.iteritems(), key=lambda k: k[1].route_id
+        ):
 
             # Add route information
             gtfs_route = feed.AddRoute(
                 route_id=self._define_route_id(route),
                 route_type=self._define_route_type(route),
                 short_name=self._define_short_name(route),
-                long_name=self._define_long_name(route)
+                long_name=self._define_long_name(route),
             )
             gtfs_route.agency_id = feed.GetDefaultAgency().agency_id
             gtfs_route.route_desc = self._define_route_description(route)
@@ -69,14 +70,14 @@ class RoutesCreator(object):
         Returns the short name for the use in the GTFS feed.
         Can be easily overridden in any creator.
         """
-        return route.route_id.encode('utf-8')
+        return route.route_id.encode("utf-8")
 
     def _define_long_name(self, route):
         """
         Returns the long name for the use in the GTFS feed.
         Can be easily overridden in any creator.
         """
-        return route.name.encode('utf-8')
+        return route.name.encode("utf-8")
 
     def _define_route_type(self, route):
         """
@@ -114,6 +115,7 @@ class RoutesCreator(object):
         if route.route_text_color is None:
             # Auto calculate text color with high contrast
             route.route_text_color = Helper.calculate_color_of_contrast(
-                route.route_color)
+                route.route_color
+            )
 
         return route.route_text_color[1:]

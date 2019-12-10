@@ -16,26 +16,40 @@ logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
 
 # Handle arguments
 parser = argparse.ArgumentParser(
-    prog='osm2gtfs', description='Create GTFS from OpenStreetMap data.')
+    prog="osm2gtfs", description="Create GTFS from OpenStreetMap data."
+)
 
 # Filename arguments for config and output file
-parser.add_argument('--config', '-c', metavar='FILE',
-                    type=argparse.FileType('r'), help='Configuration file')
-parser.add_argument('--output', '-o', metavar='FILENAME',
-                    type=str, help='Specify GTFS output zip file')
+parser.add_argument(
+    "--config",
+    "-c",
+    metavar="FILE",
+    type=argparse.FileType("r"),
+    help="Configuration file",
+)
+parser.add_argument(
+    "--output", "-o", metavar="FILENAME", type=str, help="Specify GTFS output zip file"
+)
 
 # Refresh caching arguments
 group = parser.add_mutually_exclusive_group()
-group.add_argument('--refresh-routes', action="store_true",
-                   help='Refresh OSM data for all routes')
-group.add_argument('--refresh-stops', action="store_true",
-                   help='Refresh OSM data for all stops')
-group.add_argument('--refresh-osm', action="store_true",
-                   help='Refresh all OSM data')
-group.add_argument('--refresh-schedule-source', action="store_true",
-                   help='Refresh data for time information')
-group.add_argument('--refresh-all', action="store_true",
-                   help='Refresh all OSM and time information data')
+group.add_argument(
+    "--refresh-routes", action="store_true", help="Refresh OSM data for all routes"
+)
+group.add_argument(
+    "--refresh-stops", action="store_true", help="Refresh OSM data for all stops"
+)
+group.add_argument("--refresh-osm", action="store_true", help="Refresh all OSM data")
+group.add_argument(
+    "--refresh-schedule-source",
+    action="store_true",
+    help="Refresh data for time information",
+)
+group.add_argument(
+    "--refresh-all",
+    action="store_true",
+    help="Refresh all OSM and time information data",
+)
 args = parser.parse_args()
 
 

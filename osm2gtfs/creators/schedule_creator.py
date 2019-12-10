@@ -14,6 +14,7 @@ class ScheduleCreator(object):
     https://github.com/grote/osm2gtfs/wiki/Schedule
 
     """
+
     def __init__(self, config):
         self.config = config
 
@@ -46,8 +47,8 @@ class ScheduleCreator(object):
         else:
             try:
                 schedule = json.loads(schedule_source)
-            except ValueError, e:
-                logging.error('Schedule file is invalid.')
+            except ValueError as e:
+                logging.error("Schedule file is invalid.")
                 logging.error(e)
                 sys.exit(0)
 
