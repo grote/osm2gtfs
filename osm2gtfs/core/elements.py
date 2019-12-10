@@ -10,6 +10,7 @@ class Element(object):
     Contains the common attributes all other data classes share.
 
     """
+
     osm_id = attr.ib()
     osm_type = attr.ib()
     osm_url = attr.ib()
@@ -29,6 +30,7 @@ class Line(Element):
     In GTFS this is usually represented as "route".
 
     """
+
     route_id = attr.ib()
 
     route_type = attr.ib(default=None)
@@ -40,55 +42,63 @@ class Line(Element):
     _itineraries = attr.ib(default=attr.Factory(list))
 
     def __attrs_post_init__(self):
-        '''
+        """
         Populates the object with information obtained from the tags
-        '''
+        """
         # pylint: disable=unsupported-membership-test,unsubscriptable-object
-        if 'colour' in self.tags:
-            self.route_color = self.tags['colour']
+        if "colour" in self.tags:
+            self.route_color = self.tags["colour"]
 
         # pylint: disable=unsupported-membership-test,unsubscriptable-object
-        if 'ref:colour_tx' in self.tags:
-            self.route_text_color = self.tags['ref:colour_tx']
+        if "ref:colour_tx" in self.tags:
+            self.route_text_color = self.tags["ref:colour_tx"]
 
         # pylint: disable=unsupported-membership-test,unsubscriptable-object
-        if 'route_master' in self.tags:
-            self.route_type = self.tags['route_master']
+        if "route_master" in self.tags:
+            self.route_type = self.tags["route_master"]
         else:
-            logging.warning("Route master relation without a route_master tag: %s", self.osm_url)
+            logging.warning(
+                "Route master relation without a route_master tag: %s", self.osm_url
+            )
 
             # Try to guess the type differently
-            if 'route' in self.tags:
-                self.route_type = self.tags['route']
+            if "route" in self.tags:
+                self.route_type = self.tags["route"]
             else:
                 self.route_type = "bus"
                 logging.warning(" Assuming it to be a bus line (standard).")
 
         known_route_types = {
-            'tram': 'Tram',
-            'light_rail': 'Tram',
-            'subway': 'Subway',
-            'train': 'Rail',
-            'bus': 'Bus',
-            'trolleybus': 'Bus',
-            'ferry': 'Ferry'
+            "tram": "Tram",
+            "light_rail": "Tram",
+            "subway": "Subway",
+            "train": "Rail",
+            "bus": "Bus",
+            "trolleybus": "Bus",
+            "ferry": "Ferry",
         }
 
         if self.route_type not in known_route_types:
-            logging.warning("Route master relation with an unknown route type (%s): %s",
-                            self.route_type, self.osm_url)
+            logging.warning(
+                "Route master relation with an unknown route type (%s): %s",
+                self.route_type,
+                self.osm_url,
+            )
             logging.warning(" Assuming it to be a bus line (standard).")
-            self.route_type = known_route_types['bus']
+            self.route_type = known_route_types["bus"]
         else:
             self.route_type = known_route_types[self.route_type]
 
     def add_itinerary(self, itinerary):
 
         if self.route_id != itinerary.route_id:
-            raise ValueError('Itinerary route ID (' +
-                             itinerary.route_id +
-                             ') does not match Line route ID (' +
-                             self.route_id + ')')
+            raise ValueError(
+                "Itinerary route ID ("
+                + itinerary.route_id
+                + ") does not match Line route ID ("
+                + self.route_id
+                + ")"
+            )
         # pylint: disable=no-member
         self._itineraries.append(itinerary)
 
@@ -107,6 +117,7 @@ class Itinerary(Element):
     In GTFS this is not exlicitly presented but used as base to create "trips"
 
     """
+
     route_id = attr.ib()
     shape = attr.ib()
 
@@ -120,20 +131,20 @@ class Itinerary(Element):
     stops = attr.ib(default=attr.Factory(list))
 
     def __attrs_post_init__(self):
-        '''
+        """
         Populates the object with information obtained from the tags
-        '''
+        """
         # pylint: disable=unsupported-membership-test,unsubscriptable-object
-        if 'from' in self.tags:
-            self.fr = self.tags['from']
+        if "from" in self.tags:
+            self.fr = self.tags["from"]
 
         # pylint: disable=unsupported-membership-test,unsubscriptable-object
-        if 'via' in self.tags:
-            self.via = self.tags['via']
+        if "via" in self.tags:
+            self.via = self.tags["via"]
 
         # pylint: disable=unsupported-membership-test,unsubscriptable-object
-        if 'to' in self.tags:
-            self.to = self.tags['to']
+        if "to" in self.tags:
+            self.to = self.tags["to"]
 
     def get_stops(self):
         return self.stops
@@ -150,6 +161,7 @@ class Station(Element):
     location_type=0 might specify a station as parent_station.
 
     """
+
     lat = attr.ib()
     lon = attr.ib()
 
@@ -180,6 +192,7 @@ class Stop(Element):
     "plattform" in the route.
 
     """
+
     lat = attr.ib()
     lon = attr.ib()
 
@@ -197,8 +210,11 @@ class Stop(Element):
         if self._parent_station is None or override is True:
             self._parent_station = identifier
         else:
-            logging.warning("Stop is part of two stop areas: https://osm.org/%s/%s",
-                            self.osm_type, self.osm_id)
+            logging.warning(
+                "Stop is part of two stop areas: https://osm.org/%s/%s",
+                self.osm_type,
+                self.osm_id,
+            )
 
     def get_parent_station(self):
         return self._parent_station

@@ -35,16 +35,21 @@ class OsmConnector(object):
         self.config = config.data
 
         # bbox from config file for querying
-        self.bbox = (str(self.config['query']['bbox']["s"]) + "," +
-                     str(self.config['query']['bbox']["w"]) + "," +
-                     str(self.config['query']['bbox']["n"]) + "," +
-                     str(self.config['query']['bbox']["e"]))
+        self.bbox = (
+            str(self.config["query"]["bbox"]["s"])
+            + ","
+            + str(self.config["query"]["bbox"]["w"])
+            + ","
+            + str(self.config["query"]["bbox"]["n"])
+            + ","
+            + str(self.config["query"]["bbox"]["e"])
+        )
 
         # tags from config file for querying
-        self.tags = ''
+        self.tags = ""
         for key, value in self.config["query"].get("tags", {}).iteritems():
             if isinstance(value, list):
-                value = '^' + '$|^'.join(value) + '$'
+                value = "^" + "$|^".join(value) + "$"
                 self.tags += unicode('["' + key + '" ~ "' + value + '"]')
             else:
                 self.tags += unicode('["' + key + '" = "' + value + '"]')
@@ -55,21 +60,21 @@ class OsmConnector(object):
             logging.info("Using tag 'public_transport:version=2'")
 
         # Define name for stops without one
-        self.stop_no_name = 'No name'
-        if 'stops' in self.config and 'name_without' in self.config['stops']:
-            self.stop_no_name = self.config['stops']['name_without'].encode()
+        self.stop_no_name = "No name"
+        if "stops" in self.config and "name_without" in self.config["stops"]:
+            self.stop_no_name = self.config["stops"]["name_without"].encode()
 
         # Check if auto stop name logic should be used
         self.auto_stop_names = False
-        if 'stops' in self.config and 'name_auto' in self.config['stops']:
-            if self.config['stops']['name_auto'] == "yes":
+        if "stops" in self.config and "name_auto" in self.config["stops"]:
+            if self.config["stops"]["name_auto"] == "yes":
                 self.auto_stop_names = True
 
         # Selector
-        if 'selector' in self.config:
-            self.selector = self.config['selector']
+        if "selector" in self.config:
+            self.selector = self.config["selector"]
         else:
-            self.selector = 'no-selector'
+            self.selector = "no-selector"
 
         # Initiate containers for data
         self.routes = {}
@@ -109,7 +114,7 @@ class OsmConnector(object):
             # Check if routes data is already built in this object
             if not self.routes:
                 # If not, try to get routes data from file cache
-                self.routes = Cache.read_data(self.selector + '-routes')
+                self.routes = Cache.read_data(self.selector + "-routes")
             # Return cached data if found
             if bool(self.routes):
                 return self.routes
@@ -149,20 +154,15 @@ class OsmConnector(object):
                     if bool(rv):
                         rv = rv.pop()
                         logging.warning("Itinerary was assigned again:")
-                        logging.warning(
-                            "https://osm.org/relation/%s", rv.id)
+                        logging.warning("https://osm.org/relation/%s", rv.id)
                         itinerary = self._build_itinerary(rv, result, route_master)
                         if itinerary is not None:
                             itineraries[rv.id] = itinerary
                     else:
-                        logging.warning(
-                            "Warning: This relation route master:")
-                        logging.warning(
-                            " https://osm.org/relation/%s", route_master.id)
-                        logging.warning(
-                            " has a member which is not a valid itinerary:")
-                        logging.warning(
-                            " https://osm.org/relation/%s", member.ref)
+                        logging.warning("Warning: This relation route master:")
+                        logging.warning(" https://osm.org/relation/%s", route_master.id)
+                        logging.warning(" has a member which is not a valid itinerary:")
+                        logging.warning(" https://osm.org/relation/%s", member.ref)
 
             # Create Line object from route master
             line = self._build_line(route_master, itineraries)
@@ -173,8 +173,7 @@ class OsmConnector(object):
             # Make sure route_id (ref) number is not already taken
             if line.route_id in self.routes:
                 logging.warning("'Ref' of route_master already taken")
-                logging.warning(
-                    " https://osm.org/relation/%s", route_master.id)
+                logging.warning(" https://osm.org/relation/%s", route_master.id)
                 logging.warning(" Skipped. Please fix in OpenStreetMap")
             else:
                 self.routes[line.route_id] = line
@@ -182,8 +181,7 @@ class OsmConnector(object):
         # Build routes from variants (missing master relation)
         for rvid, route_variant in route_variants.iteritems():
             logging.warning("Route (variant) without route_master")
-            logging.warning(
-                " https://osm.org/relation/%s", route_variant.id)
+            logging.warning(" https://osm.org/relation/%s", route_variant.id)
             logging.warning(" Please fix in OpenStreetMap")
             itinerary = self._build_itinerary(route_variant, result, False)
 
@@ -191,8 +189,7 @@ class OsmConnector(object):
             if itinerary is not None:
                 if itinerary.route_id in self.routes:
                     logging.warning("Route with existing route_id (ref)")
-                    logging.warning(
-                        " https://osm.org/relation/%s", route_variant.id)
+                    logging.warning(" https://osm.org/relation/%s", route_variant.id)
                     logging.warning(" Skipped. Please fix in OpenStreetMap")
                 else:
                     # Create Line from route variant
@@ -203,7 +200,7 @@ class OsmConnector(object):
                         self.routes[line.route_id] = line
 
         # Cache data
-        Cache.write_data(self.selector + '-routes', self.routes)
+        Cache.write_data(self.selector + "-routes", self.routes)
 
         return self.routes
 
@@ -238,8 +235,7 @@ class OsmConnector(object):
             # Check if stops data is already built in this object
             if not self.stops:
                 # If not, try to get stops data from file cache
-                self.stops = Cache.read_data(
-                    self.selector + '-stops')
+                self.stops = Cache.read_data(self.selector + "-stops")
 
             if bool(self.stops):
                 # Maybe check for unnamed stop names
@@ -254,35 +250,36 @@ class OsmConnector(object):
 
         # Obtain raw data about routes from OpenStreetMap
         result = self._query_stops()
-        self.stops['regular'] = {}
-        self.stops['stations'] = {}
+        self.stops["regular"] = {}
+        self.stops["stations"] = {}
 
         # Build stops from ways (polygons)
         for stop in result.ways:
             osm_type = "way"
             stop_object = self._build_stop(stop, osm_type)
             if stop_object:
-                self.stops['regular'][osm_type + "/" + str(
-                    stop_object.osm_id)] = stop_object
+                self.stops["regular"][
+                    osm_type + "/" + str(stop_object.osm_id)
+                ] = stop_object
 
         # Build stops from nodes
         for stop in result.nodes:
             osm_type = "node"
             stop_object = self._build_stop(stop, osm_type)
             if stop_object:
-                self.stops['regular'][osm_type + "/" + str(
-                    stop_object.osm_id)] = stop_object
+                self.stops["regular"][
+                    osm_type + "/" + str(stop_object.osm_id)
+                ] = stop_object
 
         # Build stations from stop_area relations
         for stop in result.relations:
             osm_type = "relation"
             stop_object = self._build_station(stop, osm_type)
             if stop_object:
-                self.stops['stations'][osm_type + "/" + str(
-                    stop.id)] = stop_object
+                self.stops["stations"][osm_type + "/" + str(stop.id)] = stop_object
 
         # Cache data
-        Cache.write_data(self.selector + '-stops', self.stops)
+        Cache.write_data(self.selector + "-stops", self.stops)
 
         # Maybe check for unnamed stop names
         if self.auto_stop_names:
@@ -300,65 +297,69 @@ class OsmConnector(object):
 
         if len(itineraries) == 0:
             logging.warning(
-                "Relation without valid members. Please fix in OpenStreetMap")
-            logging.warning(
-                " https://osm.org/relation/%s", route_master.id)
-            logging.warning(
-                " Skipping whole route without valid members.")
+                "Relation without valid members. Please fix in OpenStreetMap"
+            )
+            logging.warning(" https://osm.org/relation/%s", route_master.id)
+            logging.warning(" Skipping whole route without valid members.")
             return None
 
-        if 'ref' in route_master.tags:
-            ref = route_master.tags['ref']
+        if "ref" in route_master.tags:
+            ref = route_master.tags["ref"]
         else:
-            logging.warning(
-                "Relation without 'ref'. Please fix in OpenStreetMap")
-            logging.warning(
-                " https://osm.org/relation/%s", route_master.id)
+            logging.warning("Relation without 'ref'. Please fix in OpenStreetMap")
+            logging.warning(" https://osm.org/relation/%s", route_master.id)
 
             # Check if a ref can be taken from one of the itineraries
             ref = False
             for itinerary in list(itineraries.values()):
                 if not ref and itinerary.route_id:
                     ref = itinerary.route_id
-                    logging.warning(
-                        "Using 'ref' from member variant instead")
+                    logging.warning("Using 'ref' from member variant instead")
                     logging.warning("%s", itinerary.osm_url)
 
             # Ignore whole Line if no reference number could be obtained
             if not ref:
-                logging.warning(
-                    "No 'ref' could be obtained. Skipping whole route.")
+                logging.warning("No 'ref' could be obtained. Skipping whole route.")
                 return None
 
         # Move to Elements class, once attributes with defaults play well
         # with inheritance https://github.com/python-attrs/attrs/issues/38
-        osm_url = "https://osm.org/" + str(
-            osm_type) + "/" + str(route_master.id)
-        if 'name' in route_master.tags:
-            name = route_master.tags['name']
-        elif 'ref' in route_master.tags:
-            name = route_master.tags['ref']
+        osm_url = "https://osm.org/" + str(osm_type) + "/" + str(route_master.id)
+        if "name" in route_master.tags:
+            name = route_master.tags["name"]
+        elif "ref" in route_master.tags:
+            name = route_master.tags["ref"]
         else:
             name = None
 
         # Normalize route color information
-        if 'colour' in route_master.tags:
+        if "colour" in route_master.tags:
             try:
                 # Check if colour is a valid hex format
-                route_master.tags['colour'] = webcolors.normalize_hex(
-                    route_master.tags['colour'])
+                route_master.tags["colour"] = webcolors.normalize_hex(
+                    route_master.tags["colour"]
+                )
             except ValueError:
                 try:
                     # Convert web color names into rgb hex values
-                    route_master.tags['colour'] = webcolors.name_to_hex(
-                        route_master.tags['colour'])
+                    route_master.tags["colour"] = webcolors.name_to_hex(
+                        route_master.tags["colour"]
+                    )
                 except ValueError:
-                    logging.warning("Invalid colour: %s found in OSM data",
-                                    route_master.tags['colour'])
+                    logging.warning(
+                        "Invalid colour: %s found in OSM data",
+                        route_master.tags["colour"],
+                    )
 
         # Create Line (route master) object
-        line = Line(osm_id=route_master.id, osm_type=osm_type, osm_url=osm_url,
-                    tags=route_master.tags, name=name, route_id=ref)
+        line = Line(
+            osm_id=route_master.id,
+            osm_type=osm_type,
+            osm_url=osm_url,
+            tags=route_master.tags,
+            name=name,
+            route_id=ref,
+        )
 
         # Add Itinerary objects (route variants) to Line (route master)
         for itinerary in list(itineraries.values()):
@@ -366,7 +367,8 @@ class OsmConnector(object):
                 line.add_itinerary(itinerary)
             except ValueError:
                 logging.warning(
-                    "Itinerary ID doesn't match line ID. Please fix in OSM.")
+                    "Itinerary ID doesn't match line ID. Please fix in OSM."
+                )
                 logging.warning("%s", line.osm_url)
                 itinerary.route_id = line.route_id
                 line.add_itinerary(itinerary)
@@ -380,15 +382,12 @@ class OsmConnector(object):
 
         """
         osm_type = "relation"
-        if 'ref' in route_variant.tags:
-            ref = route_variant.tags['ref']
+        if "ref" in route_variant.tags:
+            ref = route_variant.tags["ref"]
         else:
-            logging.warning(
-                "RouteVariant without 'ref': %s", route_variant.id)
-            logging.warning(
-                " https://osm.org/relation/%s", route_variant.id)
-            logging.warning(
-                " Whole Itinerary skipped. Please fix in OpenStreetMap")
+            logging.warning("RouteVariant without 'ref': %s", route_variant.id)
+            logging.warning(" https://osm.org/relation/%s", route_variant.id)
+            logging.warning(" Whole Itinerary skipped. Please fix in OpenStreetMap")
             return None
 
         stops = []
@@ -404,7 +403,9 @@ class OsmConnector(object):
                     otype = "way"
 
                 else:
-                    logging.warning("Unknown type of itinerary member: %s", stop_candidate)
+                    logging.warning(
+                        "Unknown type of itinerary member: %s", stop_candidate
+                    )
                     continue
 
                 stops.append(otype + "/" + str(stop_candidate.ref))
@@ -416,21 +417,27 @@ class OsmConnector(object):
 
         # Move to Elements class, once attributes with defaults play well with
         # inheritance https://github.com/python-attrs/attrs/issues/38
-        osm_url = "https://osm.org/" + str(
-            osm_type) + "/" + str(route_variant.id)
-        if 'name' in route_variant.tags:
-            name = route_variant.tags['name']
-        elif 'ref' in route_variant.tags:
-            name = route_variant.tags['ref']
+        osm_url = "https://osm.org/" + str(osm_type) + "/" + str(route_variant.id)
+        if "name" in route_variant.tags:
+            name = route_variant.tags["name"]
+        elif "ref" in route_variant.tags:
+            name = route_variant.tags["ref"]
         else:
             name = None
 
         shape = self._generate_shape(route_variant, query_result_set)
 
-        rv = Itinerary(osm_id=route_variant.id, osm_type=osm_type,
-                       osm_url=osm_url, name=name, tags=route_variant.tags,
-                       route_id=ref, shape=shape, line=parent_identifier,
-                       stops=stops)
+        rv = Itinerary(
+            osm_id=route_variant.id,
+            osm_type=osm_type,
+            osm_url=osm_url,
+            name=name,
+            tags=route_variant.tags,
+            route_id=ref,
+            shape=shape,
+            line=parent_identifier,
+            stops=stops,
+        )
         return rv
 
     def _build_stop(self, stop, osm_type):
@@ -443,30 +450,32 @@ class OsmConnector(object):
         if self._is_valid_stop_candidate(stop):
 
             # Make sure name is not empty
-            if 'name' not in stop.tags:
-                stop.tags['name'] = "[" + self.stop_no_name + "]"
+            if "name" not in stop.tags:
+                stop.tags["name"] = "[" + self.stop_no_name + "]"
 
             # Ways don't have a pair of coordinates and need to be calculated
             if osm_type == "way":
-                (stop.lat, stop.lon) = Helper.get_center_of_nodes(
-                    stop.get_nodes())
+                (stop.lat, stop.lon) = Helper.get_center_of_nodes(stop.get_nodes())
 
             # Move to Elements class, once attributes with defaults play well
             # with inheritance https://github.com/python-attrs/attrs/issues/38
-            osm_url = "https://osm.org/" + str(
-                osm_type) + "/" + str(stop.id)
+            osm_url = "https://osm.org/" + str(osm_type) + "/" + str(stop.id)
 
             # Create and return Stop object
-            stop = Stop(osm_id=stop.id, osm_type=osm_type, osm_url=osm_url,
-                        tags=stop.tags, name=stop.tags['name'], lat=stop.lat,
-                        lon=stop.lon)
+            stop = Stop(
+                osm_id=stop.id,
+                osm_type=osm_type,
+                osm_url=osm_url,
+                tags=stop.tags,
+                name=stop.tags["name"],
+                lat=stop.lat,
+                lon=stop.lon,
+            )
             return stop
 
         else:
-            logging.warning(
-                "Warning: Potential stop is invalid and has been ignored.")
-            logging.warning(
-                " Check tagging: https://osm.org/%s/%s", osm_type, stop.id)
+            logging.warning("Warning: Potential stop is invalid and has been ignored.")
+            logging.warning(" Check tagging: https://osm.org/%s/%s", osm_type, stop.id)
             return None
 
     def _build_station(self, stop_area, osm_type):
@@ -482,21 +491,23 @@ class OsmConnector(object):
 
         """
         # Check relation to be a station or used differently
-        if 'route' in stop_area.tags:
+        if "route" in stop_area.tags:
             return None
         else:
             # Check tagging whether this is a stop area.
-            if 'public_transport' not in stop_area.tags:
+            if "public_transport" not in stop_area.tags:
+                logging.warning("Potential station has no public_transport tag.")
                 logging.warning(
-                    "Potential station has no public_transport tag.")
-                logging.warning(
-                    " Please fix on OSM: https://osm.org/%s/%s", osm_type, stop_area.id)
+                    " Please fix on OSM: https://osm.org/%s/%s", osm_type, stop_area.id
+                )
                 return None
-            elif stop_area.tags['public_transport'] != 'stop_area':
+            elif stop_area.tags["public_transport"] != "stop_area":
                 logging.warning(
-                    "Warning: Potential station is not tagged as stop_area.")
+                    "Warning: Potential station is not tagged as stop_area."
+                )
                 logging.warning(
-                    " Please fix on OSM: https://osm.org/%s/%s", osm_type, stop_area.id)
+                    " Please fix on OSM: https://osm.org/%s/%s", osm_type, stop_area.id
+                )
                 return None
 
         # Analzyse member objects (stops) of this stop area
@@ -512,11 +523,11 @@ class OsmConnector(object):
 
                 identifier = member_osm_type + "/" + str(member.ref)
 
-                if identifier in self.stops['regular']:
+                if identifier in self.stops["regular"]:
 
                     # Collect the Stop objects that are members
                     # of this Station
-                    members[identifier] = self.stops['regular'][identifier]
+                    members[identifier] = self.stops["regular"][identifier]
                 else:
                     logging.error("Station member was not found in data")
                     logging.error(" https://osm.org/relation/%s", stop_area.id)
@@ -531,12 +542,13 @@ class OsmConnector(object):
 
         elif len(members) == 1:
             logging.warning(
-                "OSM stop area has only one platform and can't be used as a GTFS station:")
+                "OSM stop area has only one platform and can't be used as a GTFS station:"
+            )
             logging.warning(" https://osm.org/relation/%s", stop_area.id)
             return None
 
         # Check name of stop area
-        if 'name' not in stop_area.tags:
+        if "name" not in stop_area.tags:
             logging.warning("Stop area without name. Please fix in OpenStreetMap:")
             logging.warning(" https://osm.org/relation/%s", stop_area.id)
             stop_area.name = self.stop_no_name
@@ -545,19 +557,22 @@ class OsmConnector(object):
 
         # Calculate coordinates for stop area based on the center of it's
         # members
-        stop_area.lat, stop_area.lon = Helper.get_center_of_nodes(
-            members.values())
+        stop_area.lat, stop_area.lon = Helper.get_center_of_nodes(members.values())
 
         # Move to Elements class, once attributes with defaults play well
         # with inheritance https://github.com/python-attrs/attrs/issues/38
-        osm_url = "https://osm.org/" + str(
-            osm_type) + "/" + str(stop_area.id)
+        osm_url = "https://osm.org/" + str(osm_type) + "/" + str(stop_area.id)
 
         # Create and return Station object
-        station = Station(osm_id=stop_area.id, osm_type=osm_type,
-                          osm_url=osm_url, tags=stop_area.tags,
-                          name=stop_area.name, lat=stop_area.lat,
-                          lon=stop_area.lon)
+        station = Station(
+            osm_id=stop_area.id,
+            osm_type=osm_type,
+            osm_url=osm_url,
+            tags=stop_area.tags,
+            name=stop_area.name,
+            lat=stop_area.lat,
+            lon=stop_area.lon,
+        )
         station.set_members(members)
 
         logging.info("Stop area (OSM) has been used to create a station (GTFS):\n")
@@ -588,7 +603,10 @@ class OsmConnector(object):
             ( .routes;.masters;._; );
 
             /* Return tags for elements and roles for relation members. */
-            );out body;""" % (self.tags, self.bbox)
+            );out body;""" % (
+            self.tags,
+            self.bbox,
+        )
         logging.info(query_str)
         return api.query(query_str)
 
@@ -619,7 +637,10 @@ class OsmConnector(object):
             foreach.nodes(
             rel(bn:"platform")["public_transport"="stop_area"];
             out body;
-            );""" % (self.tags, self.bbox)
+            );""" % (
+            self.tags,
+            self.bbox,
+        )
         logging.info(query_str)
         return api.query(query_str)
 
@@ -649,8 +670,10 @@ class OsmConnector(object):
             way_nodes = []
             for node in nodes:
                 way_nodes.append(node.id)
-                node_geography[node.id] = {'lat': float(
-                    node.lat), 'lon': float(node.lon)}
+                node_geography[node.id] = {
+                    "lat": float(node.lat),
+                    "lon": float(node.lon),
+                }
 
             if len(shape_sorter) == 0:
                 shape_sorter.extend(way_nodes)
@@ -669,10 +692,11 @@ class OsmConnector(object):
                 shape_sorter.reverse()
                 shape_sorter.extend(reversed(way_nodes))
             else:
-                logging.warning("Route has non-matching ways: https://osm.org/relation/%s",
-                                route_variant.id)
                 logging.warning(
-                    "  Problem at: https://osm.org/way/%s", way)
+                    "Route has non-matching ways: https://osm.org/relation/%s",
+                    route_variant.id,
+                )
+                logging.warning("  Problem at: https://osm.org/way/%s", way)
                 break
 
         for sorted_node in shape_sorter:
@@ -686,16 +710,16 @@ class OsmConnector(object):
         :return bool: Returns True or False
 
         """
-        if 'public_transport' in stop.tags:
-            if stop.tags['public_transport'] == 'platform':
+        if "public_transport" in stop.tags:
+            if stop.tags["public_transport"] == "platform":
                 return True
-            elif stop.tags['public_transport'] == 'station':
+            elif stop.tags["public_transport"] == "station":
                 return True
-        if 'highway' in stop.tags:
-            if stop.tags['highway'] == 'bus_stop':
+        if "highway" in stop.tags:
+            if stop.tags["highway"] == "bus_stop":
                 return True
-        if 'amenity' in stop.tags:
-            if stop.tags['amenity'] == 'bus_station':
+        if "amenity" in stop.tags:
+            if stop.tags["amenity"] == "bus_station":
                 return True
         return False
 
@@ -707,16 +731,17 @@ class OsmConnector(object):
 
         """
         # Loop through all stops
-        for stop in self.stops['regular'].values():
+        for stop in self.stops["regular"].values():
 
             # If there is no name, query one intelligently from OSM
             if stop.name == "[" + self.stop_no_name + "]":
                 self._find_best_name_for_unnamed_stop(stop)
-                logging.info("* Found alternative stop name: " +
-                             stop.name + " - " + stop.osm_url)
+                logging.info(
+                    "* Found alternative stop name: " + stop.name + " - " + stop.osm_url
+                )
 
                 # Cache stops with newly created stop names
-                Cache.write_data(self.selector + '-stops', self.stops)
+                Cache.write_data(self.selector + "-stops", self.stops)
 
     def _find_best_name_for_unnamed_stop(self, stop):
         """Define name for stop without explicit name based on sourroundings
@@ -724,7 +749,8 @@ class OsmConnector(object):
         """
         api = overpy.Overpass()
 
-        result = api.query("""
+        result = api.query(
+            """
         <osm-script>
           <query type="way">
             <around lat="%s" lon="%s" radius="50.0"/>
@@ -742,18 +768,20 @@ class OsmConnector(object):
           </query>
           <print order="quadtile"/>
         </osm-script>
-        """ % (stop.lat, stop.lon, stop.lat, stop.lon))
+        """
+            % (stop.lat, stop.lon, stop.lat, stop.lon)
+        )
 
         candidates = []
 
         # get all node candidates
         for node in result.get_nodes():
-            if 'name' in node.tags and node.tags["name"] is not None:
+            if "name" in node.tags and node.tags["name"] is not None:
                 candidates.append(node)
 
         # get way node candidates
         for way in result.get_ways():
-            if 'name' in way.tags and way.tags["name"] is not None:
+            if "name" in way.tags and way.tags["name"] is not None:
                 candidates.append(way)
 
         # leave if no candidates
@@ -769,19 +797,12 @@ class OsmConnector(object):
         for candidate in candidates:
             if isinstance(candidate, overpy.Way):
                 lat, lon = Helper.get_center_of_nodes(
-                    candidate.get_nodes(resolve_missing=True))
-                distance = util.ApproximateDistance(
-                    lat,
-                    lon,
-                    stop.lat,
-                    stop.lon
+                    candidate.get_nodes(resolve_missing=True)
                 )
+                distance = util.ApproximateDistance(lat, lon, stop.lat, stop.lon)
             else:
                 distance = util.ApproximateDistance(
-                    candidate.lat,
-                    candidate.lon,
-                    stop.lat,
-                    stop.lon
+                    candidate.lat, candidate.lon, stop.lat, stop.lon
                 )
             if distance < winner_distance:
                 winner = candidate
