@@ -11,11 +11,10 @@ from osm2gtfs.creators.trips_creator import TripsCreator
 
 
 class CreatorFactory(object):
-
     def __init__(self, config):
         self.config = config
-        if 'selector' in self.config.data:
-            self.selector = self.config.data['selector']
+        if "selector" in self.config.data:
+            self.selector = self.config.data["selector"]
         else:
             self.selector = None
 
@@ -33,9 +32,11 @@ class CreatorFactory(object):
         try:
             module = importlib.import_module(
                 ".creators." + selector + ".agency_creator_" + selector,
-                package="osm2gtfs")
+                package="osm2gtfs",
+            )
             agency_creator_override = getattr(
-                module, "AgencyCreator" + self._generate_class_name(selector))
+                module, "AgencyCreator" + self._generate_class_name(selector)
+            )
             logging.info("Agency creator: %s", selector)
             return agency_creator_override(self.config)
         except ImportError:
@@ -48,9 +49,11 @@ class CreatorFactory(object):
         try:
             module = importlib.import_module(
                 ".creators." + selector + ".feed_info_creator_" + selector,
-                package="osm2gtfs")
+                package="osm2gtfs",
+            )
             feed_info_creator_override = getattr(
-                module, "FeedInfoCreator" + self._generate_class_name(selector))
+                module, "FeedInfoCreator" + self._generate_class_name(selector)
+            )
             logging.info("Feed info creator: %s", selector)
             return feed_info_creator_override(self.config)
         except ImportError:
@@ -63,9 +66,11 @@ class CreatorFactory(object):
         try:
             module = importlib.import_module(
                 ".creators." + selector + ".routes_creator_" + selector,
-                package="osm2gtfs")
+                package="osm2gtfs",
+            )
             routes_creator_override = getattr(
-                module, "RoutesCreator" + self._generate_class_name(selector))
+                module, "RoutesCreator" + self._generate_class_name(selector)
+            )
             logging.info("Routes creator: %s", selector)
             return routes_creator_override(self.config)
         except ImportError:
@@ -78,9 +83,11 @@ class CreatorFactory(object):
         try:
             module = importlib.import_module(
                 ".creators." + selector + ".stops_creator_" + selector,
-                package="osm2gtfs")
+                package="osm2gtfs",
+            )
             stops_creator_override = getattr(
-                module, "StopsCreator" + self._generate_class_name(selector))
+                module, "StopsCreator" + self._generate_class_name(selector)
+            )
             logging.info("Stops creator: %s", selector)
             return stops_creator_override(self.config)
         except ImportError:
@@ -93,9 +100,11 @@ class CreatorFactory(object):
         try:
             module = importlib.import_module(
                 ".creators." + selector + ".schedule_creator_" + selector,
-                package="osm2gtfs")
+                package="osm2gtfs",
+            )
             schedule_creator_override = getattr(
-                module, "ScheduleCreator" + self._generate_class_name(selector))
+                module, "ScheduleCreator" + self._generate_class_name(selector)
+            )
             logging.info("Schedule creator: %s", selector)
             return schedule_creator_override(self.config)
         except ImportError:
@@ -108,9 +117,11 @@ class CreatorFactory(object):
         try:
             module = importlib.import_module(
                 ".creators." + selector + ".trips_creator_" + selector,
-                package="osm2gtfs")
+                package="osm2gtfs",
+            )
             trips_creator_override = getattr(
-                module, "TripsCreator" + self._generate_class_name(selector))
+                module, "TripsCreator" + self._generate_class_name(selector)
+            )
             logging.info("Trips creator: %s", selector)
             return trips_creator_override(self.config)
         except ImportError:

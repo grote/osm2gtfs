@@ -5,7 +5,6 @@ import transitfeed
 
 
 class StopsCreator(object):
-
     def __init__(self, config):
         self.config = config
 
@@ -21,8 +20,8 @@ class StopsCreator(object):
         It also unites stops in stations based on stop_areas in OpenStreetMap.
         """
         all_stops = data.get_stops()
-        regular_stops = all_stops['regular']
-        parent_stations = all_stops['stations']
+        regular_stops = all_stops["regular"]
+        parent_stations = all_stops["stations"]
 
         # Loop through all stations and prepare stops
         for station in parent_stations.values():
@@ -83,24 +82,25 @@ class StopsCreator(object):
         stop_name = self._define_stop_name(stop)
 
         # Collect all data together for the stop creation
-        field_dict = {'stop_id': self._define_stop_id(stop),
-                      'stop_name': stop_name,
-                      'stop_lat': float(stop.lat),
-                      'stop_lon': float(stop.lon),
-                      'location_type': stop.location_type,
-                      'parent_station': parent_station
-                      }
+        field_dict = {
+            "stop_id": self._define_stop_id(stop),
+            "stop_name": stop_name,
+            "stop_lat": float(stop.lat),
+            "stop_lon": float(stop.lon),
+            "location_type": stop.location_type,
+            "parent_station": parent_station,
+        }
 
         # Add stop to GTFS object
         feed.AddStopObject(transitfeed.Stop(field_dict=field_dict))
 
         if type(stop_name).__name__ == "unicode":
-            stop_name = stop_name.encode('utf-8')
+            stop_name = stop_name.encode("utf-8")
 
         logging.info("Added stop: %s - %s", stop_name, stop.osm_url)
 
         # Return the stop_id of the stop added
-        return field_dict['stop_id']
+        return field_dict["stop_id"]
 
     def _define_stop_id(self, stop):
         """
@@ -113,9 +113,9 @@ class StopsCreator(object):
 
         #  Use a GTFS stop_id coming from OpenStreetMap data
         if "ref:gtfs" in stop.tags:
-            stop_id = stop.tags['ref:gtfs']
+            stop_id = stop.tags["ref:gtfs"]
         elif "ref" in stop.tags:
-            stop_id = stop.tags['ref']
+            stop_id = stop.tags["ref"]
 
         # Use a GTFS stop_id matching to OpenStreetMap objects
         else:

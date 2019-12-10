@@ -5,7 +5,6 @@ import transitfeed
 
 
 class AgencyCreator(object):
-
     def __init__(self, config):
         self.config = config.data
 
@@ -25,8 +24,15 @@ class AgencyCreator(object):
 
         Return a transitfeed.Agency object
         """
-        fields = ['agency_name', 'agency_url', 'agency_timezone', 'agency_id',
-                  'agency_lang', 'agency_phone', 'agency_fare_url']
+        fields = [
+            "agency_name",
+            "agency_url",
+            "agency_timezone",
+            "agency_id",
+            "agency_lang",
+            "agency_phone",
+            "agency_fare_url",
+        ]
         data_dict = {}
         for field_name in fields:
             if field_name in self.config["agency"]:
@@ -34,7 +40,9 @@ class AgencyCreator(object):
                 if field_value is not None and field_value != "":
                     data_dict[field_name] = field_value
             else:
-                logging.warning("Key '%s' was not found in the config file.", field_name)
+                logging.warning(
+                    "Key '%s' was not found in the config file.", field_name
+                )
 
         agency = transitfeed.Agency(field_dict=data_dict)
 

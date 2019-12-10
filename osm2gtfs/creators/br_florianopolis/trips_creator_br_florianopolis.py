@@ -11,13 +11,15 @@ from osm2gtfs.core.elements import Line, Itinerary, Stop
 
 DEBUG_ROUTE = ""
 BLACKLIST = [
-    '10200', '12400',
-    '328', '466',  # Don't exist in Fenix data, should be removed from OSM
-    '665',  # needs ponto final fixing and master in OSM
-    '464'  # TODO handle special route variants (B)
+    "10200",
+    "12400",
+    "328",
+    "466",  # Don't exist in Fenix data, should be removed from OSM
+    "665",  # needs ponto final fixing and master in OSM
+    "464",  # TODO handle special route variants (B)
 ]
 
-STOP_REGEX = re.compile('(TICAN|TISAN|TICEN|TITRI|TILAG|TIRIO|TISAC).*')
+STOP_REGEX = re.compile("(TICAN|TISAN|TICEN|TITRI|TILAG|TIRIO|TISAC).*")
 
 WEEKDAY = "Dias Úteis"
 SATURDAY = "Sábado"
@@ -27,28 +29,29 @@ NO_DURATION = "não encontrado"
 
 
 class TripsCreatorBrFlorianopolis(TripsCreator):
-
     def __init__(self, config):
         super(TripsCreatorBrFlorianopolis, self).__init__(config)
 
-        self.start_date = datetime.strptime(self.config['feed_info']['start_date'], "%Y%m%d")
+        self.start_date = datetime.strptime(
+            self.config["feed_info"]["start_date"], "%Y%m%d"
+        )
 
         self.service_weekday = transitfeed.ServicePeriod("weekday")
-        self.service_weekday.SetStartDate(self.config['feed_info']['start_date'])
-        self.service_weekday.SetEndDate(self.config['feed_info']['end_date'])
+        self.service_weekday.SetStartDate(self.config["feed_info"]["start_date"])
+        self.service_weekday.SetEndDate(self.config["feed_info"]["end_date"])
         self.service_weekday.SetWeekdayService(True)
         self.service_weekday.SetWeekendService(False)
 
         self.service_saturday = transitfeed.ServicePeriod("saturday")
-        self.service_saturday.SetStartDate(self.config['feed_info']['start_date'])
-        self.service_saturday.SetEndDate(self.config['feed_info']['end_date'])
+        self.service_saturday.SetStartDate(self.config["feed_info"]["start_date"])
+        self.service_saturday.SetEndDate(self.config["feed_info"]["end_date"])
         self.service_saturday.SetWeekdayService(False)
         self.service_saturday.SetWeekendService(False)
         self.service_saturday.SetDayOfWeekHasService(5, True)
 
         self.service_sunday = transitfeed.ServicePeriod("sunday")
-        self.service_sunday.SetStartDate(self.config['feed_info']['start_date'])
-        self.service_sunday.SetEndDate(self.config['feed_info']['end_date'])
+        self.service_sunday.SetStartDate(self.config["feed_info"]["start_date"])
+        self.service_sunday.SetEndDate(self.config["feed_info"]["end_date"])
         self.service_sunday.SetWeekdayService(False)
         self.service_sunday.SetWeekendService(False)
         self.service_sunday.SetDayOfWeekHasService(6, True)
@@ -62,12 +65,12 @@ class TripsCreatorBrFlorianopolis(TripsCreator):
         feed.AddServicePeriodObject(self.service_sunday)
 
         # Get Fenix schedule data from source file
-        linhas = data.schedule['data']
+        linhas = data.schedule["data"]
 
         # Try to find OSM routes in Fenix data
         for route_ref, route in sorted(routes.iteritems(), key=lambda k: k[1].route_id):
-            if 'ref' in route.tags:
-                route_ref = route.tags['ref']
+            if "ref" in route.tags:
+                route_ref = route.tags["ref"]
             else:
                 continue
 
@@ -75,30 +78,40 @@ class TripsCreatorBrFlorianopolis(TripsCreator):
 
             if route_ref not in BLACKLIST and route_ref in linhas:
                 linha = linhas[route_ref]
-                route.name = linha['nome'].encode('utf-8')
-                route.last_update = datetime.strptime(linha['alterado_em'], "%d/%m/%Y")
+                route.name = linha["nome"].encode("utf-8")
+                route.last_update = datetime.strptime(linha["alterado_em"], "%d/%m/%Y")
                 # save duration
-                if linha['tempo_de_percurso'].encode('utf-8') == NO_DURATION:
+                if linha["tempo_de_percurso"].encode("utf-8") == NO_DURATION:
                     sys.stderr.write(
-                        "ERROR: Route has no duration in Fenix data: " + str(route) + "\n")
+                        "ERROR: Route has no duration in Fenix data: "
+                        + str(route)
+                        + "\n"
+                    )
                     continue
-                duration_str = linha['tempo_de_percurso'].replace('aproximado', '')
-                (hours, tmp, minutes) = duration_str.partition(':')
+                duration_str = linha["tempo_de_percurso"].replace("aproximado", "")
+                (hours, tmp, minutes) = duration_str.partition(":")
                 route.duration = timedelta(hours=int(hours), minutes=int(minutes))
-                self.add_route(feed, route, linha['horarios'], linha['operacoes'])
+                self.add_route(feed, route, linha["horarios"], linha["operacoes"])
             elif route_ref not in BLACKLIST:
                 sys.stderr.write(
-                    "Route not found in Fenix data: [" + route.route_id + "] " + str(
-                        route.osm_url) + "\n")
+                    "Route not found in Fenix data: ["
+                    + route.route_id
+                    + "] "
+                    + str(route.osm_url)
+                    + "\n"
+                )
 
     def add_route(self, feed, route, horarios, operacoes):
         line = feed.AddRoute(
             short_name=route.route_id,
-            long_name=route.name.decode('utf8'),
-            route_type="Bus")
+            long_name=route.name.decode("utf8"),
+            route_type="Bus",
+        )
         line.agency_id = feed.GetDefaultAgency().agency_id
         line.route_desc = "TEST DESCRIPTION"
-        line.route_url = "http://www.consorciofenix.com.br/horarios?q=" + str(route.route_id)
+        line.route_url = "http://www.consorciofenix.com.br/horarios?q=" + str(
+            route.route_id
+        )
         line.route_color = "1779c2"
         line.route_text_color = "ffffff"
 
@@ -107,13 +120,13 @@ class TripsCreatorBrFlorianopolis(TripsCreator):
         sunday = {}
 
         for day in horarios:
-            sday = day.encode('utf-8')
+            sday = day.encode("utf-8")
             if sday.startswith(WEEKDAY):
-                weekday[sday.replace(WEEKDAY + ' - Saída ', '')] = horarios[day]
+                weekday[sday.replace(WEEKDAY + " - Saída ", "")] = horarios[day]
             elif sday.startswith(SATURDAY):
-                saturday[sday.replace(SATURDAY + ' - Saída ', '')] = horarios[day]
+                saturday[sday.replace(SATURDAY + " - Saída ", "")] = horarios[day]
             elif sday.startswith(SUNDAY):
-                sunday[sday.replace(SUNDAY + ' - Saída ', '')] = horarios[day]
+                sunday[sday.replace(SUNDAY + " - Saída ", "")] = horarios[day]
             else:
                 raise RuntimeError("Unknown day in Fenix data: " + day)
 
@@ -123,20 +136,24 @@ class TripsCreatorBrFlorianopolis(TripsCreator):
         elif self.exceptions != operacoes:
             previous_exceptions = set()
             for ex in self.exceptions:
-                previous_exceptions.add(ex['data'])
+                previous_exceptions.add(ex["data"])
             this_exceptions = set()
             for ex in operacoes:
-                this_exceptions.add(ex['data'])
+                this_exceptions.add(ex["data"])
             logging.error("Route has different service exceptions.")
             logging.error(
-                "Missing service exceptions: %s", str(previous_exceptions - this_exceptions))
+                "Missing service exceptions: %s",
+                str(previous_exceptions - this_exceptions),
+            )
             logging.error(
-                "Additional service exceptions: %s", str(this_exceptions - previous_exceptions))
+                "Additional service exceptions: %s",
+                str(this_exceptions - previous_exceptions),
+            )
 
         # schedule exceptions
         for o in operacoes:
             date = datetime.strptime(o["data"], "%Y-%m-%d")
-            day = o["tipo"].encode('utf-8')
+            day = o["tipo"].encode("utf-8")
 
             # only include exceptions within service period
             if date < self.start_date:
@@ -152,7 +169,9 @@ class TripsCreatorBrFlorianopolis(TripsCreator):
 
         # regular schedule
         self.add_trips_by_day(feed, line, self.service_weekday, route, weekday, WEEKDAY)
-        self.add_trips_by_day(feed, line, self.service_saturday, route, saturday, SATURDAY)
+        self.add_trips_by_day(
+            feed, line, self.service_saturday, route, saturday, SATURDAY
+        )
         self.add_trips_by_day(feed, line, self.service_sunday, route, sunday, SUNDAY)
 
     def add_trips_by_day(self, feed, line, service, route, horarios, day):
@@ -181,8 +200,8 @@ class TripsCreatorBrFlorianopolis(TripsCreator):
             return
 
         if route.route_id == DEBUG_ROUTE:
-            print "\n\n\n" + str(route)
-            print day + " - " + key
+            print("\n\n\n" + str(route))
+            print(day + " - " + key)
 
         # get shape id
         shape_id = str(route.route_id)
@@ -196,8 +215,12 @@ class TripsCreatorBrFlorianopolis(TripsCreator):
 
         if len(horarios) > 1 and route.line is None:
             sys.stderr.write(
-                "Route should have a master: [" + route.route_id + "] " + str(
-                    route.osm_url) + "\n")
+                "Route should have a master: ["
+                + route.route_id
+                + "] "
+                + str(route.osm_url)
+                + "\n"
+            )
 
         for time_group in horarios[key]:
             for time_point in time_group:
@@ -225,7 +248,7 @@ class TripsCreatorBrFlorianopolis(TripsCreator):
                 trip.shape_id = shape_id
                 trip.direction_id = ""
                 if route.route_id == DEBUG_ROUTE:
-                    print "ADD TRIP " + str(trip.trip_id) + ":"
+                    print("ADD TRIP " + str(trip.trip_id) + ":")
                 self.add_trip_stops(feed, trip, route, start_time, end_time)
 
                 # interpolate times, because Navitia can not handle this itself
@@ -244,7 +267,10 @@ class TripsCreatorBrFlorianopolis(TripsCreator):
         if service_id in feed.service_periods:
             service = feed.GetServicePeriod(service_id)
         else:
-            print("Created new schedule exception for %s with ID %s" % (str(date), service_id))
+            print(
+                "Created new schedule exception for %s with ID %s"
+                % (str(date), service_id)
+            )
             service = transitfeed.ServicePeriod(service_id)
             service.SetStartDate(date_string)
             service.SetEndDate(date_string)
@@ -252,7 +278,7 @@ class TripsCreatorBrFlorianopolis(TripsCreator):
             feed.AddServicePeriodObject(service)
         return service
 
-    def match_first_stops(self, route, sim_stops, ):
+    def match_first_stops(self, route, sim_stops):
         # get the first stop of the route
         stop = route.stops[0]
 
@@ -260,8 +286,8 @@ class TripsCreatorBrFlorianopolis(TripsCreator):
         stop.name = self.normalize_stop_name(stop.name)
 
         # get first stop from relation 'from' tag
-        if 'from' in route.tags:
-            alt_stop_name = route.tags['from']
+        if "from" in route.tags:
+            alt_stop_name = route.tags["from"]
         else:
             alt_stop_name = ""
         alt_stop_name = self.normalize_stop_name(alt_stop_name)
@@ -288,13 +314,15 @@ class TripsCreatorBrFlorianopolis(TripsCreator):
 
     @staticmethod
     def normalize_stop_name(old_name):
-        name = STOP_REGEX.sub(r'\1', old_name)
-        if type(name).__name__ == 'str':
-            name = name.decode('utf-8')
-        name = name.replace('Terminal de Integração da Lagoa da Conceição'.decode('utf-8'), 'TILAG')
-        name = name.replace('Terminal Centro', 'TICEN')
-        name = name.replace('Terminal Rio Tavares', 'TIRIO')
-        name = name.replace('Itacurubi', 'Itacorubi')
+        name = STOP_REGEX.sub(r"\1", old_name)
+        if type(name).__name__ == "str":
+            name = name.decode("utf-8")
+        name = name.replace(
+            "Terminal de Integração da Lagoa da Conceição".decode("utf-8"), "TILAG"
+        )
+        name = name.replace("Terminal Centro", "TICEN")
+        name = name.replace("Terminal Rio Tavares", "TIRIO")
+        name = name.replace("Itacurubi", "Itacorubi")
         return name
 
     @staticmethod
@@ -308,12 +336,16 @@ class TripsCreatorBrFlorianopolis(TripsCreator):
                         # timepoint="1" (Times are considered exact)
                         if route.route_id == DEBUG_ROUTE:
                             logging.info("START: %s at %s", start_time, str(stop))
-                        trip.AddStopTime(feed.GetStop(str(stop.stop_id)), stop_time=start_time)
+                        trip.AddStopTime(
+                            feed.GetStop(str(stop.stop_id)), stop_time=start_time
+                        )
                     elif i == len(route.stops):
                         # timepoint="0" (Times are considered approximate)
                         if route.route_id == DEBUG_ROUTE:
                             logging.info("END: %s at %s", end_time, str(stop))
-                        trip.AddStopTime(feed.GetStop(str(stop.stop_id)), stop_time=end_time)
+                        trip.AddStopTime(
+                            feed.GetStop(str(stop.stop_id)), stop_time=end_time
+                        )
                     else:
                         # timepoint="0" (Times are considered approximate)
                         if route.route_id == DEBUG_ROUTE:

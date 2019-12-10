@@ -11,18 +11,24 @@ class Helper(object):
 
     @staticmethod
     def print_shape_for_leaflet(shape):
-        print "var shape = [",
+        print("var shape = ["),
         i = 0
         for node in shape:
-            print "new L.LatLng(" + str(node["lat"]) + ", " + str(node["lon"]) + ")",
+            print("new L.LatLng(" + str(node["lat"]) + ", " + str(node["lon"]) + ")"),
             if i != len(shape) - 1:
-                print ",",
+                print(","),
             i += 1
-        print "];"
+        print("];")
         i = 0
         for node in shape:
-            print "L.marker([" + str(node["lat"]) + ", " + str(node["lon"]) + "]).addTo(map)"
-            print "    .bindPopup(\"" + str(i) + "\").openPopup();"
+            print(
+                "L.marker(["
+                + str(node["lat"])
+                + ", "
+                + str(node["lon"])
+                + "]).addTo(map)"
+            )
+            print('    .bindPopup("' + str(i) + '").openPopup();')
             i += 1
 
     @staticmethod
@@ -85,8 +91,9 @@ class Helper(object):
 
         dlat = radians(lat2 - lat1)
         dlon = radians(lon2 - lon1)
-        a = sin(dlat / 2) * sin(dlat / 2) + cos(radians(lat1)) * \
-            cos(radians(lat2)) * sin(dlon / 2) * sin(dlon / 2)
+        a = sin(dlat / 2) * sin(dlat / 2) + cos(radians(lat1)) * cos(
+            radians(lat2)
+        ) * sin(dlon / 2) * sin(dlon / 2)
         c = 2 * atan2(sqrt(a), sqrt(1 - a))
         d = radius * c
 
@@ -103,12 +110,16 @@ class Helper(object):
         http://www.nbdtech.com/Blog/archive/2008/04/27/Calculating-the-Perceived-Brightness-of-a-Color.aspx
         """
         # Slice RGB and convert to decimal numbers
-        red, green, blue = (int(color[1:3], 16), int(color[3:5], 16),
-                            int(color[5:7], 16))
+        red, green, blue = (
+            int(color[1:3], 16),
+            int(color[3:5], 16),
+            int(color[5:7], 16),
+        )
 
         # Calculate the route_text_color
         brightness = sqrt(
-            red * red * .241 + green * green * .691 + blue * blue * .068)
+            red * red * 0.241 + green * green * 0.691 + blue * blue * 0.068
+        )
         color_of_contrast = "#ffffff" if brightness <= 130 else "#000000"
 
         return color_of_contrast

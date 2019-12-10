@@ -8,7 +8,6 @@ from osm2gtfs.creators.trips_creator import TripsCreator
 
 
 class TripsCreatorCrGam(TripsCreator):
-
     def add_trips_to_feed(self, feed, data):
 
         lines = data.get_routes()
@@ -32,17 +31,22 @@ class TripsCreatorCrGam(TripsCreator):
 
                 # operation (gtfs service period)
                 for operation in operations:
-                    service_period = self._create_service_period(
-                        feed, operation)
+                    service_period = self._create_service_period(feed, operation)
 
                     horarios = load_times(itinerary, data, operation)
                     estaciones = load_stations(itinerary, data, operation)
 
                     route = feed.GetRoute(line_id)
 
-                    add_trips_for_route(feed, route, itinerary,
-                                        service_period, shape_id, estaciones,
-                                        horarios)
+                    add_trips_for_route(
+                        feed,
+                        route,
+                        itinerary,
+                        service_period,
+                        shape_id,
+                        estaciones,
+                        horarios,
+                    )
         return
 
     def _get_itinerary_operation(self, itinerary, data):
@@ -52,8 +56,8 @@ class TripsCreatorCrGam(TripsCreator):
             incluyen en el archivo de entrada.
         """
 
-        start_date = self.config['feed_info']['start_date']
-        enda_date = self.config['feed_info']['end_date']
+        start_date = self.config["feed_info"]["start_date"]
+        enda_date = self.config["feed_info"]["end_date"]
 
         operations = []
 
@@ -78,8 +82,11 @@ class TripsCreatorCrGam(TripsCreator):
             if service is not None:
                 return service
         except KeyError:
-            print("INFO. There is no service_period for this service:",
-                  operation, " therefore it will be created.")
+            print(
+                "INFO. There is no service_period for this service:",
+                operation,
+                " therefore it will be created.",
+            )
 
         if operation == "weekday":
             service = transitfeed.ServicePeriod("weekday")
@@ -98,21 +105,23 @@ class TripsCreatorCrGam(TripsCreator):
         else:
             raise KeyError("uknown operation keyword")
 
-        service.SetStartDate(self.config['feed_info']['start_date'])
-        service.SetEndDate(self.config['feed_info']['end_date'])
+        service.SetStartDate(self.config["feed_info"]["start_date"])
+        service.SetEndDate(self.config["feed_info"]["end_date"])
         feed.AddServicePeriodObject(service)
         return feed.GetServicePeriod(operation)
 
 
-def add_trips_for_route(feed, gtfs_route, itinerary, service_period,
-                        shape_id, estaciones, horarios):
+def add_trips_for_route(
+    feed, gtfs_route, itinerary, service_period, shape_id, estaciones, horarios
+):
     # debug
     # print("DEBUG Adding trips for itinerary", itinerary.name)
 
     for viaje in horarios:
         indice = 0
-        trip = gtfs_route.AddTrip(feed, headsign=itinerary.name,
-                                  service_period=service_period)
+        trip = gtfs_route.AddTrip(
+            feed, headsign=itinerary.name, service_period=service_period
+        )
         while indice < len(estaciones):
             tiempo = viaje[indice]
             estacion = estaciones[indice]
@@ -142,8 +151,11 @@ def load_stations(route, data, operation):
     stations = []
     for direction in data.schedule["itinerario"][route.route_id]:
         data_operation = direction["operacion"]
-        if (direction["from"] == route.fr and
-                direction["to"] == route.to and data_operation == operation):
+        if (
+            direction["from"] == route.fr
+            and direction["to"] == route.to
+            and data_operation == operation
+        ):
             for station in direction["estaciones"]:
                 stations = stations + [station]
 
@@ -162,13 +174,15 @@ def load_times(route, data, operation):
 
     for direction in data.schedule["itinerario"][route.route_id]:
         data_operation = direction["operacion"]
-        if (direction["from"] == route.fr and
-                direction["to"] == route.to and data_operation == operation):
+        if (
+            direction["from"] == route.fr
+            and direction["to"] == route.to
+            and data_operation == operation
+        ):
             times = direction["horarios"]
 
     if times is None:
-        print("debug: ruta va de", route.fr,
-              "hacia", route.to)
+        print("debug: ruta va de", route.fr, "hacia", route.to)
         print("error consiguiendo los tiempos de la ruta")
 
     return times
