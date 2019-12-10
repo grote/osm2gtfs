@@ -170,6 +170,14 @@ class OsmConnector(object):
             if line is None:
                 continue
 
+            # Make sure route_id (ref) number is not already taken
+            if line.route_id and line.route_id in [elem.route_id for elem in self.routes.values()]:
+                logging.warning("'Ref' of route_master already taken")
+                logging.warning(
+                    " https://osm.org/relation/%s", route_master.id)
+                logging.warning(" Skipped. Please fix in OpenStreetMap")
+                continue
+
             self.routes[str(line.osm_id)] = line
 
         # Build routes from variants (missing master relation)
@@ -317,7 +325,6 @@ class OsmConnector(object):
                         "Using 'ref' from member variant instead")
                     logging.warning("%s", itinerary.osm_url)
 
-            # Ignore whole Line if no reference number could be obtained
             if not ref:
                 ref = ""
 
