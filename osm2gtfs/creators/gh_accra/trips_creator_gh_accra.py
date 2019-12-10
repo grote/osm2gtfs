@@ -19,10 +19,11 @@ class TripsCreatorGhAccra(TripsCreator):
         self.service_weekday.SetWeekendService(True)
 
         lines = data.routes
-        for route_ref, line in sorted(lines.iteritems()):
+
+        for route_osm_id, line in sorted(lines.iteritems(), key=lambda k: k[1].route_id):
             if not isinstance(line, Line):
                 continue
-            print("Generating schedule for line: " + route_ref)
+            print("Generating schedule for line: " + line.tags['ref'])
 
             line_gtfs = feed.AddRoute(
                 short_name=str(line.route_id),

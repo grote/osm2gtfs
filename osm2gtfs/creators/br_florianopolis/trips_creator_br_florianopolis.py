@@ -65,7 +65,11 @@ class TripsCreatorBrFlorianopolis(TripsCreator):
         linhas = data.schedule['data']
 
         # Try to find OSM routes in Fenix data
-        for route_ref, route in sorted(routes.iteritems()):
+        for route_ref, route in sorted(routes.iteritems(), key=lambda k: k[1].route_id):
+            if 'ref' in route.tags:
+                route_ref = route.tags['ref']
+            else:
+                continue
 
             print("Generating schedule for line: " + route_ref)
 
