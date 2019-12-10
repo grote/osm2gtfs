@@ -1,5 +1,3 @@
-# coding=utf-8
-
 import logging
 import sys
 from collections import OrderedDict

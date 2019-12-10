@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='osm2gtfs',
-    version='0.0.1',
+    version='0.0.2',
     description='Turn OpenStreetMap data and schedule information into GTFS',
     long_description='Use public transport data from OpenStreetMap and external schedule information to create a General Transit Feed (GTFS).',
     url='https://github.com/grote/osm2gtfs',

@@ -1,5 +1,3 @@
-# coding=utf-8
-
 from osm2gtfs.creators.schedule_creator import ScheduleCreator
 
 

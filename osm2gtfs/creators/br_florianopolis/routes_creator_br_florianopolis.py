@@ -1,5 +1,3 @@
-# coding=utf-8
-
 import logging
 
 from osm2gtfs.core.elements import Line, Itinerary, Station, Stop

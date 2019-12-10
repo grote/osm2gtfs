@@ -1,5 +1,3 @@
-# coding=utf-8
-
 from osm2gtfs.creators.routes_creator import RoutesCreator
 
 

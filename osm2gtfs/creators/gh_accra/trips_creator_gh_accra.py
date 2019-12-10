@@ -1,5 +1,3 @@
-# coding=utf-8
-
 from datetime import timedelta, datetime
 
 from osm2gtfs.creators.trips_creator import TripsCreator

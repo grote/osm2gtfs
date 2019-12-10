@@ -1,5 +1,3 @@
-# coding=utf-8
-
 import importlib
 import logging
 from osm2gtfs.creators.agency_creator import AgencyCreator

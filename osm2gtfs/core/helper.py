@@ -1,5 +1,3 @@
-# coding=utf-8
-
 import logging
 from math import cos, sin, atan2, sqrt, radians, degrees
 
