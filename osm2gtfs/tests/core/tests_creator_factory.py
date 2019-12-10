@@ -88,7 +88,7 @@ class TestCoreCreatorFactory(unittest.TestCase):
                                 x.capitalize() for x in filename[:-3].split("_")
                             )
                             try:
-                                var = getattr(module, classname)
+                                var = getattr(module, classname)  # noqa: F841
                             except AttributeError:
                                 correct_class_name_state = False
 

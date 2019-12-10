@@ -69,7 +69,7 @@ class TripsCreatorGhAccra(TripsCreator):
                             "frequency is invalid for route_master " + str(line.osm_id)
                         )
                         ROUTE_FREQUENCY = DEFAULT_ROUTE_FREQUENCY
-                except (ValueError, TypeError) as e:
+                except (ValueError, TypeError):
                     print("frequency not a number for route_master " + str(line.osm_id))
                     ROUTE_FREQUENCY = DEFAULT_ROUTE_FREQUENCY
                 trip_gtfs.AddFrequency("05:00:00", "22:00:00", ROUTE_FREQUENCY * 60)
@@ -82,7 +82,7 @@ class TripsCreatorGhAccra(TripsCreator):
                                 + str(a_route.osm_id)
                             )
                             TRAVEL_TIME = DEFAULT_TRAVEL_TIME
-                    except (ValueError, TypeError) as e:
+                    except (ValueError, TypeError):
                         print(
                             "travel_time not a number for route " + str(a_route.osm_id)
                         )

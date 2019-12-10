@@ -368,7 +368,8 @@ class CreatorsTestsHelper:
                     trip_point_found = True
                     if st1["stop_id"] != st2["stop_id"]:
                         print(
-                            "stop_id different for trip_id={} & stop_sequence={} ({} <> {})".format(
+                            "stop_id different for trip_id={} \
+                            & stop_sequence={} ({} <> {})".format(
                                 st1["trip_id"],
                                 st1["stop_sequence"],
                                 st1["stop_id"],

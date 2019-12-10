@@ -54,9 +54,6 @@ class TripsCreatorCrGam(TripsCreator):
             incluyen en el archivo de entrada.
         """
 
-        start_date = self.config["feed_info"]["start_date"]
-        enda_date = self.config["feed_info"]["end_date"]
-
         operations = []
 
         for operation in data.schedule["itinerario"][itinerary.route_id]:

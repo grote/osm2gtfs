@@ -12,9 +12,9 @@ jobs:
       before_script: pip install black
       script: black osm2gtfs
 
-    - stage: pylint
-      before_script: pip install pylint
-      script: pylint --disable=C,R osm2gtfs
+    - stage: flake8
+      before_script: pip install flake8
+      script: flake8 osm2gtfs
 
     - stage: non regression test
       script: python -m unittest discover -p 'tests_*.py'
