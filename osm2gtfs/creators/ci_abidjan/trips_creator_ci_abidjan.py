@@ -92,7 +92,7 @@ class TripsCreatorCiAbidjan(TripsCreator):
         for route_ref, line in sorted(lines.iteritems()):
             if not isinstance(line, Line):
                 continue
-            # logging.info("Generating schedule for line: " + route_ref)
+            logging.info("Generating schedule for line: " + route_ref)
             if 'operator' in line.tags and line.tags['operator']:
                 try: 
                     agency = feed.GetAgency(line.tags['operator'])
@@ -146,7 +146,12 @@ class TripsCreatorCiAbidjan(TripsCreator):
 
                     if a_route.fr and a_route.to:
                         trip_gtfs.trip_headsign = a_route.to
-                        line_gtfs.route_long_name = a_route.fr + " ↔ ".decode('utf-8') +  a_route.to
+                        if line_gtfs.route_short_name:
+                            # The line.name in the OSM data (route_long_name in the GTFS) is in the format 
+                            # '{transport mode} {route_short_name if there is one} : {A terminus} ↔ {The other terminus}'
+                            # But it is good practice to not repeat the route_short_name in the route_long_name,
+                            # so we abridge the route_long_name here if the line has a route_short_name
+                            line_gtfs.route_long_name = a_route.fr + " ↔ ".decode('utf-8') +  a_route.to
 
                     for itinerary_hour in itinerary_hours:
                         trip_gtfs.AddFrequency(itinerary_hour['start_time'], itinerary_hour['end_time'], itinerary_hour['headway'])
