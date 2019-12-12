@@ -10,5 +10,4 @@ OpenStreetMap Ivory Coast association (OSM-CI).
 Useful resources:
 * [osm2gtfs config](./config.json)
 * [Documentation related to the project](https://git.digitaltransport4africa.org/data/africa/abidjan)
-* [osm2gtfs user manual for Accra (TODO: create user manual for Abidjan)](https://wiki.openstreetmap.org/wiki/OSM2GTFS_for_Accra_-_user_manual)
 * [OSM wiki page about Abidjan mobility data (in French)](https://wiki.openstreetmap.org/wiki/FR:WikiProject_C%C3%B4te_d'Ivoire/Transport_Abidjan)

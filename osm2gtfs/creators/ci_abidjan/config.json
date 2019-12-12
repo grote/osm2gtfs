@@ -11,13 +11,13 @@
         }
     },
     "stops": {
-        "name_without": "Add a name to the stop with JungleBus app",
-        "name_auto": "yes"
+        "name_without": "Arret sans nom",
+        "name_auto": "no"
     },
     "agency": {
-        "agency_id": "SOTRA",
-        "agency_name": "Société des transports abidjanais (SOTRA) S.A.",
-        "agency_url": "http://sotra.ci/",
+        "agency_id": "divers",
+        "agency_name": "Divers opérateurs",
+        "agency_url": "https://wiki.openstreetmap.org/wiki/FR:WikiProject_C%C3%B4te_d'Ivoire/Transport_Abidjan",
         "agency_timezone": "Africa/Abidjan",
         "agency_lang": "fr",
         "agency_phone": "",

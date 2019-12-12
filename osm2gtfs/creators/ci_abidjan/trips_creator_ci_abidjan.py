@@ -1,5 +1,6 @@
 # coding=utf-8
-
+import logging
+import pprint
 import collections
 from datetime import timedelta, datetime
 import transporthours
@@ -13,8 +14,10 @@ from osm2gtfs.core.elements import Line
 class TripsCreatorCiAbidjan(TripsCreator):
 
     _DAYS_OF_WEEK = [ 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday' ]
-    _DEFAULT_START_TIME = "05:00:00"
-    _DEFAULT_END_TIME = "22:00:00"
+    _DEFAULT_TAGS = {
+        'opening_hours': 'Mo-Su,PH 05:00-22:00',
+        'interval': '00:30'
+    }
     _DAY_ABBREVIATIONS = {
             'monday': 'Mo',
             'tuesday': 'Tu',
@@ -24,35 +27,32 @@ class TripsCreatorCiAbidjan(TripsCreator):
             'saturday': 'Sa',
             'sunday': 'Su'
         }
-    _DEFAULT_HEADWAY = 30 # in minutes
-
-    def _date_range(self, start, end):
-        return self._DAY_ABBREVIATIONS[start] + '-' + self._DAY_ABBREVIATIONS[end]
-
-    def _days_abbreviation_from_transport_hour(self, a_transport_hour):
+    _DEFAULT_TRAVEL_TIME = 120 # minutes
+    
+    
+    def _service_id_from_transport_hour(self, a_transport_hour):
         service_days = [ day_name for day_name in self._DAYS_OF_WEEK if day_name in a_transport_hour and a_transport_hour[day_name]]
 
         if not service_days:
-            print('Transport_hour missing service days. Assuming 7 days a week.')
+            logging.info('Transport_hour missing service days. Assuming 7 days a week.')
             service_days = self._DAYS_OF_WEEK
 
+        def date_range(start, end):
+            return self._DAY_ABBREVIATIONS[start] + '-' + self._DAY_ABBREVIATIONS[end]
+
         if collections.Counter(service_days) == collections.Counter(self._DAYS_OF_WEEK):
-            return self._date_range('monday', 'sunday')
+            return date_range('monday', 'sunday')
         if collections.Counter(service_days) == collections.Counter(self._DAYS_OF_WEEK[:5]):
-            return self._date_range('monday', 'friday')
+            return date_range('monday', 'friday')
         if collections.Counter(service_days) == collections.Counter(self._DAYS_OF_WEEK[:6]):
-            return self._date_range('monday', 'saturday')
+            return date_range('monday', 'saturday')
         if collections.Counter(service_days) == collections.Counter(self._DAYS_OF_WEEK[-2:]):
-            return self._date_range('saturday', 'sunday')
+            return date_range('saturday', 'sunday')
 
         return ','.join([self._DAY_ABBREVIATIONS[day_name] for day_name in service_days])
 
-    def _set_default_times(self, transport_hour):
-        transport_hour['start_time'] = self._DEFAULT_START_TIME
-        transport_hour['end_time'] = self._DEFAULT_END_TIME
-
     def _init_service_period(self, feed, hour):
-        service_id = self._days_abbreviation_from_transport_hour(hour)
+        service_id = self._service_id_from_transport_hour(hour)
         service_period = ServicePeriod(id=service_id)
         service_period.SetStartDate(self.config['feed_info']['start_date'])
         service_period.SetEndDate(self.config['feed_info']['end_date'])
@@ -60,20 +60,16 @@ class TripsCreatorCiAbidjan(TripsCreator):
             if (day_of_week in hour and hour[day_of_week]):
                 service_period.SetDayOfWeekHasService(i)
         feed.AddServicePeriodObject(service_period)
-        print("Created new service period " + service_id)
         return service_period
 
-    def _process_transport_hours(self, feed, transport_hours_list):
+    def _group_hours_by_service_period(self, feed, transport_hours_list):
         transport_hours_dict = {}
         for hour in transport_hours_list:
-            service_id = self._days_abbreviation_from_transport_hour(hour)
+            service_id = self._service_id_from_transport_hour(hour)
             try:
                 feed.GetServicePeriod(service_id)
             except KeyError:
                 self._init_service_period(feed, hour)
-
-            if "00:00:00" ==  hour['start_time'] and hour['end_time'] in ["00:00:00", "24:00:00"]:
-                self._set_default_times(hour)
 
             if service_id in transport_hours_dict.keys():
                 transport_hours_dict[service_id].append(hour)
@@ -81,44 +77,36 @@ class TripsCreatorCiAbidjan(TripsCreator):
                 transport_hours_dict[service_id] = [hour]
         return transport_hours_dict
 
-    def _init_default_hour(self):
-        hour = { key:True for key in self._DAYS_OF_WEEK }
-        self._set_default_times(hour)
-        hour['headway'] = self._DEFAULT_HEADWAY * 60
-        return hour
-
-    def _init_agency(self, feed, agency_name):
-        return feed.AddAgency(agency_name, None, self.config['agency']['agency_timezone'], agency_id=agency_name)
-
     def add_trips_to_feed(self, feed, data):
-        lines = data.routes
-        default_hour = self._init_default_hour()
-        default_service_period = self._init_service_period(feed, default_hour)
-        default_hours_dict = {
-            default_service_period.service_id: [default_hour]
-        }
-
+        transport_hours = transporthours.main.Main() 
+        default_hours = transport_hours.tagsToGtfs(self._DEFAULT_TAGS)
+        
+        default_service_period = self._init_service_period(feed, default_hours[0])
         feed.SetDefaultServicePeriod(default_service_period)
-        # This sets the default agency to the agency in config.json
-        # Not ever used, but needed to avoid an error in feed.AddRoute() below
-        feed.GetDefaultAgency()
+        default_hours_dict = self._group_hours_by_service_period(feed, default_hours)
+
+        lines = data.routes
+
+        default_agency = feed.GetDefaultAgency()
 
         for route_ref, line in sorted(lines.iteritems()):
             if not isinstance(line, Line):
                 continue
-            # print("Generating schedule for line: " + route_ref)
-
+            # logging.info("Generating schedule for line: " + route_ref)
             if 'operator' in line.tags and line.tags['operator']:
-                agency_id = line.tags['operator']
-                if agency_id == self.config['agency']['agency_name']:
-                    agency_id = self.config['agency']['agency_id']
+                try: 
+                    agency = feed.GetAgency(line.tags['operator'])
+                except KeyError:
+                    agency = feed.AddAgency(line.tags['operator'], 
+                        default_agency.agency_url, default_agency.agency_timezone, agency_id=line.tags['operator'])
+                    if not agency.Validate():
+                        logging.error("Agency data not valid for " + line.tags['operator'] + 'in line ')
+                if 'operator:website' in line.tags and line.tags['operator:website']:
+                    agency.agency_url = line.tags['operator:website']
+                    if not agency.Validate():
+                        logging.error('Url is not valid for agency: ' + agency.agency_url)
             else:
-                agency_id = 'Unknown Agency'
-
-            try:
-                agency = feed.GetAgency(agency_id)
-            except KeyError:
-                agency = self._init_agency(feed, agency_id)
+                agency = default_agency
 
             line_gtfs = feed.AddRoute(
                 short_name=str(line.route_id),
@@ -135,16 +123,15 @@ class TripsCreatorCiAbidjan(TripsCreator):
 
             route_index = 0
             itineraries = line.get_itineraries()
-            transport_hours = transporthours.main.Main()
 
             line_hours_list = transport_hours.tagsToGtfs(line.tags)
-            line_hours_dict = self._process_transport_hours(feed, line_hours_list)
+            line_hours_dict = self._group_hours_by_service_period(feed, line_hours_list)
 
             for a_route in itineraries:
                 itinerary_hours_list = transport_hours.tagsToGtfs(a_route.tags)
 
                 if itinerary_hours_list:
-                    itinerary_hours_dict = self._process_transport_hours(feed, itinerary_hours_list)
+                    itinerary_hours_dict = self._group_hours_by_service_period(feed, itinerary_hours_list)
                 elif line_hours_dict:
                     itinerary_hours_dict = line_hours_dict
                 else:
@@ -161,28 +148,23 @@ class TripsCreatorCiAbidjan(TripsCreator):
                         trip_gtfs.trip_headsign = a_route.to
                         line_gtfs.route_long_name = a_route.fr + " ↔ ".decode('utf-8') +  a_route.to
 
-                    DEFAULT_TRAVEL_TIME = 120 # minutes
-
                     for itinerary_hour in itinerary_hours:
                         trip_gtfs.AddFrequency(itinerary_hour['start_time'], itinerary_hour['end_time'], itinerary_hour['headway'])
 
                     if 'duration' in a_route.tags:
-                        print('duration', a_route.tags['duration'])
 
-                    if 'travel_time' in a_route.tags:
                         try:
-                            travel_time = int(a_route.tags['travel_time'])
+                            travel_time = int(a_route.tags['duration'])
                             if not travel_time > 0:
-                                print("travel_time is invalid for route " + str(
+                                logging.warning("duration " + str(duration) + " is invalid for route " + str(
                                         a_route.osm_id))
-                                travel_time = DEFAULT_TRAVEL_TIME
+                                travel_time = self._DEFAULT_TRAVEL_TIME
                         except (ValueError, TypeError) as e:
-                            print("travel_time not a number for route " + str(
+                            logging.warning("duration not a number for route " + str(
                                         a_route.osm_id))
-                            travel_time = DEFAULT_TRAVEL_TIME
+                            travel_time = self._DEFAULT_TRAVEL_TIME
                     else:
-                        travel_time = DEFAULT_TRAVEL_TIME
-
+                        travel_time = self._DEFAULT_TRAVEL_TIME
 
                     for index_stop, a_stop in enumerate(a_route.stops):
                         stop_id = a_stop
