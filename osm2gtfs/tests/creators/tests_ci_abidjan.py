@@ -15,7 +15,7 @@ class TestCreatorsCiAbidjan(CreatorsTestsAbstract):
     def _get_required_variables(self):
         # Define required values for the tests of this provider
         return {
-            'routes_count': 128, 
+            'routes_count': 128,
             'stops_count': 1879,
             'stations_count': 0,
             'stops_osm_count': 1879,
@@ -32,7 +32,8 @@ class TestCreatorsCiAbidjan(CreatorsTestsAbstract):
 
 def load_tests(loader, tests, pattern):
     # pylint: disable=unused-argument
-    test_cases = ['test_refresh_routes_cache', 'test_refresh_stops_cache', 'test_gtfs_from_cache']
+    test_cases = ['test_refresh_routes_cache',
+                  'test_refresh_stops_cache', 'test_gtfs_from_cache']
     suite = unittest.TestSuite(map(TestCreatorsCiAbidjan, test_cases))
     return suite
 
