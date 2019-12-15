@@ -15,9 +15,9 @@
         "name_auto": "yes"
     },
     "agency": {
-        "agency_id": "AM3",
-        "agency_name": "Addis Ababa Public Transport",
-        "agency_url": "https://www.addismap.com",
+        "agency_id": "AA",
+        "agency_name": "Addis Ababa Transport (all)",
+        "agency_url": "https://example.com",
         "agency_timezone": "Africa/Addis_Ababa",
         "agency_lang": "en",
         "agency_phone": "",
@@ -25,10 +25,10 @@
     },
     "feed_info": {
         "publisher_name": "AddisMap",
-        "publisher_url": "https://addismap.com",
+        "publisher_url": "http://addismap.com",
         "version": "0.1",
         "start_date": "20190101",
-        "end_date": "20201231"
+        "end_date": "20991231"
     },
     "output_file": "data/et-addisababa.zip",
     "selector": "et_addisababa"

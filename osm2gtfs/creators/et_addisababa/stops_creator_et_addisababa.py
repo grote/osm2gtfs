@@ -3,11 +3,9 @@
 from osm2gtfs.core.helper import Helper
 from osm2gtfs.creators.stops_creator import StopsCreator
 
-def get_stop_id(stop):
-    return stop.osm_type + "/" + str(stop.osm_id)
 
 def create_stop_area(stop_data, feed):
-    stop_id = get_stop_id(stop_data)
+    stop_id = stop_data.osm_id
     gtfs_stop_area = feed.AddStop(
         lat=float(stop_data.lat),
         lng=float(stop_data.lon),
@@ -17,8 +15,9 @@ def create_stop_area(stop_data, feed):
     gtfs_stop_area.location_type = 1
     return gtfs_stop_area
 
+
 def create_stop_point(stop_data, feed):
-    stop_id = get_stop_id(stop_data)
+    stop_id = stop_data.osm_id
     gtfs_stop_point = feed.AddStop(
         lat=float(stop_data.lat),
         lng=float(stop_data.lon),
@@ -28,14 +27,11 @@ def create_stop_point(stop_data, feed):
     return gtfs_stop_point
 
 
+def get_stop_id(stop):
+    return stop.osm_id
+
 
 class StopsCreatorEtAddisababa(StopsCreator):
-
-    # Override construction of stop_id
-    def _define_stop_id(self, stop):
-        # Simply returns osm_id regardless of the osm_type as only map
-        # objects of type nodes are assumed.
-        return get_stop_id(stop)
 
     def add_stops_to_feed(self, feed, data):
         stops = data.get_stops()

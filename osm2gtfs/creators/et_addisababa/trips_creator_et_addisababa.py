@@ -1,13 +1,11 @@
 # coding=utf-8
 
-import sys
-import re
-import logging
 from datetime import timedelta, datetime
-import transitfeed
+
 from osm2gtfs.creators.trips_creator import TripsCreator
 from osm2gtfs.core.helper import Helper
-from osm2gtfs.core.elements import Line, Itinerary, Stop
+from osm2gtfs.core.elements import Line
+
 
 class TripsCreatorEtAddisababa(TripsCreator):
     service_weekday = None
@@ -87,8 +85,8 @@ class TripsCreatorEtAddisababa(TripsCreator):
                     TRAVEL_TIME = DEFAULT_TRAVEL_TIME
 
                 for index_stop, a_stop in enumerate(a_route.stops):
-                    stop_id = a_stop
-                    departure_time = datetime(2019, 11, 22, 6, 0, 0)
+                    stop_id = a_stop.split('/')[-1]
+                    departure_time = datetime(2008, 11, 22, 6, 0, 0)
 
                     if index_stop == 0:
                         trip_gtfs.AddStopTime(feed.GetStop(
@@ -109,4 +107,3 @@ class TripsCreatorEtAddisababa(TripsCreator):
                         trip_gtfs.ReplaceStopTimeObject(stop_time)
 
                 Helper.interpolate_stop_times(trip_gtfs)
-
