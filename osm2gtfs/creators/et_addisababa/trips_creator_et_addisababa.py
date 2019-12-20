@@ -70,9 +70,10 @@ class TripsCreatorEtAddisababa(TripsCreator):
                     ROUTE_FREQUENCY = DEFAULT_ROUTE_FREQUENCY
                 trip_gtfs.AddFrequency(
                     "05:00:00", "22:00:00", ROUTE_FREQUENCY * 60)
-                if 'travel_time' in a_route.tags:
+                if 'duration' in a_route.tags:
                     try:
-                        TRAVEL_TIME = int(a_route.tags['travel_time'])
+                        (hours, minutes, seconds) = a_route.tags['duration'].split(':')
+                        TRAVEL_TIME = int(hours) * 60 + int(minutes);
                         if not TRAVEL_TIME > 0:
                             print("travel_time is invalid for route " + str(
                                     a_route.osm_id))
