@@ -79,11 +79,12 @@ class TripsCreatorEtAddisababa(TripsCreator):
                                     a_route.osm_id))
                             TRAVEL_TIME = DEFAULT_TRAVEL_TIME
                     except (ValueError, TypeError) as e:
-                        print("travel_time not a number for route " + str(
+                        print("travel_time not a number / exception thrown for route with OSM ID " + str(
                                     a_route.osm_id))
                         TRAVEL_TIME = DEFAULT_TRAVEL_TIME
                 else:
                     TRAVEL_TIME = DEFAULT_TRAVEL_TIME
+                    print("WARNING: No duration set --- Using default travel time for route with OSM ID " +str(a_route.osm_id));
 
                 for index_stop, a_stop in enumerate(a_route.stops):
                     stop_id = a_stop.split('/')[-1]
