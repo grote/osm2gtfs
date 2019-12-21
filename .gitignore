@@ -18,3 +18,5 @@ Pipfile.lock
 
 __pycache__
 .cache
+.vscode
+.vscode
