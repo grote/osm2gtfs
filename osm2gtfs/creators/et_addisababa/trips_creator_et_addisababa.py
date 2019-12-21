@@ -7,6 +7,10 @@ from osm2gtfs.core.helper import Helper
 from osm2gtfs.core.elements import Line
 
 
+def time_string_to_minutes(time_string):
+    (hours, minutes, seconds) = time_string.split(':')
+    return int(hours) * 60 + int(minutes)
+
 class TripsCreatorEtAddisababa(TripsCreator):
     service_weekday = None
 
@@ -56,24 +60,26 @@ class TripsCreatorEtAddisababa(TripsCreator):
                 DEFAULT_TRAVEL_TIME = 120
 
                 frequency = None
-                if "frequency" in line.tags:
-                    frequency = line.tags['frequency']
-                try:
-                    ROUTE_FREQUENCY = int(frequency)
-                    if not ROUTE_FREQUENCY > 0:
-                        print("frequency is invalid for route_master " + str(
-                            line.osm_id))
-                        ROUTE_FREQUENCY = DEFAULT_ROUTE_FREQUENCY
-                except (ValueError, TypeError) as e:
-                    print("frequency not a number for route_master " + str(
-                            line.osm_id))
-                    ROUTE_FREQUENCY = DEFAULT_ROUTE_FREQUENCY
+
+                ROUTE_FREQUENCY = DEFAULT_ROUTE_FREQUENCY
+
+                if "interval" in a_route.tags:
+                    frequency = a_route.tags['interval']
+                    try:
+                        ROUTE_FREQUENCY = time_string_to_minutes(frequency)
+                        if not ROUTE_FREQUENCY > 0:
+                            print("frequency is invalid for route_master " + str(
+                                line.osm_id))
+                    except (ValueError, TypeError) as e:
+                        print("frequency not a number for route_master " + str(
+                                line.osm_id))
+
                 trip_gtfs.AddFrequency(
                     "05:00:00", "22:00:00", ROUTE_FREQUENCY * 60)
+
                 if 'duration' in a_route.tags:
                     try:
-                        (hours, minutes, seconds) = a_route.tags['duration'].split(':')
-                        TRAVEL_TIME = int(hours) * 60 + int(minutes);
+                        TRAVEL_TIME = time_string_to_minutes(a_route.tags['duration']);
                         if not TRAVEL_TIME > 0:
                             print("travel_time is invalid for route " + str(
                                     a_route.osm_id))
