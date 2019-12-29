@@ -100,7 +100,7 @@ class TripsCreatorEtAddisababa(TripsCreator):
                     print("WARNING: No duration set --- Using default travel time for route with OSM ID " +str(a_route.osm_id));
 
                 for index_stop, a_stop in enumerate(a_route.stops):
-                    stop_id = a_stop.split('/')[-1]
+                    stop_id = a_stop
                     departure_time = datetime(2008, 11, 22, 6, 0, 0)
 
                     if index_stop == 0:
