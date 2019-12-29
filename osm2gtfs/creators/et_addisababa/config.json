@@ -7,7 +7,7 @@
             "w": "38.61"
         },
         "tags": {
-            "route": "bus"
+            "route": ["bus", "light_rail"]
         }
     },
     "stops": {
@@ -27,8 +27,8 @@
         "publisher_name": "AddisMap",
         "publisher_url": "http://addismap.com",
         "version": "0.1",
-        "start_date": "20190101",
-        "end_date": "20991231"
+        "start_date": "20191201",
+        "end_date": "20201101"
     },
     "output_file": "data/et-addisababa.zip",
     "selector": "et_addisababa"

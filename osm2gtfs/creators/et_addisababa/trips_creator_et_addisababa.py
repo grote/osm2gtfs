@@ -28,13 +28,20 @@ class TripsCreatorEtAddisababa(TripsCreator):
                 continue
             print("Generating schedule for line: " + route_ref)
 
+            if 'route_master' in line.tags and line.tags['route_master'] == "light_rail":
+                route_type = "Tram"
+                route_suffix = " (Light Rail)"
+            else:
+                route_type = "Bus"
+                route_suffix = ""
+
             line_gtfs = feed.AddRoute(
                 short_name=str(line.route_id),
-                long_name=line.name,
+                long_name=line.name + route_suffix,
                 # we change the route_long_name with the 'from' and 'to' tags
                 # of the last route as the route_master name tag contains
                 # the line code (route_short_name)
-                route_type="Bus",
+                route_type=route_type,
                 route_id=line.osm_id)
             line_gtfs.agency_id = feed.GetDefaultAgency().agency_id
             line_gtfs.route_desc = ""
@@ -54,7 +61,7 @@ class TripsCreatorEtAddisababa(TripsCreator):
                     trip_gtfs.trip_headsign = a_route.to
                     line_gtfs.route_long_name = a_route.fr.decode(
                         'utf8') + " ↔ ".decode(
-                        'utf8') + a_route.to.decode('utf8')
+                        'utf8') + a_route.to.decode('utf8') + route_suffix
 
                 DEFAULT_ROUTE_FREQUENCY = 30
                 DEFAULT_TRAVEL_TIME = 120
