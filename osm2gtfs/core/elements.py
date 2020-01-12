@@ -66,7 +66,7 @@ class Line(Element):
 
         known_route_types = {
             'tram': 'Tram',
-            'light_rail': 'Tram',
+            'light_rail': 'Light Rail',
             'subway': 'Subway',
             'train': 'Rail',
             'bus': 'Bus',
