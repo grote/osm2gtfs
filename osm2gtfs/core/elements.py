@@ -71,7 +71,8 @@ class Line(Element):
             'train': 'Rail',
             'bus': 'Bus',
             'trolleybus': 'Bus',
-            'ferry': 'Ferry'
+            'ferry': 'Ferry',
+            'share_taxi': 'Share Taxi'
         }
 
         if self.route_type not in known_route_types:
