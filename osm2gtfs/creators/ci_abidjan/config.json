@@ -27,8 +27,8 @@
         "publisher_name": "Jungle Bus",
         "publisher_url": "http://junglebus.io",
         "version": "0.1",
-        "start_date": "20190101",
-        "end_date": "20191231"
+        "start_date": "20200101",
+        "end_date": "20201231"
     },
     "output_file": "data/ci-abidjan.zip",
     "selector": "ci_abidjan"

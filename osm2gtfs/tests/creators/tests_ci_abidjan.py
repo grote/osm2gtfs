@@ -15,10 +15,10 @@ class TestCreatorsCiAbidjan(CreatorsTestsAbstract):
     def _get_required_variables(self):
         # Define required values for the tests of this provider
         return {
-            'routes_count': 128,
-            'stops_count': 1879,
+            'routes_count': 193,
+            'stops_count': 2614,
             'stations_count': 0,
-            'stops_osm_count': 1879,
+            'stops_osm_count': 1614,
             'route_id_to_check': 10192143,
             'gtfs_files': [
                 "agency.txt", "calendar.txt", "frequencies.txt", "routes.txt",

@@ -96,18 +96,18 @@ class TripsCreatorCiAbidjan(TripsCreator):
             if not isinstance(line, Line):
                 continue
             logging.info("Generating schedule for line: %s",  route_id)
-            if 'operator' in line.tags and line.tags['operator']:
+            if 'network' in line.tags and line.tags['network']:
                 try:
-                    agency = feed.GetAgency(line.tags['operator'])
+                    agency = feed.GetAgency(line.tags['network'])
                 except KeyError:
-                    agency = feed.AddAgency(line.tags['operator'],
+                    agency = feed.AddAgency(line.tags['network'],
                                             default_agency.agency_url,
                                             default_agency.agency_timezone,
-                                            agency_id=line.tags['operator'])
+                                            agency_id=line.tags['network'])
                     logging.info("Added agency: %s", agency.agency_name)
                     if not agency.Validate():
                         logging.error("Agency data not valid for %s in line",
-                                      line.tags['operator'])
+                                      line.tags['network'])
                 if 'operator:website' in line.tags and line.tags['operator:website']:
                     agency.agency_url = line.tags['operator:website']
                     if not agency.Validate():
