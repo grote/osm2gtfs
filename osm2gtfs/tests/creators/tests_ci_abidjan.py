@@ -18,7 +18,7 @@ class TestCreatorsCiAbidjan(CreatorsTestsAbstract):
             'routes_count': 193,
             'stops_count': 2614,
             'stations_count': 0,
-            'stops_osm_count': 1614,
+            'stops_osm_count': 2614,
             'route_id_to_check': 10192143,
             'gtfs_files': [
                 "agency.txt", "calendar.txt", "frequencies.txt", "routes.txt",
