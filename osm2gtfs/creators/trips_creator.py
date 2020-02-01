@@ -37,7 +37,7 @@ class TripsCreator(object):
             logging.info(
                 "\nGenerating schedule for line: [" + line.tags['ref'] + "] - " + line.name)
 
-            # Loop through it's itineraries
+            # Loop through its itineraries
             itineraries = line.get_itineraries()
             for itinerary in itineraries:
                 trips_count = 0

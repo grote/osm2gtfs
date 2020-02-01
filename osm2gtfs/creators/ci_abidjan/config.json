@@ -1,0 +1,35 @@
+{
+    "query": {
+        "bbox": {
+            "n": "5.6367",
+            "s": "5.2121", 
+            "e": "-3.7154", 
+            "w": "-4.2973" 
+        },
+        "tags": {
+            "route": ["bus", "ferry"]
+        }
+    },
+    "stops": {
+        "name_without": "Arret sans nom",
+        "name_auto": "no"
+    },
+    "agency": {
+        "agency_id": "divers",
+        "agency_name": "Divers opérateurs",
+        "agency_url": "https://wiki.openstreetmap.org/wiki/FR:WikiProject_C%C3%B4te_d'Ivoire/Transport_Abidjan",
+        "agency_timezone": "Africa/Abidjan",
+        "agency_lang": "fr",
+        "agency_phone": "",
+        "agency_fare_url": ""
+    },
+    "feed_info": {
+        "publisher_name": "Jungle Bus",
+        "publisher_url": "http://junglebus.io",
+        "version": "0.1",
+        "start_date": "20200101",
+        "end_date": "20201231"
+    },
+    "output_file": "data/ci-abidjan.zip",
+    "selector": "ci_abidjan"
+}

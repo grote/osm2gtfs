@@ -32,6 +32,7 @@ Tests for core components must be named and placed in the following schema:
 
 * Accra in Ghana
 * Managua and Ciudad Sandino in Nicaragua
+* Abidjan in Ivory Coast
 
 ### Description
 
@@ -54,3 +55,4 @@ each GTFS file is compared to the reference.
     python osm2gtfs/tests/creators/tests_gh_accra.py
     python osm2gtfs/tests/creators/tests_ni_esteli.py
     python osm2gtfs/tests/creators/tests_ni_managua.py
+    python osm2gtfs/tests/creators/tests_ci_abidjan.py
