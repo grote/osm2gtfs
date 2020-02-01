@@ -6,7 +6,9 @@ from osm2gtfs.creators.trips_creator import TripsCreator
 from osm2gtfs.core.helper import Helper
 from osm2gtfs.core.elements import Line
 
+from transitfeed.trip import Trip
 
+ 
 def time_string_to_minutes(time_string):
     (hours, minutes, seconds) = time_string.split(':')
     return int(hours) * 60 + int(minutes)
@@ -28,9 +30,14 @@ class TripsCreatorEtAddisababa(TripsCreator):
                 continue
             print("Generating schedule for line: " + route_ref)
 
+            is_share_taxi = True
             if 'route_master' in line.tags and line.tags['route_master'] == "light_rail":
                 route_type = "Tram"
                 route_suffix = " (Light Rail)"
+            elif 'route_master' in line.tags and line.tags['route_master'] == "share_taxi":
+                route_type = "Bus"
+                route_suffix = " (Minibus)"
+                is_share_taxi = True
             else:
                 route_type = "Bus"
                 route_suffix = ""
@@ -106,16 +113,18 @@ class TripsCreatorEtAddisababa(TripsCreator):
                     if index_stop == 0:
                         trip_gtfs.AddStopTime(feed.GetStop(
                             str(stop_id)), stop_time=departure_time.strftime(
-                                "%H:%M:%S"))
+                                "%H:%M:%S"), continuous_pickup = 0, continuous_drop_off = 0)
                     elif index_stop == len(a_route.stops) - 1:
                         departure_time += timedelta(minutes=TRAVEL_TIME)
                         trip_gtfs.AddStopTime(feed.GetStop(
                             str(stop_id)), stop_time=departure_time.strftime(
-                                "%H:%M:%S"))
+                                "%H:%M:%S"), continuous_pickup = 0, continuous_drop_off = 0)
                     else:
-                        trip_gtfs.AddStopTime(feed.GetStop(str(stop_id)))
+                        trip_gtfs.AddStopTime(feed.GetStop(str(stop_id)), continuous_pickup = 0, continuous_drop_off = 0)
 
                 for secs, stop_time, is_timepoint in trip_gtfs.GetTimeInterpolatedStops():
+                    stop_time.continuous_pickup_flag = 0
+                    stop_time.continuous_drop_off_flag = 0
                     if not is_timepoint:
                         stop_time.arrival_secs = secs
                         stop_time.departure_secs = secs

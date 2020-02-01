@@ -1,0 +1,30 @@
+README file for the googletransit extension
+
+
+This extension modifies the transitfeed package to adapt it to the requirements
+and features specific to Google Transit.
+
+List of changes to the default behavior:
+* extensions.googletransit.Agency:
+  - extension of transitfeed.Agency
+  - adding pybcp47 module for supporting BCP-47 language code validation
+* extensions.googletransit.FareAttribute:
+  - extension of transitfeed.FareAttribute as in the open proposal
+    "add agency_id column to fare_attributes.txt" at
+    http://groups.google.com/group/gtfs-changes/browse_frm/thread/4e74c23bb1f80480
+  - adds new field 'agency_id' and function ValidateAgencyId()
+* extensions.googletransit.Route
+  - extension of transitfeed.Route as proposed in
+    https://sites.google.com/site/gtfschanges/spec-changes-summary#routes and
+    https://sites.google.com/site/gtfschanges/open-proposals
+  - adding field 'co2_per_km' and ValidateCo2PerKm() function
+  - adding HVT (Hierarchical Vehicle Type) route types, also used in
+    extensions.googletransit.Stop for validating field vehicle_type.
+    The HVT values are derived from the European TPEG standard, see discussion
+    at http://groups.google.com/group/gtfs-changes/msg/ed917a69cf8c5bef
+* extensions.googletransit.Stop
+  - extension of transitfeed.Stop as proposed in
+    https://sites.google.com/site/gtfschanges/spec-changes-summary#stops
+  - adding and validating fields 'stop_timezone', 'vehicle_type' and
+    'wheelchair_boarding'
+  - overriding ValidateStopLocationType(), adding location_type 2 (entrance)
