@@ -30,14 +30,14 @@ class TripsCreatorEtAddisababa(TripsCreator):
                 continue
             print("Generating schedule for line: " + route_ref)
 
-            is_share_taxi = True
+            flex_flag = None
             if 'route_master' in line.tags and line.tags['route_master'] == "light_rail":
                 route_type = "Tram"
                 route_suffix = " (Light Rail)"
             elif 'route_master' in line.tags and line.tags['route_master'] == "share_taxi":
                 route_type = "Bus"
                 route_suffix = " (Minibus)"
-                is_share_taxi = True
+                flex_flag = 0
             else:
                 route_type = "Bus"
                 route_suffix = ""
@@ -113,18 +113,18 @@ class TripsCreatorEtAddisababa(TripsCreator):
                     if index_stop == 0:
                         trip_gtfs.AddStopTime(feed.GetStop(
                             str(stop_id)), stop_time=departure_time.strftime(
-                                "%H:%M:%S"), continuous_pickup = 0, continuous_drop_off = 0)
+                                "%H:%M:%S"), continuous_pickup = flex_flag, continuous_drop_off = flex_flag)
                     elif index_stop == len(a_route.stops) - 1:
                         departure_time += timedelta(minutes=TRAVEL_TIME)
                         trip_gtfs.AddStopTime(feed.GetStop(
                             str(stop_id)), stop_time=departure_time.strftime(
-                                "%H:%M:%S"), continuous_pickup = 0, continuous_drop_off = 0)
+                                "%H:%M:%S"), continuous_pickup = flex_flag, continuous_drop_off = flex_flag)
                     else:
-                        trip_gtfs.AddStopTime(feed.GetStop(str(stop_id)), continuous_pickup = 0, continuous_drop_off = 0)
+                        trip_gtfs.AddStopTime(feed.GetStop(str(stop_id)), continuous_pickup = flex_flag, continuous_drop_off = flex_flag)
 
                 for secs, stop_time, is_timepoint in trip_gtfs.GetTimeInterpolatedStops():
-                    stop_time.continuous_pickup_flag = 0
-                    stop_time.continuous_drop_off_flag = 0
+                    stop_time.continuous_pickup_flag = flex_flag
+                    stop_time.continuous_drop_off_flag = flex_flag
                     if not is_timepoint:
                         stop_time.arrival_secs = secs
                         stop_time.departure_secs = secs
