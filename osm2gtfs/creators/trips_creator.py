@@ -32,11 +32,12 @@ class TripsCreator(object):
         all_trips_count = 0
 
         # Go though all lines
-        for line_id, line in data.routes.iteritems():
+        for line_id, line in sorted(data.routes.iteritems(), key=lambda k: k[1].route_id):
 
-            logging.info("\nGenerating schedule for line: [" + line_id + "] - " + line.name)
+            logging.info(
+                "\nGenerating schedule for line: [" + line.tags['ref'] + "] - " + line.name)
 
-            # Loop through it's itineraries
+            # Loop through its itineraries
             itineraries = line.get_itineraries()
             for itinerary in itineraries:
                 trips_count = 0

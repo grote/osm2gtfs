@@ -27,12 +27,11 @@
     },
     "feed_info": {
         "publisher_name": "Laboratorio Experimental",
-        "publisher_url": "http://ic-itcr.ac.cr/~jgutierrez/incofer/",
-        "version": "0.1",
-        "start_date" : "20170202",
-        "end_date": "20170910"
+        "publisher_url": "http://www.labexp.org",
+        "version": "0.1"
+
     },
-    "schedule_source": "https://raw.githubusercontent.com/jamescr/incofer-datos/master/input_incofer.json",
+    "schedule_source": "https://raw.githubusercontent.com/jamescr/incofer-datos/master/incofer_schedule.json",
     "output_file": "data/cr-gam.zip",
     "selector": "cr_gam"
 }

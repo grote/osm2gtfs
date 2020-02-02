@@ -56,10 +56,10 @@ class TestCreatorsBrFlorianopolis(CreatorsTestsAbstract):
         self.assertTrue(os.path.isfile(cache_file), 'The routes cache file creation failed')
         cache = Cache()
         routes = cache.read_data(self.selector + "-routes")
-        # The Florianopolis creator eliminates (eight) routes in the Trips creator.
+        # The Florianopolis creator eliminates (nine) routes in the Trips creator.
         # This should be revised. Afterwards this overriden function can be removed.
         self.assertEqual(
-            len(routes), self.required_variables['routes_count'] + 8,
+            len(routes), self.required_variables['routes_count'] + 9,
             'Wrong count of routes in the cache file')
 
 
