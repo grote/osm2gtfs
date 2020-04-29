@@ -83,13 +83,14 @@ class StopsCreator(object):
         stop_name = self._define_stop_name(stop)
 
         # Collect all data together for the stop creation
-        field_dict = {'stop_id': self._define_stop_id(stop),
-                      'stop_name': stop_name,
-                      'stop_lat': float(stop.lat),
-                      'stop_lon': float(stop.lon),
-                      'location_type': stop.location_type,
-                      'parent_station': parent_station
-                      }
+        field_dict = {
+            "stop_id": self._define_stop_id(stop),
+            "stop_name": stop_name,
+            "stop_lat": round(float(stop.lat),10),
+            "stop_lon": round(float(stop.lon),10),
+            "location_type": stop.location_type,
+            "parent_station": parent_station,
+        }
 
         # Add stop to GTFS object
         feed.AddStopObject(transitfeed.Stop(field_dict=field_dict))
