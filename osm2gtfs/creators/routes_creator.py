@@ -69,14 +69,14 @@ class RoutesCreator(object):
         Returns the short name for the use in the GTFS feed.
         Can be easily overridden in any creator.
         """
-        return route.route_id.encode('utf-8')
+        return route.route_id
 
     def _define_long_name(self, route):
         """
         Returns the long name for the use in the GTFS feed.
         Can be easily overridden in any creator.
         """
-        return route.name.encode('utf-8')
+        return route.name
 
     def _define_route_type(self, route):
         """

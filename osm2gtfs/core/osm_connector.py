@@ -55,9 +55,9 @@ class OsmConnector(object):
             logging.info("Using tag 'public_transport:version=2'")
 
         # Define name for stops without one
-        self.stop_no_name = 'No name'
-        if 'stops' in self.config and 'name_without' in self.config['stops']:
-            self.stop_no_name = self.config['stops']['name_without'].encode()
+        self.stop_no_name = "No name"
+        if "stops" in self.config and "name_without" in self.config["stops"]:
+            self.stop_no_name = self.config["stops"]["name_without"]
 
         # Check if auto stop name logic should be used
         self.auto_stop_names = False
@@ -437,8 +437,8 @@ class OsmConnector(object):
         if self._is_valid_stop_candidate(stop):
 
             # Make sure name is not empty
-            if 'name' not in stop.tags:
-                stop.tags['name'] = "[" + self.stop_no_name + "]"
+            if "name" not in stop.tags:
+                stop.tags["name"] = "[{}]".format(self.stop_no_name)
 
             # Ways don't have a pair of coordinates and need to be calculated
             if osm_type == "way":
