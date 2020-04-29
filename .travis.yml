@@ -1,21 +1,18 @@
 language: python
 
 python:
-  - "2.7"
+  - "3.7"
 
 install:
+  - git clone https://github.com/pecalleja/transitfeed.git
+  - cd transitfeed
+  - git checkout python3
+  - pip install -e .
+  - cd ..
   - pip install -e .
 
 jobs:
   include:
-    - stage: pep8
-      before_script: pip install pep8
-      script: pep8 --show-pep8 --max-line-length=100 osm2gtfs
-
-    - stage: pylint
-      before_script: pip install pylint
-      script: pylint --disable=C,R osm2gtfs
-
     - stage: non regression test br
       script: python -m unittest discover -p 'tests_br*.py'
 
