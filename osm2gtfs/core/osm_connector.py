@@ -704,7 +704,7 @@ class OsmConnector(object):
         for stop in self.stops['regular'].values():
 
             # If there is no name, query one intelligently from OSM
-            if stop.name == "[" + self.stop_no_name + "]":
+            if stop.name == "[{}]".format(self.stop_no_name):
                 self._find_best_name_for_unnamed_stop(stop)
                 logging.info("* Found alternative stop name: " +
                              stop.name + " - " + stop.osm_url)
@@ -759,7 +759,7 @@ class OsmConnector(object):
 
         # find closest candidate
         winner = None
-        winner_distance = sys.maxint
+        winner_distance = sys.maxsize
         for candidate in candidates:
             if isinstance(candidate, overpy.Way):
                 lat, lon = Helper.get_center_of_nodes(
