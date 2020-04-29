@@ -5,7 +5,7 @@ import sys
 import logging
 import json
 import datetime
-from urllib2 import urlopen
+from urllib.request import urlopen
 from calendar import monthrange
 from osm2gtfs.core.cache import Cache
 
