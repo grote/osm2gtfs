@@ -23,7 +23,7 @@ class RoutesCreator(object):
         routes = data.get_routes()
 
         # Loop through all routes
-        for route_osm_id, route in sorted(routes.iteritems(), key=lambda k: k[1].route_id):
+        for route_osm_id, route in sorted(routes.items(), key=lambda k: k[1].route_id):
 
             # Add route information
             gtfs_route = feed.AddRoute(

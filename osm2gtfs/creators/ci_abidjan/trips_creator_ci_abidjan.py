@@ -92,7 +92,7 @@ class TripsCreatorCiAbidjan(TripsCreator):
 
         default_agency = feed.GetDefaultAgency()
 
-        for route_id, line in sorted(lines.iteritems()):
+        for route_id, line in sorted(lines.items()):
             if not isinstance(line, Line):
                 continue
             logging.info("Generating schedule for line: %s",  route_id)

@@ -20,7 +20,7 @@ class TripsCreatorGhAccra(TripsCreator):
 
         lines = data.routes
 
-        for route_osm_id, line in sorted(lines.iteritems(), key=lambda k: k[1].route_id):
+        for route_osm_id, line in sorted(lines.items(), key=lambda k: k[1].route_id):
             if not isinstance(line, Line):
                 continue
             print("Generating schedule for line: " + line.tags['ref'])

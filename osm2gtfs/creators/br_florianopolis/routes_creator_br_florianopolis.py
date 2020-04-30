@@ -17,7 +17,7 @@ class RoutesCreatorBrFlorianopolis(RoutesCreator):
         stops = data.get_stops()
 
         # Loop through routes
-        for ref, route in routes.iteritems():
+        for ref, route in routes.items():
             # Replace stop ids with Stop objects
             self._fill_stops(stops['regular'], route)
         return
@@ -46,7 +46,7 @@ class RoutesCreatorBrFlorianopolis(RoutesCreator):
             logging.error("Unknown route: %s", str(route))
 
     def _look_up_stop(self, stop_id, stops):
-        for ref, elem in stops.iteritems():
+        for ref, elem in stops.items():
             if type(elem) is Stop:
                 if ref == stop_id:
                     return elem
