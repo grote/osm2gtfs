@@ -180,8 +180,9 @@ class TripsCreatorBrFlorianopolis(TripsCreator):
             return
 
         if route.route_id == DEBUG_ROUTE:
-            print "\n\n\n" + str(route)
-            print day + " - " + key
+            logging.info("\n\n\n", route)
+            logging.info("{} - {}", day, key)
+
 
         # get shape id
         shape_id = str(route.route_id)
@@ -224,7 +225,7 @@ class TripsCreatorBrFlorianopolis(TripsCreator):
                 trip.shape_id = shape_id
                 trip.direction_id = ""
                 if route.route_id == DEBUG_ROUTE:
-                    print "ADD TRIP " + str(trip.trip_id) + ":"
+                    logging.info("ADD TRIP {}:".format(trip.trip_id))
                 self.add_trip_stops(feed, trip, route, start_time, end_time)
 
                 # interpolate times, because Navitia can not handle this itself
