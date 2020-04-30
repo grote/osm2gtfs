@@ -118,7 +118,7 @@ class Configuration(object):
         """
         try:
             config = json.load(configfile)
-        except ValueError, e:
+        except ValueError as e:
             logging.error('Config json file is invalid.')
             logging.error(e)
             sys.exit(0)
@@ -157,7 +157,7 @@ class Configuration(object):
             try:
                 start_date = datetime.datetime.strptime(
                     config['feed_info']['start_date'], "%Y%m%d")
-            except ValueError, e:
+            except ValueError as e:
                 logging.warning('"start_date" from config file %s', e)
 
         if not start_date:
@@ -175,7 +175,7 @@ class Configuration(object):
                     config['feed_info']['end_date'], "%Y%m%d")
                 logging.info("Using the end date from config file: %s",
                              config['feed_info']['end_date'])
-            except ValueError, e:
+            except ValueError as e:
                 logging.warning('"end_date" from config file %s', e)
 
         if not end_date:
