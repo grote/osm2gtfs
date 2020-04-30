@@ -97,14 +97,18 @@ class Configuration(object):
 
         """
         # Load config json file
-        if args.config is not None:
-            config = Configuration.load_config_file(args.config)
-        elif os.path.isfile('config.json'):
-            with open("config.json") as json_file:
-                config = Configuration.load_config_file(json_file)
+        if args.config is None:
+            args.config = "config.json"
+
+        if type(args.config).__name__ == "str":
+            if os.path.isfile(args.config):
+                with open(args.config) as json_file:
+                    config = Configuration.load_config_file(json_file)
+            else:
+                logging.error("No config.json file found.")
+                sys.exit(0)
         else:
-            logging.error("No config.json file found.")
-            sys.exit(0)
+            config = Configuration.load_config_file(args.config)
 
         return config
 

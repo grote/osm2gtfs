@@ -23,7 +23,7 @@ class CreatorsTestsArgs():
 
         """
         # Basic preparations
-        self.config = open(config_file)
+        self.config = config_file
         self.selector = selector
 
         # Overriding the output to not interfere with user's data
@@ -115,11 +115,14 @@ class CreatorsTestsAbstract(unittest.TestCase):
         if os.path.isfile(cache_file):
             os.remove(cache_file)
         with patch("osm2gtfs.core.osm_connector.OsmConnector._query_routes") as mocked1:
-            overpass_xml = open(mocked_overpass_data_file, mode='r').read()
-            api = overpy.Overpass()
-            mocked1.return_value = api.parse_xml(overpass_xml)
-            data.get_routes(refresh=True)
-        self.assertTrue(os.path.isfile(cache_file), 'The routes cache file creation failed')
+            with open(mocked_overpass_data_file, mode="r") as ov:
+                overpass_xml = ov.read()
+                api = overpy.Overpass()
+                mocked1.return_value = api.parse_xml(overpass_xml)
+                data.get_routes(refresh=True)
+        self.assertTrue(
+            os.path.isfile(cache_file), "The routes cache file creation failed"
+        )
         cache = Cache()
         routes = cache.read_data(self.selector + "-routes")
         self.assertEqual(
@@ -133,11 +136,14 @@ class CreatorsTestsAbstract(unittest.TestCase):
         if os.path.isfile(cache_file):
             os.remove(cache_file)
         with patch("osm2gtfs.core.osm_connector.OsmConnector._query_stops") as mocked1:
-            overpass_xml = open(mocked_overpass_data_file, mode='r').read()
-            api = overpy.Overpass()
-            mocked1.return_value = api.parse_xml(overpass_xml)
-            data.get_stops(refresh=True)
-        self.assertTrue(os.path.isfile(cache_file), 'The stops cache file creation failed')
+            with open(mocked_overpass_data_file, mode="r") as ov:
+                overpass_xml = ov.read()
+                api = overpy.Overpass()
+                mocked1.return_value = api.parse_xml(overpass_xml)
+                data.get_stops(refresh=True)
+        self.assertTrue(
+            os.path.isfile(cache_file), "The stops cache file creation failed"
+        )
         cache = Cache()
         stops = cache.read_data(self.selector + "-stops")
         amount_of_stops = len(stops['regular']) + len(stops['stations'])
