@@ -49,9 +49,7 @@ class TripsCreatorGhAccra(TripsCreator):
 
                 if a_route.fr and a_route.to:
                     trip_gtfs.trip_headsign = a_route.to
-                    line_gtfs.route_long_name = a_route.fr.decode(
-                        'utf8') + " ↔ ".decode(
-                        'utf8') + a_route.to.decode('utf8')
+                    line_gtfs.route_long_name = a_route.fr + " ↔ " + a_route.to
 
                 DEFAULT_ROUTE_FREQUENCY = 30
                 DEFAULT_TRAVEL_TIME = 120
