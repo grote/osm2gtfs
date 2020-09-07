@@ -49,7 +49,7 @@ class Cache(object):
         """
         if not os.path.isdir("data"):
             os.mkdir("data")
-        with open(os.path.join("data", name), "w") as f:
+        with open(os.path.join("data", name), "wb") as f:
             f.write(content)
 
     @staticmethod

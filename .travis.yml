@@ -4,26 +4,21 @@ python:
   - "3.7"
 
 install:
-  - git clone https://github.com/pecalleja/transitfeed.git
-  - cd transitfeed
-  - git checkout python3
-  - pip install -e .
-  - cd ..
-  - pip install -e .
+  - pip3 install -e .
 
 jobs:
   include:
     - stage: non regression test br
-      script: python -m unittest discover -p 'tests_br*.py'
+      script: python3 -m unittest discover -p 'tests_br*.py'
 
     - stage: non regression test ci
-      script: python -m unittest discover -p 'tests_ci*.py'
+      script: python3 -m unittest discover -p 'tests_ci*.py'
 
     - stage: non regression test cr
-      script: python -m unittest discover -p 'tests_cr*.py'
+      script: python3 -m unittest discover -p 'tests_cr*.py'
 
     - stage: non regression test gh
-      script: python -m unittest discover -p 'tests_gh*.py'
+      script: python3 -m unittest discover -p 'tests_gh*.py'
 
     - stage: non regression test ni
-      script: python -m unittest discover -p 'tests_ni*.py'
+      script: python3 -m unittest discover -p 'tests_ni*.py'

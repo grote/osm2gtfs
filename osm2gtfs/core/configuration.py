@@ -71,7 +71,7 @@ class Configuration(object):
             if os.path.isfile(source_file):
 
                 # Open file and add to config object
-                with open(source_file, 'r') as f:
+                with open(source_file, 'rb') as f:
                     schedule_source = f.read()
 
             else:
