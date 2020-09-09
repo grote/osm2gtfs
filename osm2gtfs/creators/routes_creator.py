@@ -45,14 +45,17 @@ class RoutesCreator(object):
         from the final GTFS.
         It is called after the whole GTFS creation inside the main program.
         """
-        removed = 0
+        unused_routes = []
         for route_id, route in feed.routes.items():
             if len(route.GetPatternIdTripDict()) == 0:
-                removed += 1
-                del feed.routes[route_id]
-        if removed == 0:
+                unused_routes.append(route_id)
+        if len(unused_routes) == 0:
             pass
-        elif removed == 1:
+        removed = 0
+        for route_id in unused_routes:
+            removed += 1
+            del feed.routes[route_id]
+        if removed == 1:
             logging.info("Removed 1 unused route")
         else:
             logging.info("Removed %d unused routes", removed)
