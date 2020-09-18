@@ -49,16 +49,12 @@ class RoutesCreator(object):
         for route_id, route in feed.routes.items():
             if len(route.GetPatternIdTripDict()) == 0:
                 unused_routes.append(route_id)
-        if len(unused_routes) == 0:
-            pass
-        removed = 0
         for route_id in unused_routes:
-            removed += 1
             del feed.routes[route_id]
-        if removed == 1:
+        if len(unused_routes) == 1:
             logging.info("Removed 1 unused route")
         else:
-            logging.info("Removed %d unused routes", removed)
+            logging.info("Removed %d unused routes", len(unused_routes))
 
     def _define_route_id(self, route):
         """
