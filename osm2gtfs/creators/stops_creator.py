@@ -48,17 +48,16 @@ class StopsCreator(object):
         from the final GTFS.
         It is called after the whole GTFS creation inside the main program.
         """
-        removed = 0
+        unused_stops = []
         for stop_id, stop in feed.stops.items():
             if stop.location_type == 0 and not stop.GetTrips(feed):
-                removed += 1
-                del feed.stops[stop_id]
-        if removed == 0:
-            pass
-        elif removed == 1:
+                unused_stops.append(stop_id)
+        for stop_id in unused_stops:
+            del feed.stops[stop_id]
+        if len(unused_stops) == 1:
             logging.info("Removed 1 unused stop")
         else:
-            logging.info("Removed %d unused stops", removed)
+            logging.info("Removed %d unused stops", len(unused_stops))
 
     def _add_stop_to_feed(self, stop, feed):
         """
@@ -83,13 +82,14 @@ class StopsCreator(object):
         stop_name = self._define_stop_name(stop)
 
         # Collect all data together for the stop creation
-        field_dict = {'stop_id': self._define_stop_id(stop),
-                      'stop_name': stop_name,
-                      'stop_lat': float(stop.lat),
-                      'stop_lon': float(stop.lon),
-                      'location_type': stop.location_type,
-                      'parent_station': parent_station
-                      }
+        field_dict = {
+            "stop_id": self._define_stop_id(stop),
+            "stop_name": stop_name,
+            "stop_lat": round(float(stop.lat),10),
+            "stop_lon": round(float(stop.lon),10),
+            "location_type": stop.location_type,
+            "parent_station": parent_station,
+        }
 
         # Add stop to GTFS object
         feed.AddStopObject(transitfeed.Stop(field_dict=field_dict))

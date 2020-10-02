@@ -6,6 +6,7 @@ import overpy
 import transitfeed
 
 from mock import patch
+from io import TextIOWrapper
 from osm2gtfs.core.configuration import Configuration
 from osm2gtfs.core.osm_connector import OsmConnector
 from osm2gtfs.core.creator_factory import CreatorFactory
@@ -22,7 +23,7 @@ class CreatorsTestsArgs():
 
         """
         # Basic preparations
-        self.config = open(config_file)
+        self.config = config_file
         self.selector = selector
 
         # Overriding the output to not interfere with user's data
@@ -114,11 +115,14 @@ class CreatorsTestsAbstract(unittest.TestCase):
         if os.path.isfile(cache_file):
             os.remove(cache_file)
         with patch("osm2gtfs.core.osm_connector.OsmConnector._query_routes") as mocked1:
-            overpass_xml = open(mocked_overpass_data_file, mode='r').read()
-            api = overpy.Overpass()
-            mocked1.return_value = api.parse_xml(overpass_xml)
-            data.get_routes(refresh=True)
-        self.assertTrue(os.path.isfile(cache_file), 'The routes cache file creation failed')
+            with open(mocked_overpass_data_file, mode="r") as ov:
+                overpass_xml = ov.read()
+                api = overpy.Overpass()
+                mocked1.return_value = api.parse_xml(overpass_xml)
+                data.get_routes(refresh=True)
+        self.assertTrue(
+            os.path.isfile(cache_file), "The routes cache file creation failed"
+        )
         cache = Cache()
         routes = cache.read_data(self.selector + "-routes")
         self.assertEqual(
@@ -132,11 +136,14 @@ class CreatorsTestsAbstract(unittest.TestCase):
         if os.path.isfile(cache_file):
             os.remove(cache_file)
         with patch("osm2gtfs.core.osm_connector.OsmConnector._query_stops") as mocked1:
-            overpass_xml = open(mocked_overpass_data_file, mode='r').read()
-            api = overpy.Overpass()
-            mocked1.return_value = api.parse_xml(overpass_xml)
-            data.get_stops(refresh=True)
-        self.assertTrue(os.path.isfile(cache_file), 'The stops cache file creation failed')
+            with open(mocked_overpass_data_file, mode="r") as ov:
+                overpass_xml = ov.read()
+                api = overpy.Overpass()
+                mocked1.return_value = api.parse_xml(overpass_xml)
+                data.get_stops(refresh=True)
+        self.assertTrue(
+            os.path.isfile(cache_file), "The stops cache file creation failed"
+        )
         cache = Cache()
         stops = cache.read_data(self.selector + "-stops")
         amount_of_stops = len(stops['regular']) + len(stops['stations'])
@@ -257,13 +264,13 @@ class CreatorsTestsHelper():
         # Grabbing the trip_ids from both gtfs
         trips_id1 = []
         with zf1.open("trips.txt") as trip_file:
-            reader = csv.DictReader(trip_file)
+            reader = csv.DictReader(TextIOWrapper(trip_file,'utf-8'))
             for row in reader:
                 if row["route_id"] == route_id:
                     trips_id1.append(row['trip_id'])
         trips_id2 = []
         with zf2.open("trips.txt") as trip_file:
-            reader = csv.DictReader(trip_file)
+            reader = csv.DictReader(TextIOWrapper(trip_file,'utf-8'))
             for row in reader:
                 if row["route_id"] == route_id:
                     trips_id2.append(row['trip_id'])
@@ -277,7 +284,7 @@ class CreatorsTestsHelper():
         stop_times1 = []
         stop_times2 = []
         with zf1.open("stop_times.txt") as st_file:
-            reader = csv.DictReader(st_file)
+            reader = csv.DictReader(TextIOWrapper(st_file,'utf-8'))
             for row in reader:
                 if row["trip_id"] in trips_id1:
                     st = {
@@ -289,7 +296,7 @@ class CreatorsTestsHelper():
                     }
                     stop_times1.append(st)
         with zf2.open("stop_times.txt") as st_file:
-            reader = csv.DictReader(st_file)
+            reader = csv.DictReader(TextIOWrapper(st_file,'utf-8'))
             for row in reader:
                 if row["trip_id"] in trips_id2:
                     st = {
@@ -360,13 +367,15 @@ class CreatorsTestsHelper():
         gtfs_infos["stop_areas_count"] = 0
         gtfs_infos["routes_count"] = 0
         with zipfile.ZipFile(gtfs) as zf:
-            reader = csv.DictReader(zf.open("stops.txt"))
-            for r in reader:
-                if r["location_type"] == "1":
-                    gtfs_infos["stop_areas_count"] += 1
-                else:
-                    gtfs_infos["stop_points_count"] += 1
-            reader = csv.DictReader(zf.open("routes.txt"))
-            for r in reader:
-                gtfs_infos["routes_count"] += 1
+            with zf.open("stops.txt") as szf:
+                reader = csv.DictReader(TextIOWrapper(szf,'utf-8'))
+                for r in reader:
+                    if r["location_type"] == "1":
+                        gtfs_infos["stop_areas_count"] += 1
+                    else:
+                        gtfs_infos["stop_points_count"] += 1
+            with zf.open("routes.txt") as rzf:
+                reader = csv.DictReader(TextIOWrapper(rzf,'utf-8'))
+                for r in reader:
+                    gtfs_infos["routes_count"] += 1
         return gtfs_infos

@@ -5,7 +5,7 @@ import sys
 import logging
 import json
 import datetime
-from urllib2 import urlopen
+from urllib.request import urlopen
 from calendar import monthrange
 from osm2gtfs.core.cache import Cache
 
@@ -71,7 +71,7 @@ class Configuration(object):
             if os.path.isfile(source_file):
 
                 # Open file and add to config object
-                with open(source_file, 'r') as f:
+                with open(source_file, 'rb') as f:
                     schedule_source = f.read()
 
             else:
@@ -97,14 +97,18 @@ class Configuration(object):
 
         """
         # Load config json file
-        if args.config is not None:
-            config = Configuration.load_config_file(args.config)
-        elif os.path.isfile('config.json'):
-            with open("config.json") as json_file:
-                config = Configuration.load_config_file(json_file)
+        if args.config is None:
+            args.config = "config.json"
+
+        if type(args.config).__name__ == "str":
+            if os.path.isfile(args.config):
+                with open(args.config) as json_file:
+                    config = Configuration.load_config_file(json_file)
+            else:
+                logging.error("No config.json file found.")
+                sys.exit(0)
         else:
-            logging.error("No config.json file found.")
-            sys.exit(0)
+            config = Configuration.load_config_file(args.config)
 
         return config
 
@@ -118,7 +122,7 @@ class Configuration(object):
         """
         try:
             config = json.load(configfile)
-        except ValueError, e:
+        except ValueError as e:
             logging.error('Config json file is invalid.')
             logging.error(e)
             sys.exit(0)
@@ -157,7 +161,7 @@ class Configuration(object):
             try:
                 start_date = datetime.datetime.strptime(
                     config['feed_info']['start_date'], "%Y%m%d")
-            except ValueError, e:
+            except ValueError as e:
                 logging.warning('"start_date" from config file %s', e)
 
         if not start_date:
@@ -175,7 +179,7 @@ class Configuration(object):
                     config['feed_info']['end_date'], "%Y%m%d")
                 logging.info("Using the end date from config file: %s",
                              config['feed_info']['end_date'])
-            except ValueError, e:
+            except ValueError as e:
                 logging.warning('"end_date" from config file %s', e)
 
         if not end_date:

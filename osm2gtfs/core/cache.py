@@ -47,9 +47,9 @@ class Cache(object):
         hard drive.
 
         """
-        if not os.path.isdir('data'):
-            os.mkdir('data')
-        with open(os.path.join('data', name), 'wb') as f:
+        if not os.path.isdir("data"):
+            os.mkdir("data")
+        with open(os.path.join("data", name), "wb") as f:
             f.write(content)
 
     @staticmethod

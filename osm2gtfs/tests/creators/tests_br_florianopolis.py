@@ -49,10 +49,11 @@ class TestCreatorsBrFlorianopolis(CreatorsTestsAbstract):
         if os.path.isfile(cache_file):
             os.remove(cache_file)
         with patch("osm2gtfs.core.osm_connector.OsmConnector._query_routes") as mocked1:
-            overpass_xml = open(mocked_overpass_data_file, mode='r').read()
-            api = overpy.Overpass()
-            mocked1.return_value = api.parse_xml(overpass_xml)
-            data.get_routes(refresh=True)
+            with open(mocked_overpass_data_file, mode='r') as ov:
+                overpass_xml = ov.read()
+                api = overpy.Overpass()
+                mocked1.return_value = api.parse_xml(overpass_xml)
+                data.get_routes(refresh=True)
         self.assertTrue(os.path.isfile(cache_file), 'The routes cache file creation failed')
         cache = Cache()
         routes = cache.read_data(self.selector + "-routes")
