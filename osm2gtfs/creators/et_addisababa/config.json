@@ -28,7 +28,7 @@
         "publisher_url": "http://addismap.com",
         "version": "0.1",
         "start_date": "20191201",
-        "end_date": "20201101"
+        "end_date": "20991231"
     },
     "output_file": "data/et-addisababa.zip",
     "selector": "et_addisababa"
