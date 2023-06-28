@@ -32,11 +32,12 @@ class TripsCreator(object):
         all_trips_count = 0
 
         # Go though all lines
-        for line_id, line in data.routes.iteritems():
+        for line_id, line in sorted(
+            data.routes.items(), key=lambda k: k[1].route_id
+        ):
+            logging.info("\nGenerating schedule for line: [{}] - {}".format(line.route_id, line.name))
 
-            logging.info("\nGenerating schedule for line: [" + line_id + "] - " + line.name)
-
-            # Loop through it's itineraries
+            # Loop through its itineraries
             itineraries = line.get_itineraries()
             for itinerary in itineraries:
                 trips_count = 0
@@ -61,11 +62,15 @@ class TripsCreator(object):
                             feed, itinerary, line, trip_builder, shape_id)
 
                 # Print out status messge about added trips
-                logging.info(" Itinerary: [" + itinerary.route_id.encode("utf-8") + "] " +
-                             itinerary.to.encode("utf-8") + " (added " + str(
-                                 trips_count) + " trips, serving " + str(
-                                     len(itinerary.get_stops())) + " stops) - " +
-                             itinerary.osm_url)
+                logging.info(
+                    " Itinerary: [{} {}] (added {} trips, serving {} stops) - {}".format(
+                        itinerary.route_id,
+                        itinerary.to,
+                        trips_count,
+                        len(itinerary.get_stops()),
+                        itinerary.osm_url,
+                    )
+                )
                 all_trips_count += trips_count
 
         logging.info("\nTotal of added trips to this GTFS: %s\n\n", str(all_trips_count))
@@ -214,7 +219,7 @@ class TripsCreator(object):
 
                 # Make sure we compare same unicode encoding
                 if type(itinerary_stop.name) is str:
-                    itinerary_stop.name = itinerary_stop.name.decode('utf-8')
+                    itinerary_stop.name = itinerary_stop.name
 
                 schedule_stop_idx = -1
                 # Check if we have specific time information for this stop.
@@ -226,7 +231,7 @@ class TripsCreator(object):
                         itinerary_station = trip_builder[
                             'all_stops']['stations'][str(itinerary_stop.get_parent_station())]
                         if type(itinerary_station.name) is str:
-                            itinerary_station.name = itinerary_station.name.decode('utf-8')
+                            itinerary_station.name = itinerary_station.name
                         try:
                             schedule_stop_idx = trip_builder[
                                 'stops'].index(itinerary_station.name, search_idx)

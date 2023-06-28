@@ -18,3 +18,9 @@ Pipfile.lock
 
 __pycache__
 .cache
+
+# Used for virtualenv
+env
+
+# Visual Studio Code workspace settings folder
+.vscode

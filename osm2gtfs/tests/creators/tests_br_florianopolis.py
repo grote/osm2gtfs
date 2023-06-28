@@ -49,17 +49,18 @@ class TestCreatorsBrFlorianopolis(CreatorsTestsAbstract):
         if os.path.isfile(cache_file):
             os.remove(cache_file)
         with patch("osm2gtfs.core.osm_connector.OsmConnector._query_routes") as mocked1:
-            overpass_xml = open(mocked_overpass_data_file, mode='r').read()
-            api = overpy.Overpass()
-            mocked1.return_value = api.parse_xml(overpass_xml)
-            data.get_routes(refresh=True)
+            with open(mocked_overpass_data_file, mode='r') as ov:
+                overpass_xml = ov.read()
+                api = overpy.Overpass()
+                mocked1.return_value = api.parse_xml(overpass_xml)
+                data.get_routes(refresh=True)
         self.assertTrue(os.path.isfile(cache_file), 'The routes cache file creation failed')
         cache = Cache()
         routes = cache.read_data(self.selector + "-routes")
-        # The Florianopolis creator eliminates (eight) routes in the Trips creator.
+        # The Florianopolis creator eliminates (nine) routes in the Trips creator.
         # This should be revised. Afterwards this overriden function can be removed.
         self.assertEqual(
-            len(routes), self.required_variables['routes_count'] + 8,
+            len(routes), self.required_variables['routes_count'] + 9,
             'Wrong count of routes in the cache file')
 
 

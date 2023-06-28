@@ -1,0 +1,35 @@
+{
+    "query": {
+        "bbox": {
+            "n": "9.13",
+            "s": "8.8",
+            "e": "38.96",
+            "w": "38.61"
+        },
+        "tags": {
+            "route": ["bus", "light_rail", "share_taxi"]
+        }
+    },
+    "stops": {
+        "name_without": "no name",
+        "name_auto": "yes"
+    },
+    "agency": {
+        "agency_id": "AA",
+        "agency_name": "Addis Ababa Transport (all)",
+        "agency_url": "https://example.com",
+        "agency_timezone": "Africa/Addis_Ababa",
+        "agency_lang": "en",
+        "agency_phone": "",
+        "agency_fare_url": ""
+    },
+    "feed_info": {
+        "publisher_name": "AddisMap",
+        "publisher_url": "http://addismap.com",
+        "version": "0.1",
+        "start_date": "20191201",
+        "end_date": "20991231"
+    },
+    "output_file": "data/et-addisababa.zip",
+    "selector": "et_addisababa"
+}

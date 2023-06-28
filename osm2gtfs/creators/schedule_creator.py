@@ -46,7 +46,7 @@ class ScheduleCreator(object):
         else:
             try:
                 schedule = json.loads(schedule_source)
-            except ValueError, e:
+            except ValueError as e:
                 logging.error('Schedule file is invalid.')
                 logging.error(e)
                 sys.exit(0)

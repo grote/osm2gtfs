@@ -65,16 +65,20 @@ class TripsCreatorBrFlorianopolis(TripsCreator):
         linhas = data.schedule['data']
 
         # Try to find OSM routes in Fenix data
-        for route_ref, route in sorted(routes.iteritems()):
+        for route_ref, route in sorted(routes.items(), key=lambda k: k[1].route_id):
+            if 'ref' in route.tags:
+                route_ref = route.tags['ref']
+            else:
+                continue
 
             print("Generating schedule for line: " + route_ref)
 
             if route_ref not in BLACKLIST and route_ref in linhas:
                 linha = linhas[route_ref]
-                route.name = linha['nome'].encode('utf-8')
-                route.last_update = datetime.strptime(linha['alterado_em'], "%d/%m/%Y")
+                route.name = linha["nome"]
+                route.last_update = datetime.strptime(linha["alterado_em"], "%d/%m/%Y")
                 # save duration
-                if linha['tempo_de_percurso'].encode('utf-8') == NO_DURATION:
+                if linha["tempo_de_percurso"] == NO_DURATION:
                     sys.stderr.write(
                         "ERROR: Route has no duration in Fenix data: " + str(route) + "\n")
                     continue
@@ -89,9 +93,8 @@ class TripsCreatorBrFlorianopolis(TripsCreator):
 
     def add_route(self, feed, route, horarios, operacoes):
         line = feed.AddRoute(
-            short_name=route.route_id,
-            long_name=route.name.decode('utf8'),
-            route_type="Bus")
+            short_name=route.route_id, long_name=route.name, route_type="Bus",
+        )
         line.agency_id = feed.GetDefaultAgency().agency_id
         line.route_desc = "TEST DESCRIPTION"
         line.route_url = "http://www.consorciofenix.com.br/horarios?q=" + str(route.route_id)
@@ -103,7 +106,7 @@ class TripsCreatorBrFlorianopolis(TripsCreator):
         sunday = {}
 
         for day in horarios:
-            sday = day.encode('utf-8')
+            sday = day
             if sday.startswith(WEEKDAY):
                 weekday[sday.replace(WEEKDAY + ' - Saída ', '')] = horarios[day]
             elif sday.startswith(SATURDAY):
@@ -132,7 +135,7 @@ class TripsCreatorBrFlorianopolis(TripsCreator):
         # schedule exceptions
         for o in operacoes:
             date = datetime.strptime(o["data"], "%Y-%m-%d")
-            day = o["tipo"].encode('utf-8')
+            day = o["tipo"]
 
             # only include exceptions within service period
             if date < self.start_date:
@@ -177,8 +180,9 @@ class TripsCreatorBrFlorianopolis(TripsCreator):
             return
 
         if route.route_id == DEBUG_ROUTE:
-            print "\n\n\n" + str(route)
-            print day + " - " + key
+            logging.info("\n\n\n", route)
+            logging.info("{} - {}", day, key)
+
 
         # get shape id
         shape_id = str(route.route_id)
@@ -221,7 +225,7 @@ class TripsCreatorBrFlorianopolis(TripsCreator):
                 trip.shape_id = shape_id
                 trip.direction_id = ""
                 if route.route_id == DEBUG_ROUTE:
-                    print "ADD TRIP " + str(trip.trip_id) + ":"
+                    logging.info("ADD TRIP {}:".format(trip.trip_id))
                 self.add_trip_stops(feed, trip, route, start_time, end_time)
 
                 # interpolate times, because Navitia can not handle this itself
@@ -284,13 +288,11 @@ class TripsCreatorBrFlorianopolis(TripsCreator):
 
     @staticmethod
     def normalize_stop_name(old_name):
-        name = STOP_REGEX.sub(r'\1', old_name)
-        if type(name).__name__ == 'str':
-            name = name.decode('utf-8')
-        name = name.replace('Terminal de Integração da Lagoa da Conceição'.decode('utf-8'), 'TILAG')
-        name = name.replace('Terminal Centro', 'TICEN')
-        name = name.replace('Terminal Rio Tavares', 'TIRIO')
-        name = name.replace('Itacurubi', 'Itacorubi')
+        name = STOP_REGEX.sub(r"\1", old_name)
+        name = name.replace("Terminal de Integração da Lagoa da Conceição", "TILAG")
+        name = name.replace("Terminal Centro", "TICEN")
+        name = name.replace("Terminal Rio Tavares", "TIRIO")
+        name = name.replace("Itacurubi", "Itacorubi")
         return name
 
     @staticmethod

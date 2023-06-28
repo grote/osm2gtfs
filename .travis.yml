@@ -1,20 +1,24 @@
 language: python
 
 python:
-  - "2.7"
+  - "3.7"
 
 install:
-  - pip install -e .
+  - pip3 install -e .
 
 jobs:
   include:
-    - stage: pep8
-      before_script: pip install pep8
-      script: pep8 --show-pep8 --max-line-length=100 osm2gtfs
+    - stage: non regression test br
+      script: python3 -m unittest discover -p 'tests_br*.py'
 
-    - stage: pylint
-      before_script: pip install pylint
-      script: pylint --disable=C,R osm2gtfs
+    - stage: non regression test ci
+      script: python3 -m unittest discover -p 'tests_ci*.py'
 
-    - stage: non regression test
-      script: python -m unittest discover -p 'tests_*.py'
+    - stage: non regression test cr
+      script: python3 -m unittest discover -p 'tests_cr*.py'
+
+    - stage: non regression test gh
+      script: python3 -m unittest discover -p 'tests_gh*.py'
+
+    - stage: non regression test ni
+      script: python3 -m unittest discover -p 'tests_ni*.py'

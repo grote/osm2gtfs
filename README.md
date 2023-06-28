@@ -30,6 +30,7 @@ Included cities
 * [Suburban trains in Costa Rica](./osm2gtfs/creators/cr_gam/config.json)
 * [Accra, Ghana](./osm2gtfs/creators/gh_accra/readme.md)
 * [Managua, Ciudad Sandino](./osm2gtfs/creators/ni_managua/config.json) and [Estelí](./osm2gtfs/creators/ni_esteli/config.json) in Nicaragua
+* [Abidjan, Ivory Coast](./osm2gtfs/creators/ci_abidjan/README.md)
 
 *Soon, also in your city*
 
@@ -38,13 +39,17 @@ Install
 
 Install by running
 
-    pip install -e .
+    pip3 install -e .
 
 Requirements
 ------------
 Automatically installed by the previous step:
+* https://github.com/python-attrs/attrs
 * https://github.com/DinoTools/python-overpy
-* https://github.com/google/transitfeed
+* https://github.com/pecalleja/transitfeed (fork)
+* https://github.com/testing-cabal/mock
+* https://github.com/ubernostrum/webcolors
+* https://github.com/Jungle-Bus/transport-hours-py
 
 Use
 ------------
