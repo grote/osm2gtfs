@@ -42,12 +42,12 @@ class OsmConnector(object):
 
         # tags from config file for querying
         self.tags = ''
-        for key, value in self.config["query"].get("tags", {}).iteritems():
+        for key, value in self.config["query"].get("tags", {}).items():
             if isinstance(value, list):
                 value = '^' + '$|^'.join(value) + '$'
-                self.tags += unicode('["' + key + '" ~ "' + value + '"]')
+                self.tags += "['{}' ~ '{}']".format(key, value)
             else:
-                self.tags += unicode('["' + key + '" = "' + value + '"]')
+                self.tags += "['{}' = '{}']".format(key, value)
         if not self.tags:
             # fallback
             self.tags = '["public_transport:version" = "2"]'
@@ -55,9 +55,9 @@ class OsmConnector(object):
             logging.info("Using tag 'public_transport:version=2'")
 
         # Define name for stops without one
-        self.stop_no_name = 'No name'
-        if 'stops' in self.config and 'name_without' in self.config['stops']:
-            self.stop_no_name = self.config['stops']['name_without'].encode()
+        self.stop_no_name = "No name"
+        if "stops" in self.config and "name_without" in self.config["stops"]:
+            self.stop_no_name = self.config["stops"]["name_without"]
 
         # Check if auto stop name logic should be used
         self.auto_stop_names = False
@@ -130,7 +130,7 @@ class OsmConnector(object):
                 route_variants[relation.id] = relation
 
         # Build routes from master relations
-        for rmid, route_master in route_masters.iteritems():
+        for rmid, route_master in route_masters.items():
             itineraries = OrderedDict()
 
             # Build route variant members
@@ -181,7 +181,7 @@ class OsmConnector(object):
             self.routes[str(line.osm_id)] = line
 
         # Build routes from variants (missing master relation)
-        for rvid, route_variant in route_variants.iteritems():
+        for rvid, route_variant in route_variants.items():
             logging.warning("Route (variant) without route_master")
             logging.warning(
                 " https://osm.org/relation/%s", route_variant.id)
@@ -437,8 +437,8 @@ class OsmConnector(object):
         if self._is_valid_stop_candidate(stop):
 
             # Make sure name is not empty
-            if 'name' not in stop.tags:
-                stop.tags['name'] = "[" + self.stop_no_name + "]"
+            if "name" not in stop.tags:
+                stop.tags["name"] = "[{}]".format(self.stop_no_name)
 
             # Ways don't have a pair of coordinates and need to be calculated
             if osm_type == "way":
@@ -704,7 +704,7 @@ class OsmConnector(object):
         for stop in self.stops['regular'].values():
 
             # If there is no name, query one intelligently from OSM
-            if stop.name == "[" + self.stop_no_name + "]":
+            if stop.name == "[{}]".format(self.stop_no_name):
                 self._find_best_name_for_unnamed_stop(stop)
                 logging.info("* Found alternative stop name: " +
                              stop.name + " - " + stop.osm_url)
@@ -759,7 +759,7 @@ class OsmConnector(object):
 
         # find closest candidate
         winner = None
-        winner_distance = sys.maxint
+        winner_distance = sys.maxsize
         for candidate in candidates:
             if isinstance(candidate, overpy.Way):
                 lat, lon = Helper.get_center_of_nodes(

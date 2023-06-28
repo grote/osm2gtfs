@@ -92,7 +92,7 @@ class TripsCreatorCiAbidjan(TripsCreator):
 
         default_agency = feed.GetDefaultAgency()
 
-        for route_id, line in sorted(lines.iteritems()):
+        for route_id, line in sorted(lines.items()):
             if not isinstance(line, Line):
                 continue
             logging.info("Generating schedule for line: %s",  route_id)
@@ -166,8 +166,7 @@ class TripsCreatorCiAbidjan(TripsCreator):
                             # But it is good practice to not repeat the route_short_name
                             # in the route_long_name,
                             # so we abridge the route_long_name here if needed
-                            line_gtfs.route_long_name = a_route.fr + \
-                                " ↔ ".decode('utf-8') + a_route.to
+                            line_gtfs.route_long_name =  "{} ↔ {}".format(a_route.fr, a_route.to)
 
                     for itinerary_hour in itinerary_hours:
                         trip_gtfs.AddFrequency(

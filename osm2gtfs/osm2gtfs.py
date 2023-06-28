@@ -7,9 +7,9 @@ import logging
 import argparse
 import transitfeedflex
 import transitfeed
-from core.configuration import Configuration
-from core.osm_connector import OsmConnector
-from core.creator_factory import CreatorFactory
+from osm2gtfs.core.configuration import Configuration
+from osm2gtfs.core.osm_connector import OsmConnector
+from osm2gtfs.core.creator_factory import CreatorFactory
 
 from transitfeed.trip import Trip
 from transitfeed.gtfsfactoryuser import GtfsFactoryUser
