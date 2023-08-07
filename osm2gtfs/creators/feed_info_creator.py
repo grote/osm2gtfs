@@ -30,4 +30,6 @@ class FeedInfoCreator(object):
         feed_info.feed_start_date = config['feed_info']['start_date']
         feed_info.feed_end_date = config['feed_info']['end_date']
         feed_info.feed_version = config['feed_info']['version']
+        feed_info.feed_contact_email = config['feed_info']['feed_contact_email']
+        feed_info.feed_contact_url = config['feed_info']['feed_contact_url']
         return feed_info
