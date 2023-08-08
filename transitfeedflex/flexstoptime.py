@@ -25,3 +25,23 @@ class FlexStopTime(StopTime):
          return ''
       return str(self.continuous_drop_off_flag)
     return super(FlexStopTime, self).__getattr__(name)
+
+  def GetFieldValuesTuple(self, trip_id):
+    result = []
+    for fn in self._FIELD_NAMES:
+      if fn == "trip_id":
+        result.append(trip_id)
+      else:
+        # Since we'll be writting to an output file, we want empty values to be
+        # outputted as an empty string
+        # for timepoint, 1 is default, so 0 needs to be printed as string!
+        if fn == 'timepoint':
+          if self.timepoint == None:
+            result.append('')
+          else:
+            result.append(str(self.timepoint))
+        else:
+          result.append(getattr(self, fn) or "")
+    return tuple(result)
+
+

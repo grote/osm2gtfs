@@ -111,14 +111,14 @@ class TripsCreatorEtAddisababa(TripsCreator):
                     if index_stop == 0:
                         trip_gtfs.AddStopTime(feed.GetStop(
                             str(stop_id)), stop_time=departure_time.strftime(
-                                "%H:%M:%S"), continuous_pickup = flex_flag, continuous_drop_off = flex_flag)
+                                "%H:%M:%S"), continuous_pickup = flex_flag, continuous_drop_off = flex_flag, timepoint = 1)
                     elif index_stop == len(a_route.stops) - 1:
                         departure_time += timedelta(minutes=TRAVEL_TIME)
                         trip_gtfs.AddStopTime(feed.GetStop(
                             str(stop_id)), stop_time=departure_time.strftime(
-                                "%H:%M:%S"), continuous_pickup = flex_flag, continuous_drop_off = flex_flag)
+                                "%H:%M:%S"), continuous_pickup = flex_flag, continuous_drop_off = flex_flag, timepoint = 1)
                     else:
-                        trip_gtfs.AddStopTime(feed.GetStop(str(stop_id)), continuous_pickup = flex_flag, continuous_drop_off = flex_flag)
+                        trip_gtfs.AddStopTime(feed.GetStop(str(stop_id)), continuous_pickup = flex_flag, continuous_drop_off = flex_flag, timepoint = 0)
 
                 for secs, stop_time, is_timepoint in trip_gtfs.GetTimeInterpolatedStops():
                     stop_time.continuous_pickup_flag = flex_flag
