@@ -42,7 +42,7 @@ class OsmConnector(object):
 
         # tags from config file for querying
         self.tags = ''
-        for key, value in self.config["query"].get("tags", {}).items():
+        for key, value in sorted(self.config["query"].get("tags", {}).items()):
             if isinstance(value, list):
                 value = '^' + '$|^'.join(value) + '$'
                 self.tags += "['{}' ~ '{}']".format(key, value)
@@ -130,7 +130,7 @@ class OsmConnector(object):
                 route_variants[relation.id] = relation
 
         # Build routes from master relations
-        for rmid, route_master in route_masters.items():
+        for rmid, route_master in sorted(route_masters.items()):
             itineraries = OrderedDict()
 
             # Build route variant members
@@ -181,7 +181,7 @@ class OsmConnector(object):
             self.routes[str(line.osm_id)] = line
 
         # Build routes from variants (missing master relation)
-        for rvid, route_variant in route_variants.items():
+        for rvid, route_variant in sorted(route_variants.items()):
             logging.warning("Route (variant) without route_master")
             logging.warning(
                 " https://osm.org/relation/%s", route_variant.id)
