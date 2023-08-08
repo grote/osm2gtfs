@@ -43,7 +43,7 @@ class TripsCreatorEtAddisababa(TripsCreator):
                 route_suffix = ""
 
             line_gtfs = feed.AddRoute(
-                short_name=str(line.route_id),
+                short_name=str(line.route_id).replace('Minibus', 'Tx'),
                 long_name=line.name + route_suffix,
                 # we change the route_long_name with the 'from' and 'to' tags
                 # of the last route as the route_master name tag contains

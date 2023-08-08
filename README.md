@@ -5,6 +5,12 @@ Based on https://github.com/grote/osm2gtfs
 
 Used to generate https://github.com/AddisMap/AddisMapTransit-gtfs
 
+
+Specialities for Addis Ababa
+----------------------------
+
+* `route_short_name` is cleaned up until the correct naming is decided by the authorities and can be edited on OSM
+
 License
 -------
 
